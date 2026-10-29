@@ -97,7 +97,7 @@ class Pen {
 }
 
 /* ---------- the concept's parameters for a wrestler in the game ---------- */
-interface Hd { cr: string; crw: number; jaw: string; jw: number; len: number; eye: string; ey: number; et: number; brow: string; mouth: string; ear: number; es?: number; bu?: number; cheek?: number; lip?: string; shadow?: string; freck?: number; bags?: number; scar?: number; jowl?: number; adam?: number }
+interface Hd { es2?: number; eg?: number; nose?: string; nw?: number; nl?: number; mw?: number; bt?: number; cr: string; crw: number; jaw: string; jw: number; len: number; eye: string; ey: number; et: number; brow: string; mouth: string; ear: number; es?: number; bu?: number; cheek?: number; lip?: string; shadow?: string; freck?: number; bags?: number; scar?: number; jowl?: number; adam?: number }
 export interface Look { skin: string; hc: string; hair: string; beard: string; gear: string; g2: string; boots: string; pad: string; iris: string; fem: boolean; mask?: string[]; band?: string;
   sw: number; cw: number; ww: number; hw: number; bel: number; au: number; af: number; th: number; sh: number; traps: number; abs: number; neck: number; tape: boolean; chestHair: boolean; veins: boolean; quad: boolean;
   mus?: number; braid?: boolean; legC?: string; jeans?: boolean; top?: string; topC?: string; sleeve?: string; coat?: string; cape?: string; stripes?: boolean; tie?: string; tat?: { st: string; arm: number[]; chest: number }; hd: Hd; key: string }
@@ -122,9 +122,11 @@ export function lookOf(r: Recipe, expr: string): Look {
   L.hd = { cr: hd.ryt > 1.46 ? 'long' : sq && r.hair !== 'bald' ? 'bullet' : sq ? 'round' : pointy ? 'egg' : ['round', 'round', 'long', 'egg'][h('cr', 4)], crw, jaw: sq ? (m > 1.15 ? 'anvil' : 'block') : pointy ? 'v' : hd.chin > 0.2 ? 'square' : 'round',
     jw: sq ? crw * (m > 1.15 ? 1.45 : 1.25) : pointy ? 0.32 : crw * (hd.chin > 0.2 ? 0.92 : 0.88), len: Math.max(0.95, Math.min(1.3, hd.ryb / 1.6 * 1.06 * (m > 1.2 ? 1.08 : 1))),
     eye: hurt ? 'slit' : fem ? 'lash' : md === 'fierce' ? 'slit' : md === 'cocky' ? 'lid' : 'almond', ey: -0.03, et: md === 'fierce' || md === 'heel' ? -5 : md === 'sad' ? 6 : 2,
-    brow: md === 'fierce' ? 'slab' : md === 'heel' ? 'thick' : md === 'cocky' || md === 'happy' ? (fem ? 'arch' : 'raised') : fem ? 'arch' : r.brow > 0.15 ? 'thick' : 'flat',
+    brow: md === 'fierce' ? 'slab' : md === 'heel' ? 'thick' : md === 'cocky' || md === 'happy' ? (fem ? 'arch' : 'raised') : fem ? ['arch', 'thin', 'arch'][h('br', 3)] : r.brow > 0.15 ? 'thick' : ['flat', 'thick', 'thin', 'raised', 'flat'][h('br', 5)],
     mouth: sh ? 'grit' : expr === 'talk' ? 'grin' : hurt ? 'grim' : expr === 'smirk' ? 'smirk' : md === 'happy' ? 'grin' : md === 'cocky' || md === 'heel' ? 'smirk' : md === 'fierce' ? 'grim' : md === 'sad' ? 'flat' : 'smile',
-    ear: m > 1.2 ? 1.1 : 1, cheek: fem ? 1 : 0, lip: fem ? ['#b8285a', '#b84a4a', '#8a2a3a', '#a03a50'][h('lip', 4)] : undefined, freck: r.freckles ? 1 : 0, scar: (r.scars || []).length ? 1 : 0, jowl: fat > 0.1 ? 1 : 0, adam: !fem && m < 1.05 ? 1 : 0 } as Hd;
+    ear: m > 1.2 ? 1.1 : 1 + (h('ear', 5) - 2) * 0.08, cheek: fem ? 1 : 0,
+    es2: 0.86 + h('es', 7) * 0.05 + ((r.fs || {}).eyeS ? (r.fs!.eyeS! - 1) : 0), eg: 0.92 + h('eg', 5) * 0.04 + ((r.fs || {}).eyeG ? (r.fs!.eyeG! - 1) * 0.5 : 0), mw: 0.84 + h('mw', 5) * 0.08 * (r.fs && r.fs.mouthW ? r.fs.mouthW : 1), bt: 0.8 + Math.min(0.2, r.brow) * 2.4,
+    nose: (r.feat && r.feat.nose) || (r.noseW > 0.48 ? 'broad' : r.noseL > 0.6 ? 'long' : r.noseL < 0.47 ? 'button' : ['straight', 'straight', 'hook', 'small'][h('nose', 4)]), nw: 0.75 + r.noseW * 0.6, nl: 0.7 + r.noseL * 0.55, lip: fem ? ['#b8285a', '#b84a4a', '#8a2a3a', '#a03a50'][h('lip', 4)] : undefined, freck: r.freckles ? 1 : 0, scar: (r.scars || []).length ? 1 : 0, jowl: fat > 0.1 ? 1 : 0, adam: !fem && m < 1.05 ? 1 : 0 } as Hd;
   L.iris = r.eyeCol || ['#5a3a22', '#3d2a1c', '#4f6a3a', '#3f6c94', '#6b5530'][h('eye', 5)];
   L.hair = r.mask ? 'bald' : r.hair || 'cap';   // every hair style of the game, each cut in the concept's manner (headC)
   L.beard = r.mask ? 'none' : r.beard === 1 || r.beard === 9 ? 'stubble' : r.beard === 2 || r.beard === 7 ? 'goatee' : r.beard === 8 ? 'chin' : r.beard === 3 ? 'vandyke' : r.beard === 4 ? 'short' : r.beard === 5 ? 'full' : r.beard === 6 ? 'sideburns' : r.beard === 10 ? 'chinstrap' : 'none';
@@ -160,11 +162,11 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   const piece = (pts: Pt[], col: string, edge?: number) => P.poly(cut(pts, r, false), col, edge === 1 ? shade(col, 0.8) : undefined);
   const nar = 0.86, len = h.len * hu * 1.04, jw = h.jw * hu * nar, crw = h.crw * hu * nar;
   const top = -len * 0.55, bot = len * 0.45, face = Math.max(crw, jw);
-  const ey = h.ey * len, eg = face * 0.45, es = face * 0.2 * Math.pow(h.es || 1, 0.3), browY = ey - face * 0.33 - (h.bu || 0) * hu, jt = browY + es * 0.2 + (h.bu || 0) * hu;
+  const ey = h.ey * len, eg = face * 0.45 * (h.eg || 1), es = face * 0.2 * Math.pow(h.es || 1, 0.3) * (h.es2 || 1), browY = ey - face * 0.33 - (h.bu || 0) * hu, jt = browY + es * 0.2 + (h.bu || 0) * hu;
   // hair behind the head (and, seen from behind, over it)
   const behind = () => {
     const hr = a.hair;
-    if (hr === 'long' && !a.fem) piece([[-crw * 1.12, top + len * 0.2], [-crw * 0.9, top - hu * 0.05], [crw * 0.9, top - hu * 0.05], [crw * 1.12, top + len * 0.2], [crw * 1.25, bot + hu * 0.75], [crw * 0.7, bot + hu * 0.66], [-crw * 0.7, bot + hu * 0.66], [-crw * 1.25, bot + hu * 0.75]], a.hc);
+    if (hr === 'long' && !a.fem) piece([[-crw * 1.1, top + len * 0.2], [-crw * 0.9, top - hu * 0.05], [crw * 0.9, top - hu * 0.05], [crw * 1.1, top + len * 0.2], [crw * 1.18, bot + hu * 0.55], [crw * 0.95, bot + hu * 0.68], [crw * 0.6, bot + hu * 0.5], [-crw * 0.6, bot + hu * 0.5], [-crw * 0.95, bot + hu * 0.68], [-crw * 1.18, bot + hu * 0.55]], shade(a.hc, 0.9));   // tucked behind the shoulders, so the face and the beard stand out
     if ((hr === 'long' && a.fem) || hr === 'wild') { const wl = hr === 'wild' ? 1.18 : 1; piece([[-crw * 1.5 * wl, -len * 0.05], [-crw * 1.25 * wl, top - hu * 0.1], [0, top - hu * 0.22], [crw * 1.3 * wl, top - hu * 0.08], [crw * 1.55 * wl, 0], [crw * 1.75 * wl, bot + hu * 0.55], [crw * 1.35, bot + hu * 0.45], [crw * 1.5 * wl, bot + hu * 0.8], [crw * 0.9, bot + hu * 0.55], [-crw * 0.9, bot + hu * 0.6], [-crw * 1.55 * wl, bot + hu * 0.85], [-crw * 1.4, bot + hu * 0.5], [-crw * 1.75 * wl, bot + hu * 0.6]], a.hc); }
     if (hr === 'bob') piece([[-crw * 1.18, top + len * 0.15], [-crw * 0.95, top - hu * 0.08], [crw * 0.95, top - hu * 0.08], [crw * 1.18, top + len * 0.15], [crw * 1.22, bot - len * 0.02], [crw * 0.75, bot + len * 0.02], [-crw * 0.75, bot + len * 0.02], [-crw * 1.22, bot - len * 0.02]], a.hc);
     if (hr === 'mullet') piece([[-crw * 0.95, 0], [-crw * 1.15, bot + hu * 0.5], [-crw * 0.4, bot + hu * 0.35], [crw * 0.2, bot + hu * 0.55], [crw * 1.1, bot + hu * 0.45], [crw * 0.95, 0]], a.hc);
@@ -205,7 +207,7 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   const bc = a.mask ? a.mask[2] : a.hair === 'bald' ? '#1b1b1d' : shade(a.hc, 0.6);
   for (const sd of [-1, 1]) {
     const x = sd * eg, y = ey + (sd > 0 ? r() * hu * 0.012 : 0);
-    const bw = Math.min(es * 1.6, eg - face * 0.07), bt = hu * (0.07 + (h.brow === 'slab' || h.brow === 'thick' ? 0.04 : 0)) * 0.7;
+    const bw = Math.min(es * 1.6, eg - face * 0.07), bt = hu * (0.07 + (h.brow === 'slab' || h.brow === 'thick' ? 0.04 : 0)) * 0.7 * (h.bt || 1);
     P.turn(h.et * sd, x, y, () => {
       if (a.mask) { P.path(`M${x - es * 1.7} ${y - es * 0.7} L${x + es * 1.4} ${y - es * 1.0} L${x + es * 1.6} ${y + es * 0.7} L${x - es * 1.5} ${y + es * 0.8}Z`, a.mask[2]); P.path(`M${x - es * 1.1} ${y} Q${x} ${y - es * 0.9} ${x + es * 1.1} ${y} Q${x} ${y + es * 0.6} ${x - es * 1.1} ${y}Z`, '#1b1b1d'); return; }
       const mixed = h.eye === 'mixed' && sd < 0, w = es * 1.3, hh = mixed ? es * 0.38 : es * (h.eye === 'slit' ? 0.62 : 0.76), ir = mixed ? hh * 0.75 : hh * 0.56;
@@ -224,16 +226,26 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
     if (B) P.turn((h.brow === 'slab' ? 9 : -2) * sd, x, browY, () => P.poly(B.map(([px, py]) => [x + px, browY - bt + py] as Pt), bc));
   }
   // the nose: a raised piece and two nostrils
-  const nz = hu * 0.12, ny = ey + (bot - ey) * 0.42;
-  piece([[-nz * 0.15, ny - nz * 1.6], [nz * 0.2, ny - nz * 1.6], [nz * 0.55, ny + nz * 0.1], [-nz * 0.35, ny + nz * 0.15]], shade(sk, 0.9));
-  P.ell(-nz * 0.3, ny + nz * 0.28, nz * 0.18, nz * 0.1, shade(sk, 0.55)); P.ell(nz * 0.4, ny + nz * 0.28, nz * 0.18, nz * 0.1, shade(sk, 0.55));
+  const nz = hu * 0.12, ny = ey + (bot - ey) * 0.42, NW = h.nw || 1, NL = h.nl || 1, nc = shade(sk, 0.9), nh = shade(sk, 0.55);
+  const NOSE: Record<string, Pt[]> = {
+    straight: [[-nz * 0.15, ny - nz * 1.6 * NL], [nz * 0.2, ny - nz * 1.6 * NL], [nz * 0.55 * NW, ny + nz * 0.1], [-nz * 0.35 * NW, ny + nz * 0.15]],
+    broad: [[-nz * 0.2, ny - nz * 1.3 * NL], [nz * 0.25, ny - nz * 1.3 * NL], [nz * 0.75 * NW, ny + nz * 0.05], [nz * 0.6 * NW, ny + nz * 0.3], [-nz * 0.6 * NW, ny + nz * 0.3], [-nz * 0.7 * NW, ny + nz * 0.05]],
+    hook: [[-nz * 0.1, ny - nz * 1.7 * NL], [nz * 0.25, ny - nz * 1.6 * NL], [nz * 0.55, ny - nz * 0.7], [nz * 0.6 * NW, ny + nz * 0.25], [nz * 0.1, ny + nz * 0.35], [-nz * 0.35 * NW, ny + nz * 0.15]],
+    long: [[-nz * 0.1, ny - nz * 1.9 * NL], [nz * 0.18, ny - nz * 1.9 * NL], [nz * 0.45 * NW, ny + nz * 0.25], [-nz * 0.3 * NW, ny + nz * 0.3]],
+    button: [[-nz * 0.12, ny - nz * 0.9 * NL], [nz * 0.18, ny - nz * 0.9 * NL], [nz * 0.45 * NW, ny + nz * 0.12], [0, ny + nz * 0.24], [-nz * 0.4 * NW, ny + nz * 0.12]],
+    small: [[-nz * 0.08, ny - nz * 1.1 * NL], [nz * 0.15, ny - nz * 1.1 * NL], [nz * 0.38 * NW, ny + nz * 0.1], [-nz * 0.28 * NW, ny + nz * 0.14]] };
+  const nk = NOSE[h.nose || 'straight'] || NOSE.straight, nb = nk.reduce((m2, p) => Math.max(m2, p[1]), -1e9);
+  piece(nk, nc);
+  const nx = (h.nose === 'broad' ? 0.45 : h.nose === 'button' || h.nose === 'small' ? 0.28 : 0.35) * nz * NW;
+  P.ell(-nx, nb - nz * 0.04, nz * 0.17 * NW, nz * 0.09, nh); P.ell(nx + nz * 0.08, nb - nz * 0.04, nz * 0.17 * NW, nz * 0.09, nh);
+  if (!a.fem && (h.nose === 'hook' || h.nose === 'long')) mkS(`M${nz * 0.2} ${ny - nz * 1.2 * NL} L${nz * 0.42} ${ny - nz * 0.2}`, 1.1, shade(sk, 0.75));   // the line of the bridge
   if (h.scar) mkS(`M${crw * 0.1} ${top + len * 0.22} l${hu * 0.14} ${hu * 0.17}`, 2, '#a8304a');
   if (h.freck) for (let k = 0; k < 12; k++) P.ell((k % 2 ? 1 : -1) * face * (0.25 + r() * 0.15) * 2, ny - nz * 0.6 + r() * nz * 0.8, hu * 0.012 + r() * hu * 0.008, hu * 0.012 + r() * hu * 0.008, '#c86a3a');
   if ((mk.blood || 0) >= 1) mkS(`M${-crw * 0.4} ${top + len * 0.3} l${hu * 0.2} ${hu * 0.04}`, 3, '#9e1414');
   if ((mk.blood || 0) >= 2) for (const sx of [-0.3, 0.25]) mkS(`M${crw * sx} ${top + len * 0.32} l${hu * 0.02} ${len * 0.5}`, 2.6, '#9e1414');
   if (mk.bruise) P.ell(eg, ey + es * 0.4, es * 1.2, es * 0.8, '#6e4a7e');
   // the mouth
-  const mw = face * 0.5 * (h.mouth === 'grin' || h.mouth === 'wide' ? 1.18 : 1) * 0.78;
+  const mw = face * 0.5 * (h.mouth === 'grin' || h.mouth === 'wide' ? 1.18 : 1) * 0.78 * (h.mw || 1);
   const MO: Record<string, string> = { grim: `M${-mw} ${my + hu * 0.02} L${mw * 0.9} ${my + hu * 0.035}`, grit: `M${-mw} ${my - hu * 0.02} L${mw} ${my - hu * 0.02} L${mw * 0.9} ${my + hu * 0.07} L${-mw * 0.9} ${my + hu * 0.07}Z`, smirk: `M${-mw * 0.9} ${my + hu * 0.02} Q${mw * 0.2} ${my + hu * 0.05} ${mw} ${my - hu * 0.06}`,
     flat: `M${-mw * 0.75} ${my} L${mw * 0.7} ${my + hu * 0.012}`, grin: `M${-mw} ${my - hu * 0.04} Q0 ${my + hu * 0.17} ${mw} ${my - hu * 0.04}Z`, smile: `M${-mw} ${my - hu * 0.02} Q0 ${my + hu * 0.1} ${mw} ${my - hu * 0.025}`, wide: `M${-mw} ${my - hu * 0.03} Q0 ${my + hu * 0.11} ${mw} ${my - hu * 0.03}` };
   const filled = h.mouth === 'grin' || h.mouth === 'grit', lipc = h.lip || shade(sk, 0.62);
@@ -274,7 +286,6 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   if (hr === 'tower') piece([[-crw * 0.75, top - hu * 0.02], [crw * 0.75, top - hu * 0.04], [crw * 0.7, top + hu * 0.07], [-crw * 0.72, top + hu * 0.08]], a.g2);
   if (hr === 'braids') for (let q = 0; q < 4; q++) { const x = crw * (-0.6 + q * 0.4); mkS(`M${x} ${top + len * 0.13} L${x * 0.8} ${top - hu * 0.02}`, 1.6, shade(a.hc, 0.55)); }
   if (hr === 'slick' || hr === 'undercut') mkS(`M${-crw * 0.5} ${top + len * 0.02} Q${crw * 0.1} ${top - hu * 0.08} ${crw * 0.6} ${top + len * 0.02}`, 1.6, shade(a.hc, 1.4));
-  if (hr === 'long' && !a.fem) for (const sd of [-1, 1]) piece([[sd * crw * 1.06, jt - es], [sd * crw * 0.84, top + len * 0.22], [sd * crw * 0.86, bot - len * 0.12], [sd * crw * 1.12, bot + hu * 0.25]], shade(a.hc, 0.94));
   if (hr === 'spiky') { const sp: Pt[] = [[-crw * 1.0, jt - es * 0.3], [-crw * 0.95, top + len * 0.1]], L5 = [0.55, 0.85, 0.65, 1.0, 0.7]; L5.forEach((l, q) => { const x0 = -crw * 0.85 + q * crw * 0.42; sp.push([x0 + crw * 0.05, top + len * 0.05], [x0 + crw * 0.3 + l * hu * 0.25, top - l * hu * 0.36], [x0 + crw * 0.38, top + len * 0.08]); }); sp.push([crw * 1.0, top + len * 0.1], [crw * 1.0, jt - es * 0.3], [0, top + len * 0.22]); piece(sp, a.hc); }
   if ((hr === 'long' && a.fem) || hr === 'wild') {
     piece([[-crw * 1.15, jt], [-crw * 1.1, top - hu * 0.07], [-crw * 0.15, top - hu * 0.2], [-crw * 0.05, top + len * 0.1], [-crw * 0.6, top + len * 0.3], [-crw * 0.95, jt + es]], a.hc);
@@ -304,7 +315,9 @@ function tattoo(P: Pen, st: string, L: number, w: number, sk: string, r: R) {
 
 /** Cut and pin a doll in style C. The same arguments and rig as `puppet()`. */
 export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig {
-  const n0 = out.length, bk = !!pl.b, P0 = { ...STAND, ...pose }, h = r.h, ll = r.ll || 1, H = h * (r.th || 1), K = r.kit;
+  const jit = (k2: string, d: number) => ((hashS(r.key + '|st' + k2) % 1000) / 1000 - 0.5) * d;
+  const STC: Record<string, number> = { ...STAND, sh_n: 14 + jit('sn', 8), el_n: 16 + jit('en', 10), sh_f: -12 + jit('sf', 8), el_f: -14 + jit('ef', 10), hip_n: 6 + jit('hn', 4), hip_f: -6 + jit('hf', 4), kn_n: -3, kn_f: 3, an_n: -4, an_f: 4, head: jit('hd', 6), torso: jit('to', 2) };   // style C stands easy (critic, 29 October)
+  const n0 = out.length, bk = !!pl.b, P0 = { ...STC, ...pose }, h = r.h, ll = r.ll || 1, H = h * (r.th || 1), K = r.kit;
   const a = lookOf(r, expr), rr = rngOf(r.key + '|C'), hu = HU, k = GH * h / HU, sk = a.skin, dk = shade(sk, 0.74);
   const y = pl.y + (legs(r) - LEGS0) * Math.cos(pl.r * Math.PI / 180);
   const root: F = { x: pl.x, y, a: pl.r * Math.PI / 180 }, fx = pl.f < 0 ? (px: number) => 2 * pl.x - px : (px: number) => px;
