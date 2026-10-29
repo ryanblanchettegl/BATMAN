@@ -228,7 +228,7 @@ The diorama renderer (`app/src/kit/paper.ts`, `puppet.ts`, `scene.ts`, `diorama3
 Levels with no cap, a four-branch tree (Creative, Office, Locker room, Eye) of bonuses, new actions and trade-offs, a signature move every fifth level, and rival bookers who level up with you. Plan: `docs/plans/booker-progression.md`.
 
 - [x] Gate 1: the blueprint (28 October).
-- [x] Gate 2: the questions, answered 28 October (section 8): both kinds of points kept separate; 6, 4, then 3 levels a year with no cap; the whole tree can be filled in a long career; rival bookers level up too, named with a style; perks are signature moves; respec any time at a cost; experience the same whatever the company; old saves map the five skills across.
+- [x] Gate 2: the questions, answered 28 October (section 8): both kinds of points kept separate; 6, 4, then 3 levels a year with no cap; the whole tree can be filled in a long career; rival bookers level up too, named with a style; perks are signature moves; respec any time at a cost; experience the same whatever the company; old saves are not a concern (Ryan, 29 October: "I don't care about old saves"), so nothing is built for them.
 - [x] Gate 3: Ryan's go-ahead, 28 October: "you pick" (on the order: the Director's last steps first, then this).
 - [x] Step 1 (29 October): levels come at about 6 the first year, 4 the second, then 3 a year (`xpNeed` 100 + 60 a level), with no cap; booking power no longer grows with level. Balance passes; recordings redone.
 
