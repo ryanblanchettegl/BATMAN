@@ -137,7 +137,7 @@ export function lookOf(r: Recipe, expr: string): Look {
   if (L.build === 'belly') { L.bel = Math.max(L.bel, 0.03 + fat * 0.5); L.ww = Math.max(L.ww, L.cw * 1.05); L.abs = 0; }
   if (L.build === 'heavy' || L.build === 'belly') { L.ww = Math.max(L.ww, L.cw * 1.02); L.sh *= 1.25; L.abs = 0; L.bel = Math.max(L.bel, 0.02); }
   if (L.build === 'lean') L.abs = 4;
-  if (fem) { L.hw *= 1.18; L.th *= 1.12; }
+  if (fem) { L.hw *= 1.3; L.ww *= 0.92; L.th *= 1.15; }
   if (L.build === 'skinny') { L.abs = 2; L.sw *= 0.86; L.cw *= 0.86; L.au *= 0.85; L.af *= 0.88; L.th *= 0.9; L.traps = 0; }
   if (r.mask) L.mask = [r.mask.base, r.mask.trim, r.mask.trim];
   // the gear: trunks, a top, boots and pads, in the colours of what they wear
@@ -168,7 +168,7 @@ export function lookOf(r: Recipe, expr: string): Look {
 function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   const h = a.hd, sk = a.skin, dk = shade(sk, 0.72), mkS = (d: string, w = 2.4, col = '#1b1b1d') => P.stroke(d, w, col);
   const piece = (pts: Pt[], col: string, edge?: number) => P.poly(cut(pts, r, false), col, edge === 1 ? shade(col, 0.8) : undefined);
-  const nar = 0.93, len = h.len * hu * 1.02, jw = h.jw * hu * nar, crw = h.crw * hu * nar;
+  const nar = 0.9, len = h.len * hu * 0.97, jw = h.jw * hu * nar, crw = h.crw * hu * nar;
   const top = -len * 0.55, bot = len * 0.45, face = Math.max(crw, jw);
   const ey = h.ey * len, eg = face * 0.45 * (h.eg || 1), es = face * 0.2 * Math.pow(h.es || 1, 0.3) * (h.es2 || 1), browY = ey - face * 0.33 - (h.bu || 0) * hu, jt = browY + es * 0.2 + (h.bu || 0) * hu;
   // hair behind the head (and, seen from behind, over it)
@@ -326,7 +326,7 @@ function tattoo(P: Pen, st: string, L: number, w: number, sk: string, r: R) {
 /** Cut and pin a doll in style C. The same arguments and rig as `puppet()`. */
 export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig {
   const big0 = r.w > 1.15 || (r.belly || 0) > 0.05 ? 8 : 0, jit = (k2: string, d: number) => ((hashS(r.key + '|st' + k2) % 1000) / 1000 - 0.5) * d;
-  const STC: Record<string, number> = { ...STAND, sh_n: 9 + big0 + jit('sn', 6), el_n: 18 + jit('en', 8), sh_f: -8 - big0 + jit('sf', 6), el_f: -18 + jit('ef', 8), hip_n: 6 + jit('hn', 4), hip_f: -6 + jit('hf', 4), kn_n: -3, kn_f: 3, an_n: -4, an_f: 4, head: jit('hd', 6), torso: jit('to', 2) };   // style C stands easy (critic, 29 October)
+  const STC: Record<string, number> = { ...STAND, sh_n: 9 + big0 + jit('sn', 16), el_n: 18 + jit('en', 24), sh_f: -8 - big0 + jit('sf', 16), el_f: -18 + jit('ef', 8), hip_n: 6 + jit('hn', 4), hip_f: -6 + jit('hf', 4), kn_n: -3, kn_f: 3, an_n: -4, an_f: 4, head: jit('hd', 6), torso: jit('to', 7) };   // style C stands easy (critic, 29 October)
   const a = lookOf(r, expr), out0 = out.length;
   const n0 = out0, bk = !!pl.b, P0 = { ...STC, ...pose }, h = r.h * a.hs, ll = r.ll || 1, H = h * (r.th || 1), K = r.kit;
   const rr = rngOf(r.key + '|C'), hu = HU, k = GH * h / HU, sk = a.skin, dk = shade(sk, 0.74);
@@ -398,7 +398,7 @@ export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr
   if (bel > 0) { const bc = a.top === 'singlet' || a.top === 'shirt' ? a.topC! : sk, bwd = Math.max(ww + bel, cw * 1.2); piece(Tp, [[-bwd * 0.85, yW - hu * 0.55], [0, yW - hu * 0.75], [bwd * 0.87, yW - hu * 0.54], [bwd * 1.0, yW + hu * 0.1], [bwd * 0.8, yW + hu * 0.5], [0, yW + hu * 0.66], [-bwd * 0.8, yW + hu * 0.5], [-bwd * 0.98, yW + hu * 0.1]], bc); Tp.stroke(`M${-bwd * 0.75} ${yW + hu * 0.46} Q0 ${yW + hu * 0.72} ${bwd * 0.75} ${yW + hu * 0.46}`, 1.6, shade(bc, 0.72)); }
   if (bel > 0 && bare) { if (0) for (const sd of [-1, 1]) Tp.stroke(`M${sd * (ww + bel) * 0.9} ${yW + hu * 0.12} q${-sd * hu * 0.06} ${hu * 0.03} ${-sd * hu * 0.1} 0`, 1.3, dk); }
   if (bare) {
-    if (!a.fem && !bel && a.build !== 'skinny') for (const sd of [-1, 1]) piece(Tp, [[sd * cw * 0.06, ySh + hu * 0.52], [sd * cw * 0.5, ySh + hu * 0.44], [sd * cw * 0.92, ySh + hu * 0.5], [sd * cw * 0.86, ySh + hu * 0.66], [sd * cw * 0.55, ySh + hu * 0.86], [sd * cw * 0.12, ySh + hu * 0.88]], shade(sk, 0.9));   // a pec, firm only at its lower edge
+    if (!a.fem && !bel && a.build !== 'skinny' && a.build !== 'heavy') for (const sd of [-1, 1]) piece(Tp, [[sd * cw * 0.06, ySh + hu * 0.52], [sd * cw * 0.5, ySh + hu * 0.44], [sd * cw * 0.92, ySh + hu * 0.5], [sd * cw * 0.86, ySh + hu * 0.66], [sd * cw * 0.55, ySh + hu * 0.86], [sd * cw * 0.12, ySh + hu * 0.88]], shade(sk, 0.9));   // a pec, firm only at its lower edge
     Tp.stroke(`M${-sw * 0.62} ${ySh + hu * 0.06} Q${-shn * 1.4} ${ySh + hu * 0.18} ${-shn * 0.4} ${ySh + hu * 0.2} M${sw * 0.62} ${ySh + hu * 0.06} Q${shn * 1.4} ${ySh + hu * 0.18} ${shn * 0.4} ${ySh + hu * 0.2}`, 1.4, dk);
     Tp.stroke(`M${-hu * 0.04} ${ySh + hu * 0.24} l${hu * 0.04} ${hu * 0.06} l${hu * 0.04} ${-hu * 0.06}`, 1.2, dk);
     if (!a.fem) Tp.stroke(`M${-cw * 0.8} ${ySh + hu * 0.82} Q${-cw * 0.3} ${ySh + hu * 1.0} 0 ${ySh + hu * 0.74} M${cw * 0.12} ${ySh + hu * 0.82} Q${cw * 0.5} ${ySh + hu * 0.98} ${cw * 0.82} ${ySh + hu * 0.78}`, 1.5, dk);
