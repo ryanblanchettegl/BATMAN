@@ -35,10 +35,10 @@ export var SKILLS={
 };
 $L.SKILLS = SKILLS;
 export function cap1(t){return t.charAt(0).toUpperCase()+t.slice(1);}
-export function xpNeed(l){return 80+50*l;}
+export function xpNeed(l){return 100+60*l;}   // about 6 levels the first year, 4 the second, then 3 a year; no cap (Ryan, 28 October)
 export function gainXp(S,n){
   var b=S.booker;if(!b||S.cal)return;b.xp+=Math.round(n);
-  while(b.xp>=xpNeed(b.lvl)&&b.lvl<22){b.xp-=xpNeed(b.lvl);b.lvl++;b.pts++;$L.news(S,'you','You reached booker level '+b.lvl+'. You have a skill point to spend.');if(b.lvl>=5)award(S,'ACH_LEVEL5');}
+  while(b.xp>=xpNeed(b.lvl)){b.xp-=xpNeed(b.lvl);b.lvl++;b.pts++;$L.news(S,'you','You reached booker level '+b.lvl+'. You have a skill point to spend.');if(b.lvl>=5)award(S,'ACH_LEVEL5');}
 }
 export function initYou(S,opts){
   var d=S.custom&&S.custom.id===S.player?S.custom:$L.DB.promotions.filter(function(p){return p.id===S.player;})[0],o=d.owner||{name:'The owner',style:'stars',roots:'tradition',pledge:'pay'};
@@ -55,9 +55,10 @@ export function moraleTarget(S){var o=S.owner,b=S.booker;return 65+$L.dif(S).mor
 E.spendPoint=function(S,k){var b=S.booker,sk=$L.SKILLS[k];if(!sk||b.pts<=0||b.sk[k]>=sk.max)return false;b.sk[k]++;b.pts--;return true;};
 
 /* booking power */
+// booking power no longer grows with your level: the tree adds ways to spend it (0aw)
 export function bpGrant(S){
   var P=S.promos[S.player],n=P.shows.length,b=S.booker,o=S.owner,big=cal(S.week).wom===4?3:0;
-  return Math.max(1,(o.me?n*3+2+Math.floor(b.lvl/2):Math.round(n*1.5)+Math.floor(o.trust/25)+Math.floor(b.lvl/3))+b.sk.clout+big+$L.dif(S).bp);
+  return Math.max(1,(o.me?n*3+2:Math.round(n*1.5)+Math.floor(o.trust/25))+b.sk.clout+big+$L.dif(S).bp);
 }
 export function grantBP(S){var g=bpGrant(S);S.bpGrant=g;S.bp=Math.min(g*2,(S.bp||0)+g);}
 export function matchSetup(S,m){

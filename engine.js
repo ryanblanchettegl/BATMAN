@@ -12945,13 +12945,13 @@
     return t.charAt(0).toUpperCase() + t.slice(1);
   }
   function xpNeed(l) {
-    return 80 + 50 * l;
+    return 100 + 60 * l;
   }
   function gainXp(S, n) {
     var b = S.booker;
     if (!b || S.cal) return;
     b.xp += Math.round(n);
-    while (b.xp >= xpNeed(b.lvl) && b.lvl < 22) {
+    while (b.xp >= xpNeed(b.lvl)) {
       b.xp -= xpNeed(b.lvl);
       b.lvl++;
       b.pts++;
@@ -13008,7 +13008,7 @@
   };
   function bpGrant(S) {
     var P = S.promos[S.player], n = P.shows.length, b = S.booker, o = S.owner, big = cal(S.week).wom === 4 ? 3 : 0;
-    return Math.max(1, (o.me ? n * 3 + 2 + Math.floor(b.lvl / 2) : Math.round(n * 1.5) + Math.floor(o.trust / 25) + Math.floor(b.lvl / 3)) + b.sk.clout + big + L.dif(S).bp);
+    return Math.max(1, (o.me ? n * 3 + 2 : Math.round(n * 1.5) + Math.floor(o.trust / 25)) + b.sk.clout + big + L.dif(S).bp);
   }
   function grantBP(S) {
     var g = bpGrant(S);
