@@ -96,6 +96,22 @@ const fresh = (seed, ids) => { const S = E.newGame('ewe', seed || 3, { name: 'R'
     return f.fresh; };
   const f0 = fr([]), f1 = fr(['cr_third']);
   ok(f0 != null && f1 > f0, 'A third act: a twist gives a story more room (freshness ' + f0 + ' to ' + f1 + ')'); }
+// respec: any time, at a cost (Ryan); every point comes back, the numbers go back to nothing
+{ const S = fresh(3); S.booker.pts = 5; ['cr_pen', 'cr_ear', 'of_deal'].forEach(id => E.treeSpend(S, id)); const t0 = S.owner.trust;
+  ok(!E.treeRespec(fresh(3)).ok, 'starting again with nothing taken is refused');
+  const r = E.treeRespec(S);
+  ok(r.ok && S.booker.pts === 5 && !Object.keys(S.booker.tree).length && S.booker.sk.creative === 0 && S.booker.sk.talk === 0, 'Start again: every point comes back and the numbers go back to nothing');
+  ok(S.owner.trust === t0 - 5, 'and it costs 5 of the owner\'s trust (' + t0 + ' to ' + S.owner.trust + ')');
+  const O = fresh(3); O.owner.me = 1; O.booker.pts = 1; E.treeSpend(O, 'cr_pen'); const c0 = O.promos.ewe.cash, C = E.treeRespecCost(O); E.treeRespec(O);
+  ok(C.own && C.cash > 0 && O.promos.ewe.cash === c0 - C.cash, 'when the company is yours it costs a week\'s wages instead'); }
+{ const S = fresh(3), go = () => { S.booker.pts += 1; E.treeSpend(S, 'cr_pen'); const t = S.owner.trust; E.treeRespec(S); return Math.round(t - S.owner.trust); };
+  S.owner.trust = 90; const c = [go(), go(), go()];
+  ok(c[0] === 5 && c[1] === 8 && c[2] === 12, 'each time in the same year costs more (' + c.join(', ') + ')');
+  S.week += 48; ok(go() === 5, 'and a new year starts back at 5');
+  S.owner.trust = 4; S.booker.pts = 1; E.treeSpend(S, 'cr_pen'); const r = E.treeRespec(S);
+  ok(!r.ok && /job/.test(r.msg) && S.booker.tree.cr_pen, 'it is refused when the trust it costs would cost you the job: ' + r.msg); }
+{ const S = fresh(3, ['of_lean']), A = fresh(3); S.booker.pts = 0; S.owner.trust = 80; E.treeRespec(S); E.endWeek(S); E.endWeek(A);
+  ok(Math.abs(S.promos.ewe.cash - A.promos.ewe.cash) < Math.abs(A.promos.ewe.cash) * 0.01 + 1, 'taking Lean books back ends its saving'); }
 // the levelling pace: about 6 the first year, 4 the second (Ryan's answer), measured in a headless game
 E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
 { const S = E.newGame('ewe', 3, { name: 'R' }), at = [];

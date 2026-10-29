@@ -13793,6 +13793,35 @@
     treeSync(bk);
     return { ok: true, msg: n.n + ". " + n.d };
   };
+  var RESPEC_TRUST = [5, 8, 12, 16];
+  E.treeRespecCost = function(S) {
+    const bk = S.booker || {}, own = !!(S.owner && S.owner.me), P = S.promos[S.player], n = Object.keys(bk.tree || {}).length;
+    const yr = Math.floor((S.week - 1) / 48), k = Math.min(3, bk.rsY === yr ? bk.rsN || 0 : 0);
+    const trust = own ? 0 : RESPEC_TRUST[k], money2 = own ? Math.round(L.wagesWeek(S, P) * (1 + k * 0.5)) : 0, t0 = own ? 0 : Math.round(S.owner.trust);
+    const why = !n ? "There is nothing to take back yet." : own ? P.cash < money2 ? "It costs $" + money2.toLocaleString("en-US") + " in wages, and the company cannot pay it now." : "" : t0 <= trust ? "It would cost " + trust + " of the owner\u2019s trust, and you only have " + t0 + ". It would cost you the job." : "";
+    return { n, own, k, trust, cash: money2, t0, t1: own ? 0 : t0 - trust, can: !why, why };
+  };
+  E.treeRespec = function(S) {
+    const bk = S.booker, C = E.treeRespecCost(S);
+    if (!C.can) return { ok: false, msg: C.why };
+    let back = 0;
+    for (const id in bk.tree) {
+      const n = treeNode(id);
+      if (n) back += n.c;
+    }
+    bk.tree = {};
+    bk.pts += back;
+    treeSync(bk);
+    const yr = Math.floor((S.week - 1) / 48);
+    bk.rsN = (bk.rsY === yr ? bk.rsN || 0 : 0) + 1;
+    bk.rsY = yr;
+    if (C.own) S.promos[S.player].cash -= C.cash;
+    else S.owner.trust = Math.max(0, S.owner.trust - C.trust);
+    const cost = C.own ? "$" + C.cash.toLocaleString("en-US") + " in wages" : C.trust + " of the owner\u2019s trust";
+    L.note(S, "You started the tree again, for " + cost, back + " skill point" + (back > 1 ? "s" : "") + " to spend again.", "bad");
+    if (!C.own) L.news(S, "you", S.owner.name + " noticed you changed your whole approach. Do it again this year and it will cost more.");
+    return { ok: true, msg: "Every skill is gone and " + back + " point" + (back > 1 ? "s are" : " is") + " back to spend. It cost " + cost + ".", back };
+  };
   E.spendPoint = function() {
     return false;
   };

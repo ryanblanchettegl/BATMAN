@@ -1,7 +1,7 @@
 /* Career: your own record, as a page of windows. Level and skills, the owner's trust, your word, your name, the
    assistant, the season saga, and your legacy, achievements and milestones behind buttons. */
 import { E } from '../../engine';
-import { G, me, act, plural, openModal } from '../../store';
+import { G, me, act, plural, openModal, say, cash } from '../../store';
 import { Btn, Tag, Meter, Desktop, Win, Line, Window } from '../../kit';
 import { useState } from 'preact/hooks';
 import { LegacyPanel } from './GameOver';
@@ -114,7 +114,7 @@ export function DirStyleWindow(p: { m: any }) {
 const KIND: Record<string, string> = { bonus: 'Bonus', action: 'New action', trade: 'Trade-off' };
 export function TreeWindow(p: { m: any }) {
   const S = G.S, T = (E as any).treeInfo(S), all = T.branches.flatMap((b: any) => b.tiers.flatMap((t: any) => t.nodes.map((n: any) => Object.assign({ br: b, tier: t }, n))));
-  const [pick, setPick] = useState<string>(''), P = all.find((n: any) => n.id === pick) || null;
+  const [pick, setPick] = useState<string>(''), [sure, setSure] = useState(false), P = all.find((n: any) => n.id === pick) || null;
   return <Window title="Skill tree" wide ok="Back">
     <p class="muted one">{T.pts ? T.pts + ' ' + plural(T.pts, 'point') + ' to spend.' : 'No points to spend: you get one each level.'} Spend in a branch to open its next tier. {T.owned} {plural(T.owned, 'skill')} yours so far.</p>
     <div class="treecols" data-t="tree">{T.branches.map((b: any, bi: number) => <div class="treecol" key={b.id} data-t="tree-branch" data-v={b.id}>
@@ -123,7 +123,7 @@ export function TreeWindow(p: { m: any }) {
         <p class="treetl" title={t.open ? '' : 'Spend ' + (t.need - b.spent) + ' more in ' + b.n + ' to open it.'}>Tier {t.t + 1}{t.open ? '' : ' · ' + (t.need - b.spent) + ' more to open'}</p>
         {t.nodes.map((n: any, ni: number) => <button type="button" key={n.id} data-t="tree-node" data-v={n.id} aria-pressed={pick === n.id}
           class={'treecard' + (n.has ? ' has' : '') + (n.soon ? ' soon' : '') + (n.can ? ' can' : '') + (pick === n.id ? ' on' : '')} style={{ transform: 'rotate(' + (((bi * 7 + ni * 3 + t.t) % 5) - 2) * 0.4 + 'deg)' }}
-          title={n.d} onClick={() => setPick(n.id)}>
+          title={n.d} onClick={() => { setPick(n.id); setSure(false); }}>
           <b>{n.n}</b><span class="tk">{n.has ? 'Yours' : n.soon ? 'Soon' : KIND[n.k]}{n.c > 1 ? ' · ' + n.c : ''}</span>
         </button>)}
       </div>)}
@@ -132,6 +132,9 @@ export function TreeWindow(p: { m: any }) {
       <span><b>{P.n}</b> <span class="muted">{KIND[P.k]}, {P.c} {plural(P.c, 'point')}, {P.br.n}</span><br />{P.d}{P.soon ? ' Coming in a later update.' : ''}{P.k === 'bonus' && T.stand[P.sk] ? <><br /><b class="mark">{T.stand[P.sk].n} {T.stand[P.sk].v}{P.has ? '' : ' \u2192 ' + Math.min(T.stand[P.sk].cap, T.stand[P.sk].v + 1)} of {T.stand[P.sk].cap}</b></> : null}</span>
       {P.has ? <span class="good">Yours</span> : <Btn t="tree-buy" d={{ id: P.id }} disabled={!P.can} tip={P.soon ? 'Coming in a later update.' : !P.tier.open ? 'Spend ' + (P.tier.need - P.br.spent) + ' more in ' + P.br.n + ' to open this tier.' : T.pts < P.c ? 'You need ' + P.c + ' ' + plural(P.c, 'point') + '.' : 'Take it now.'}
         onClick={() => act(() => { (E as any).treeSpend(S, P.id); })}>Take</Btn>}
-    </> : <span class="muted">Pick a skill to read it in full.</span>}</div>
+    </> : <span class="muted">Pick a skill to read it in full.</span>}
+      {(() => { const C = (E as any).treeRespecCost(S); if (!C.n) return null; const cost = C.own ? cash(C.cash) + ' in wages' : C.trust + ' of the owner\u2019s trust (' + C.t0 + ' to ' + C.t1 + ')';
+        return <Btn kind={sure ? 'danger' : 'sm'} t="tree-respec" disabled={!C.can} tip={C.can ? 'Take back every skill and spend the points again. It costs ' + cost + '.' : C.why}
+          onClick={() => { if (!sure) { setSure(true); return; } setSure(false); act(() => { const r = (E as any).treeRespec(S); say(r.msg, { err: !r.ok }); setPick(''); }); }}>{sure ? 'Sure? Costs ' + cost : 'Start again'}</Btn>; })()}</div>
   </Window>;
 }

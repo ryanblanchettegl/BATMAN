@@ -145,6 +145,10 @@ async function run(mode) {
   await page.focus('[data-t="tree-buy"][data-id="cr_ear"]'); await page.keyboard.press('Enter'); await page.waitForTimeout(150);
   ok(await state(page, S => S.booker.sk.creative) === 2, 'a skill can be picked and taken by keyboard');
   ok(/Creative 2 of 5/.test(await page.textContent('[data-t="tree-pick"]')), 'the picked bonus says where its number stands');
+  await page.click('[data-t="tree-respec"]'); await page.waitForTimeout(150);
+  ok(await state(page, S => S.booker.sk.creative) === 2 && /Sure/.test(await page.textContent('[data-t="tree-respec"]')), 'Start again asks first and changes nothing on one press');
+  await page.click('[data-t="tree-respec"]'); await page.waitForTimeout(150);
+  ok(await state(page, S => S.booker.pts) === 2 && await state(page, S => S.booker.sk.creative) === 0, 'Start again gives every point back');
   ok(await page.evaluate(() => { const b = document.querySelector('[data-t="tree-pick"]').getBoundingClientRect(); return b.bottom <= window.innerHeight; }), 'the whole tree and the picked skill fit the window');
   await page.keyboard.press('Escape'); await page.waitForTimeout(100);
   await step('skill spent');
