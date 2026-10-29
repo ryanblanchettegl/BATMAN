@@ -54,9 +54,11 @@ export function strip(a: Pt, b: Pt, w0: number, w1: number, bow = 0, n = 8): Pt[
   }
   return top.concat(bot.reverse());
 }
-export interface Head { cx: number; cy: number; rx: number; ryt: number; ryb: number; sq: number; chin: number }
+export interface Head { cx: number; cy: number; rx: number; ryt: number; ryb: number; sq: number; chin: number;
+  /** Cut in straight snips (style C, Bill 29 October): about this many corners round the whole head, so the head, its hair and its mask share the same cuts. */ facet?: number }
 /** A head's outline: a round top, and a jaw from round (sq 2) to square (sq 4) that narrows to the chin. */
 export function headPoly(h: Head, k = 1, t0 = 0, t1 = Math.PI * 2, n = 36, dy = 0): Pt[] {
+  if (h.facet) n = Math.max(2, Math.round(h.facet * Math.abs(t1 - t0) / (Math.PI * 2)));
   const o: Pt[] = [];
   for (let i = 0; i <= n; i++) {
     const t = t0 + (t1 - t0) * i / n, c = Math.cos(t), s = Math.sin(t);
@@ -200,6 +202,8 @@ export function drawScene(ctx: CanvasRenderingContext2D, pieces: Piece[], v: Vie
   });
   const Fr = layer(k + 'n', W, H, c => drawPieces(c, front.sort((a, b) => a.z - b.z), v));
   ctx.drawImage(B, 0, 0);
+  // the paper grain goes on the set only: people are cut from flat colour (style C, Bill 29 October)
+  if (!bare) { ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = ctx.createPattern(grain(), 'repeat')!; ctx.fillRect(0, 0, W, H); ctx.restore(); }
   // each wrestler throws one shadow, down and to the right, onto whatever is behind them; they themselves stay clean
   const figs = mid.filter(p => p.own != null && !p.soft && !p.txt && p.pts.length >= 3);
   if (figs.length) {
@@ -219,10 +223,9 @@ export function drawScene(ctx: CanvasRenderingContext2D, pieces: Piece[], v: Vie
     const g = c.createRadialGradient(W * 0.48, H * 0.38, H * 0.15, W * 0.5, H * 0.5, Math.hypot(W, H) * 0.6);
     g.addColorStop(0, 'rgba(255,244,214,0.10)'); g.addColorStop(0.55, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(4,6,20,0.55)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
   });
-  // `bare`: a figure on nothing (a fan in the crowd): the light and the paper grain go on the figure only, never on empty space
+  // `bare`: a figure on nothing (a fan in the crowd): the light goes on the figure only, never on empty space
   if (bare) ctx.globalCompositeOperation = 'source-atop';
   ctx.drawImage(L, 0, 0);
-  ctx.save(); ctx.globalCompositeOperation = bare ? 'source-atop' : 'multiply'; if (!bare) { ctx.fillStyle = ctx.createPattern(grain(), 'repeat')!; ctx.fillRect(0, 0, W, H); } ctx.restore();
   ctx.globalCompositeOperation = 'source-over';
 }
 
