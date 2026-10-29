@@ -15,6 +15,7 @@ export interface Piece {
   layer?: 'back' | 'front'; // part of the set: drawn once and kept (back behind everybody, front before them)
   soft?: boolean;           // a soft shadow on the floor, not a piece of card
   fin?: 'foil' | 'corr' | 'neon' | 'denim' | 'leather';   // a card that is not plain matte (Create a Player swatches)
+  ln?: string;              // a darker edge cut round it (style C: arms and fists, so an arm across the chest still reads as an arm)
 }
 export interface View { s: number; ox: number; oy: number }   // pixels per unit; the pixel position of x = 0, y = 0 (y up)
 
@@ -180,7 +181,8 @@ function drawPieces(ctx: CanvasRenderingContext2D, list: Piece[], v: View) {
       ctx.beginPath(); if (p.fin === 'corr') for (let x = x0; x <= x1; x += step) { ctx.moveTo(x, y0); ctx.lineTo(x, y1); } else for (let x = x0 - (y1 - y0); x <= x1; x += step) { ctx.moveTo(x, y1); ctx.lineTo(x + (y1 - y0), y0); }
       ctx.stroke(); ctx.restore(); path(ctx, v, p.pts);
     }
-    ctx.strokeStyle = shade(p.col, 1.35); ctx.globalAlpha = 0.6; ctx.lineWidth = edge; ctx.stroke(); ctx.globalAlpha = 1;   // the paler core along the cut
+    if (p.ln) { ctx.strokeStyle = p.ln; ctx.lineWidth = edge; ctx.stroke(); }
+    else if (!clean) { ctx.strokeStyle = shade(p.col, 1.35); ctx.globalAlpha = 0.6; ctx.lineWidth = edge; ctx.stroke(); ctx.globalAlpha = 1; }   // the paler core along the cut (people are flat colour: no core)
   }
   ctx.restore();
 }
