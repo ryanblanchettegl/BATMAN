@@ -141,6 +141,21 @@ async function studio(mode) {
     { const bb = await (await page.$('[data-t="scene-stage"]')).boundingBox(); ok(mode, 'a tall picture is taller than it is wide', bb && bb.height > bb.width * 1.2, bb && (bb.width + 'x' + bb.height)); }
     await page.selectOption('[data-t="scene-frame"]', 'wide'); await page.waitForTimeout(300);
     // rule 9c: every promo and angle a player can book has its scene
+    // Ryan, 29 October: a pin only ever follows a finisher. A move played as a signature has no cover, the referee does not
+    // count (he keeps the pose he last stood in), it keeps at least two keys, and the same move as a finisher keeps its cover.
+    { const r = await page.evaluate(() => { const D = window.EWF_DEBUG, out = { bad: [], marked: 0, kept: 0, fin: 0 };
+        D.allScenes().filter(x => /^move_/.test(x.id)).forEach(x => {
+          if (x.keys.some(k => D.isCoverKey(k) || D.isCountKey(k))) out.marked++;
+          if (x.keys.some(k => D.isCoverKey(k))) out.fin++;
+          const y = D.sigOnly(x); if (y.keys.length >= 2) out.kept++;
+          let last = null; y.keys.forEach(k => { const R = k.figs.R; if (!R) return;
+            if (D.isCoverKey(k)) out.bad.push(x.id + ': a cover');
+            if (D.isCountKey(k)) out.bad.push(x.id + ': the referee counts');
+            if (last && x.keys.find(o => o.t === k.t && D.isCountKey(o)) && JSON.stringify(R.p) !== JSON.stringify(last.p)) out.bad.push(x.id + ': the referee jumps');
+            last = R; });
+        }); return out; });
+      ok(mode, 'a move played as a signature never shows a pin: no cover, no count, the referee keeps his place (' + (r.bad.join('; ') || 'all clean') + ')', !r.bad.length);
+      ok(mode, 'every stock move keeps at least two keys as a signature, and the moves that end in a cover keep it as a finisher (' + r.kept + ' kept, ' + r.fin + ' with a cover)', r.kept >= 10 && r.fin >= 2 && r.marked >= 8); }
     { const miss = await page.evaluate(() => { const w = window.EWF_DEBUG.segScenes(); return window.GP.BEATS.filter(b => w.indexOf('beat_' + b) < 0 && w.indexOf('seg_' + b) < 0); });
       ok(mode, 'every beat of a storyline has its scene', !miss.length, miss.join(', ')); }
     { const miss = await page.evaluate(() => { const w = window.EWF_DEBUG.segScenes(), K = window.GP.SEGK; return Object.keys(K).filter(k => k !== 'writers' && w.indexOf('seg_' + k) < 0); });
@@ -227,7 +242,9 @@ async function broadcast(mode) {
     if (debId >= 0) ok(mode, 'a newcomer debuting with a surprise attack comes out on its scene', seen.has('beat_debut_atk'), [...seen].join(','));
     if (cellAt >= 0) ok(mode, 'a steel cell match is played inside the cell', sets.has('cell'), [...sets].join(','));
     ok(mode, 'the bell brings the lock-up', seen.has('lockup'), [...seen].join(','));
-    ok(mode, 'a near fall brings the count', seen.has('nearfall'), [...seen].join(','));
+    // a near fall is only a finisher kicked out of (Ryan, 29 October): the count's picture plays when the show had one, and never otherwise
+    { const fk = await state(page, S => { const r = (S.live && S.live.st && S.live.st.rep) || S.reports[0]; return (r && r.segs || []).some(x => (x.bc || []).some(b => b.fk)); });
+      ok(mode, fk ? 'a finisher kicked out of brings the count' : 'no finisher was kicked out of, so no count plays', fk === seen.has('nearfall'), [...seen].join(',')); }
     ok(mode, 'a win brings the three count', seen.has('finish'), [...seen].join(','));
     ok(mode, 'each wrestler comes out on an entrance', [...seen].some(x => x === 'entrance' || x.startsWith('ent_')), [...seen].join(','));
     ok(mode, 'a line of colour cuts to the commentary desk', seen.has('desk2'), [...seen].join(','));

@@ -33,11 +33,10 @@ export var GR={
   open_A:['{a} and {b} feel each other out before {a} takes control.','{a} out-wrestles {b} in the opening minutes.','A cautious start, and {a} finds the first opening.','{a} gets the better of the early exchanges.'],
   open_multi:['It is every wrestler for themselves, and {a} is the first to find a target in {b}.','The bell rings and the ring fills with bodies. {a} goes straight for {b}.','No partners, no friends, and the referee has their hands full. {a} starts with {b}.','Everyone is a rival here. {a} and {b} collide first while the others circle.'],
   open_six:['Three against three, and the corner is a crowded place. {a} starts for their side against {b}.','A six-man tag: {a} and {b} start it, and the other four lean on the ropes.','Six bodies, two corners, one referee. {a} and {b} get things going.','{a} tags in, {b} tags out, and the crowd cannot keep track of who is legal.'],
-  mid_multi:['The ring turns into a pile-up and {b} is lost in the middle of it.','Two of them spill to the floor while {a} and {b} trade near-falls, and a third breaks up the cover.','Alliances flip every thirty seconds. {b} thinks about trusting {a}, then thinks better of it.','Nobody can stay on one opponent for long. {a} is pulled off {b} twice in a minute.'],
+  mid_multi:['The ring turns into a pile-up and {b} is lost in the middle of it.','Two of them spill to the floor while {a} and {b} trade big moves in the ring.','Alliances flip every thirty seconds. {b} thinks about trusting {a}, then thinks better of it.','Nobody can stay on one opponent for long. {a} is pulled off {b} twice in a minute.'],
   mid_six:['The hot tag brings the crowd up. {b} cannot reach the corner while {a} cuts the ring in half.','{a} is cut off from the corner, and the other side takes turns.','Chaos in the corner: the referee has three wrestlers on the apron and no idea who is legal.','{b} makes the tag and the whole building rises with them.'],
   limb:['arm','leg','knee','shoulder','neck'],
   mid:['{b} fights back and the two trade near-falls.','{b} cuts {a} off and slows the pace.','{b} rallies, and the momentum swings back and forth.','{b} survives a close call and fires up.','{b} catches {a} coming in and turns the tide.','Back and forth they go. Neither can keep the advantage.','{b} finds a second wind out of nowhere.'],
-  near:['Cover by {b}! One, two... no! {a} kicks out!','{b} hooks the leg! One, two... {a} gets the shoulder up!','{a} goes for the finish, but {b} slips out the back!','#bigmove# from {b}! That has to be it... only a two count!','{a} thought that was three. So did I, {c}!','Shoulder up at two and nine-tenths!'],
   bigmove:['A huge clothesline','A spinning kick','A suplex out of nowhere','A dive to the floor','A knee to the jaw','A slam in the centre of the ring','A counter in mid-air'],
   late:['We are past the {mark}-minute mark and neither one will stay down.','{mark} minutes gone, and they are still throwing everything they have.','They have been at it for over {mark} minutes. Somebody has to break.'],
   q_great:['This is a classic in the making.','Remember where you were when you saw this one.','I have not seen many better than this, {p}.','They are going to be talking about this match for years.'],
@@ -73,7 +72,6 @@ export var GR={
   br_final:['{l} charges, {w} ducks, and {l} goes over the top! {w} wins it!','{w} clotheslines {l} over the top rope! It is over!','{l} is teetering on the apron... and {w} knocks {l} to the floor! {w} has done it!'],
   mid2:['{a} takes over again and goes to work.','{b} is hanging on, and {a} smells it.','{a} slows it down and makes {b} pay for every inch.','Now it is {a} with the upper hand, and the crowd does not know who to believe.'],
   tease:['{a} signals for the finish... {b} blocks it!','{a} sets up for the big one, and {b} wriggles free!','{b} sees it coming and rolls to the floor. Not yet!','{a} goes for it, and {b} counters at the last second!'],
-  near2:['Another cover! One, two... NO! How did {a} kick out of that?','Everything they have got! One, two... and {a} is still alive!','{b} cannot believe it. Neither can I, {c}. Two and a half!','That should have been it! The referee’s hand was coming down!'],
   chant:['They are chanting both names now, {p}.','Listen to that. Half the building for {a}, half for {b}.','The whole place is standing. Nobody wants to sit down for this.','Stomping in the stands. You can feel it up here.'],
   chantF:['“{n}! {n}!” The whole building is chanting it.','Listen to them, {p}. They are chanting for {n} before the bell.','You cannot hear yourself think in here. Every voice is for {n}.'],
   chantH:['The crowd has a chant for {n}, and it is not a kind one.','Every seat in the house is letting {n} have it.','{n} cups an ear and the boos only get louder.'],
@@ -197,18 +195,18 @@ export function callMatch(S,P,x){
   if(shp&&shp.intro)bc.push({t:'col',x:shp.intro.charAt(0).toUpperCase()+shp.intro.slice(1)});
   if(mem[1])raw('pbp',mem[1]);
   if($L.STIPLINE[x.stip])raw('pbp',sayPick(S,$L.STIPLINE[x.stip]));
-  if(x.mins>8){pbp(mk?'mid_'+mk:'mid');pbp('near',1);}
+  // near falls only come from a finisher kicked out of, below (Ryan, 29 October: never a pin after a signature or an ordinary move)
+  if(x.mins>8)pbp(mk?'mid_'+mk:'mid');
   if(shp&&shp.spot)bc.push({t:'pbp',x:shp.spot.charAt(0).toUpperCase()+shp.spot.slice(1)});
   if(x.mins>=14&&!mk)hp('pbp','mid2');
   if(x.mins>=12&&x.CR>=75)hp('col','chant');
   if(x.mins>=14&&!mk)hp('pbp','tease');
   if(x.mins>=20)pbp('late');
-  if(x.mins>=18&&x.MQ>=70)hp('pbp','near2',1);
   if(shp&&shp.late)bc.push({t:'pbp',x:shp.late.charAt(0).toUpperCase()+shp.late.slice(1),h:1});
   // a finisher kicked out of (src/86-looks.js); without a file, a long main event can still have one, in words only
-  if(x.fko){bc.push({t:'pbp',x:(x.fko.again?x.fko.who+' hits '+x.fko.f+'! This is it! One, two... ':'Out of nowhere, '+x.fko.who+' hits '+x.fko.f+'! One, two... ')+x.fko.by+' KICKS OUT!',h:1});
+  if(x.fko){bc.push({t:'pbp',x:(x.fko.again?x.fko.who+' hits '+x.fko.f+'! This is it! One, two... ':'Out of nowhere, '+x.fko.who+' hits '+x.fko.f+'! One, two... ')+x.fko.by+' KICKS OUT!',h:1,fk:1});
     raw('col',x.fko.huge?'Nobody kicks out of that, {p}! Nobody! I have never seen that!':'{p}, I have seen that move finish bigger names than this. Not tonight!');}
-  else if(!x.fm&&x.win>=0&&x.lfin&&(x.main||x.big)&&x.mins>=18&&h01(hk+'fko')<0.3)bc.push({t:'pbp',x:x.lname+' hits '+(/^the /i.test(x.lfin)?'':'the ')+x.lfin+'! One, two... '+o.w+' kicks out!',h:1});
+  else if(!x.fm&&x.win>=0&&x.lfin&&(x.main||x.big)&&x.mins>=18&&h01(hk+'fko')<0.3)bc.push({t:'pbp',x:x.lname+' hits '+(/^the /i.test(x.lfin)?'':'the ')+x.lfin+'! One, two... '+o.w+' kicks out!',h:1,fk:1});
   col(x.bad?'q_off':(x.MQ>=88?'q_great':(x.MQ>=75?'q_good':(x.MQ>=60?'q_ok':(x.MQ>=45?'q_poor':'q_bad')))));
   if(x.mins>=14&&x.CR>=82)col('c_hot');
   // when the company model's bonus or penalty fired, the crowd sounds like that company's crowd
