@@ -137,7 +137,7 @@ export function lookOf(r: Recipe, expr: string): Look {
   if (L.build === 'belly') { L.bel = Math.max(L.bel, 0.03 + fat * 0.5); L.ww = Math.max(L.ww, L.cw * 1.05); L.abs = 0; }
   if (L.build === 'heavy' || L.build === 'belly') { L.ww = Math.max(L.ww, L.cw * 1.02); L.sh *= 1.25; L.abs = 0; L.bel = Math.max(L.bel, 0.02); }
   L.cw *= 0.92 + h('cw', 5) * 0.04; L.ww *= 0.9 + h('ww', 5) * 0.05;
-  if (L.build === 'lean') L.abs = m < 1.05 ? 4 : 2; L.abs = Math.min(L.abs, 4);
+  if (L.build === 'lean') L.abs = m < 1.05 ? 4 : 2; L.abs = m > 1.1 ? 0 : Math.min(L.abs, 4); L.sw *= 0.9 + h('sw', 5) * 0.05;
   if (fem) { L.hw *= 1.3; L.ww *= 0.92; L.th *= 1.15; }
   if (L.build === 'skinny') { L.abs = 2; L.sw *= 0.86; L.cw *= 0.86; L.au *= 0.85; L.af *= 0.88; L.th *= 0.9; L.traps = 0; }
   if (r.mask) L.mask = [r.mask.base, r.mask.trim, r.mask.trim === r.mask.base ? '#ffd43b' : r.mask.trim];
@@ -267,7 +267,7 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   const BC = a.hc < '#333333' ? a.hc : shade(a.hc, a.hc > '#999999' ? 0.55 : 0.66), lng = a.beard === 'full' ? len * 0.22 : 0, shortB = a.beard === 'short';
   if (shortB) piece([[-jw * 0.92, jt + len * 0.22], [-jw * 0.95, bot - len * 0.12], [-jw * 0.6, bot + len * 0.06], [0, bot + len * 0.1], [jw * 0.6, bot + len * 0.06], [jw * 0.95, bot - len * 0.12], [jw * 0.92, jt + len * 0.22], [jw * 0.55, my + hu * 0.03], [0, my - hu * 0.07], [-jw * 0.55, my + hu * 0.03]], BC);   // a short beard: round, cut along the jaw
   if (shortB || a.beard === 'full') P.poly([[-jw * 0.5, bot - len * 0.05], [-jw * 0.1, bot + len * 0.02], [-jw * 0.15, bot + len * 0.06], [-jw * 0.55, bot - len * 0.01]], shade(BC, 1.35));   // a lighter strip catching the light
-  if (a.beard === 'full') piece([[-jw * 0.9, jt + len * 0.2], [-jw * 0.88, bot - len * 0.02], [-jw * 0.35, bot + len * (shortB ? 0.12 : 0.24) + lng], [jw * 0.4, bot + len * (shortB ? 0.1 : 0.2) + lng], [jw * 0.88, bot - len * 0.04], [jw * 0.9, jt + len * 0.2], [jw * 0.55, my + hu * 0.03], [0, my - hu * 0.07], [-jw * 0.55, my + hu * 0.03]], BC);
+  if (a.beard === 'full') piece([[-jw * 0.9, jt + len * 0.2], [-jw * 0.88, bot - len * 0.02], [-jw * 0.5, bot + len * 0.12 + lng * 0.6], [-jw * 0.35, bot + len * 0.24 + lng], [-jw * 0.1, bot + len * 0.16 + lng * 0.8], [jw * 0.12, bot + len * 0.26 + lng], [jw * 0.4, bot + len * 0.2 + lng], [jw * 0.6, bot + len * 0.1 + lng * 0.5], [jw * 0.88, bot - len * 0.04], [jw * 0.9, jt + len * 0.2], [jw * 0.55, my + hu * 0.03], [0, my - hu * 0.07], [-jw * 0.55, my + hu * 0.03]], BC);
   if (a.beard === 'full' && a.braid) for (let q = 0; q < 4; q++) P.poly(ell((q % 2 ? 0.03 : -0.03) * hu, bot + lng + len * 0.2 + q * hu * 0.12, hu * 0.08, hu * 0.08, 10), q % 2 ? shade(BC, 0.8) : BC);
   if (a.beard === 'goatee' || a.beard === 'vandyke') piece([[-mw * 0.7, my + hu * 0.06], [-mw * 0.28, bot + len * 0.18], [mw * 0.32, bot + len * 0.17], [mw * 0.7, my + hu * 0.06], [0, my + hu * 0.1]], BC);
   if (a.beard === 'chin') piece([[-jw * 0.75, bot - len * 0.12], [-jw * 0.55, bot + len * 0.12], [jw * 0.55, bot + len * 0.12], [jw * 0.75, bot - len * 0.12], [0, my + hu * 0.1]], BC);
@@ -329,7 +329,7 @@ function tattoo(P: Pen, st: string, L: number, w: number, sk: string, r: R) {
 /** Cut and pin a doll in style C. The same arguments and rig as `puppet()`. */
 export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig {
   const big0 = r.w > 1.15 || (r.belly || 0) > 0.05 ? 8 : 0, jit = (k2: string, d: number) => ((hashS(r.key + '|st' + k2) % 1000) / 1000 - 0.5) * d;
-  const arch = hashS(r.key + '|arch') % 4, ARMS = [{}, { sh_n: 16, el_n: 70, sh_f: -14, el_f: -70 }, { sh_n: 4, el_n: 8, sh_f: -30, el_f: -60 }, { sh_n: 12, el_n: 30, sh_f: -6, el_f: -10 }][arch];   // easy, hands on hips, one fist up, one arm off the body
+  const arch = hashS(r.key + '|arch') % 4, ARMS = [{}, { sh_n: 16, el_n: 70, sh_f: -14, el_f: -70 }, { sh_n: 6, el_n: 12, sh_f: -10, el_f: -40 }, { sh_n: 12, el_n: 30, sh_f: -6, el_f: -10 }][arch];   // easy, hands on hips, one fist up, one arm off the body
   const STC: Record<string, number> = { ...STAND, sh_n: 9 + big0 + jit('sn', 16), el_n: 18 + jit('en', 24), sh_f: -8 - big0 + jit('sf', 16), el_f: -18 + jit('ef', 8), hip_n: 6 + jit('hn', 4), hip_f: -6 + jit('hf', 4), kn_n: -3, kn_f: 3, an_n: -4, an_f: 4, head: jit('hd', 6), torso: jit('to', 7), ...ARMS };   // style C stands easy (critic, 29 October)
   const a = lookOf(r, expr), out0 = out.length;
   const n0 = out0, bk = !!pl.b, P0 = { ...STC, ...pose }, h = r.h * a.hs, ll = r.ll || 1, H = h * (r.th || 1), K = r.kit;
@@ -364,7 +364,7 @@ export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr
     if (!a.sleeve) pad(E, rr, 0, 0, 0, Math.max(au, fw) * 1.04, hu * 0.17, a.pad);
     if (a.tape && !a.sleeve) piece(E, seg([0, fl * 0.72], [0, fl], af * 0.8, af * 0.76), '#f4f1e8');
     const wr = child(el, [0, -L.fore], P0['wr_' + s]); note('wr_' + s, wr, el);
-    const Wp = pen(wr, z + 0.08, 'wr_' + s), fist = hu * 0.31 * Math.max(1, Math.min(1.5, a.sw / 0.15));
+    const Wp = pen(wr, z + 0.08, 'wr_' + s), fist = hu * 0.28 * Math.max(1, Math.min(1.5, a.sw / 0.15));
     piece(Wp, [[-fist * 0.55, 0], [fist * 0.55, 0], [fist * 0.7, fist * 0.62], [fist * 0.6, fist * 1.02], [fist * 0.42, fist * 0.96], [fist * 0.24, fist * 1.08], [fist * 0.05, fist * 1.0], [-fist * 0.13, fist * 1.08], [-fist * 0.31, fist * 1.0], [-fist * 0.5, fist * 1.04], [-fist * 0.68, fist * 0.72]], sk, true);
     Wp.stroke(`M${-fist * 0.45} ${fist * 0.8} L${fist * 0.45} ${fist * 0.8}`, 1, shade(sk, 0.6));
     piece(Wp, [[-sd * fist * 0.5, fist * 0.15], [sd * fist * 0.15, fist * 0.35], [sd * fist * 0.05, fist * 0.62], [-sd * fist * 0.6, fist * 0.55]], shade(sk, 0.93));
