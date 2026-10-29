@@ -52,6 +52,7 @@ SHOWX.push(function(S,P,show,rep){
 /** What the week's wages come to: salaries, and a fee for each show a per-appearance wrestler was on. */
 export function payWeek(S,P){
   var s=0;S.w.forEach(function(w){if(w.promo!==P.id)return;s+=w.dl==='show'&&w.fee!=null?(w.shw===S.week?w.fee*(w.shn||1):0):w.wage;});
+  if(P.id===S.player&&($L.treeHas&&$L.treeHas(S,'of_lean')))s=Math.round(s*0.92);   // Lean books: wages cost less
   return s+deskWage(S,P);
 }
 /** A deal in words, for the screens. */

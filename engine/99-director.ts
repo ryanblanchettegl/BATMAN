@@ -123,9 +123,12 @@ function dirWeight(S: any, ev: any) {
 // matters about a moment that has passed: if they cannot come now, they never come
 const DIR_NOW: any = { scrum: 1 };
 // is the cause still true? a matter about somebody who has left, or one held too long, is let go
+// Patience (the booker's tree) gives a held matter one more week
+function dirKeep(S: any) { return DIR_HOLD_WEEKS + ($L.treeHas && $L.treeHas(S, 'lr_patience') ? 1 : 0); }
+$L.dirKeep = dirKeep;
 function dirAlive(S: any, ev: any) {
   if (DIR_NOW[ev.type]) return false;
-  if (S.week - (ev.held || S.week) > DIR_HOLD_WEEKS) return false;
+  if (S.week - (ev.held || S.week) > dirKeep(S)) return false;
   for (const k of ['w', 'o']) { const x = ev[k] != null ? S.w[ev[k]] : null; if (ev[k] != null && (!x || x.promo !== S.player)) return false; }
   return true;
 }

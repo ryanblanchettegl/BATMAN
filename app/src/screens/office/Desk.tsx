@@ -261,12 +261,13 @@ const MORE: [string, string][] = [['week', 'This week'], ['world', 'Around the w
 /** What the Director held back this week: read it here, or bring one to the desk now for an action point. */
 function Held() {
   const S = G.S, D = (E as any).dirDesk(S);
-  if (!D.held.length) return <Empty>Nothing is waiting. Everything that needs you is on the desk.</Empty>;
-  return <ul class="list" data-t="held-list">{D.held.map((h: any) => <li key={h.id} data-t="held" data-id={h.id}>
-    <span><Tag kind={h.tag === 'chance' ? 'good' : h.tag === 'problem' ? 'bad' : undefined}>{h.tag === 'chance' ? 'A chance' : h.tag === 'problem' ? 'Trouble' : 'Life'}</Tag> <Txt>{h.text}</Txt></span>
+  const more = D.more ? <p class="muted" data-t="dir-more">{D.more}</p> : null;
+  if (!D.held.length) return <>{more}<Empty>Nothing is waiting. Everything that needs you is on the desk.</Empty></>;
+  return <>{more}<ul class="list" data-t="held-list">{D.held.map((h: any) => <li key={h.id} data-t="held" data-id={h.id}>
+    <span><Tag kind={h.tag === 'chance' ? 'good' : h.tag === 'problem' ? 'bad' : undefined}>{h.tag === 'chance' ? 'A chance' : h.tag === 'problem' ? 'Trouble' : 'Life'}</Tag> <Txt>{h.text}</Txt>{h.left != null ? <span class="muted" data-t="held-left"> {h.left ? 'Waits ' + h.left + ' more ' + (h.left > 1 ? 'weeks' : 'week') + '.' : 'Lapses this week.'}</span> : null}</span>
     <Btn kind="sm" t="held-pull" d={{ id: h.id }} disabled={S.ap < 1} tip={S.ap < 1 ? 'You have no action points left this week.' : 'Bring it to your desk now. It costs one action point.'}
       onClick={() => act(() => { const r = (E as any).dirPull(S, h.id); if (r.ok) closeModal(); })}>Pull forward</Btn>
-  </li>)}</ul>;
+  </li>)}</ul></>;
 }
 /** The week around the world (src/99-worldweek.js): what every other company did last week, one line each, the rest below it. */
 function WorldWeek() {

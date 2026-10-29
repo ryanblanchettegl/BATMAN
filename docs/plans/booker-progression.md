@@ -72,7 +72,7 @@ Career gets the tree: four branches side by side, nodes as cut-card tiles, the n
 1. The new curve and no cap; booking power no longer grows with level; balance test for a year-three booker.
 2. The tree as data (branches, tiers, nodes, kinds), the old five skills moved into it, old saves converted.
 3. The Career page tree and the perk pop-up.
-4. The new actions, one at a time, each in its own place.
+4. The new actions, one at a time, each in its own place. Built 29 October: every action and trade-off works (`engine/99-youacts.ts` and a guarded line where each system lives). Call an audible is a call on the main event; Sweeten the deal is on Storylines; Closed-door meeting is in wrestlers' court; Smell trouble and Read the weather add to Also this week.
 5. Respec, and the cap on any one number checked by a test.
 
 ## 7. Questions for Ryan
@@ -81,7 +81,7 @@ Asked one at a time; answers written here.
 
 ## Pace of the tree (29 October)
 
-The tree holds 43 points (a skill costs 1, the top tier 2). At about 6 levels the first year, 4 the second and 3 a year after, a career fills it in about thirteen years. Actions and trade-offs show as Soon and cannot be taken until step 4 gives them their effects; a tier opens at about three fifths of what can be taken below it.
+The tree holds 43 points (a skill costs 1, the top tier 2). At about 6 levels the first year, 4 the second and 3 a year after, a career fills it in about thirteen years. Every skill can be taken (step 4 gave the actions and trade-offs their effects); a tier opens at about three fifths of what can be taken below it.
 
 ## 8. Ryan's answers (28 October 2026)
 

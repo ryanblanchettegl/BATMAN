@@ -51,7 +51,7 @@ export function initYou(S,opts){
 SKILLMOD.push(function(S,kind){var b=S.booker;if(!b)return null;var l=kind==='creative'?b.sk.creative:b.sk.talk;return {n:(kind==='creative'?'Your creative skill':'Your negotiation skill'),v:l>=4?2:(l>=2?1:0)};});
 export function talkDiscount(S){return S.booker?1-0.03*S.booker.sk.talk:1;}
 export function pledgeRenew(S){return S.owner?(S.owner.pledge==='pay'?1.05:(S.owner.pledge==='stable'?0.9:1)):1;}
-export function moraleTarget(S){var o=S.owner,b=S.booker;return 65+$L.dif(S).mor+((S.trust==null?60:S.trust)-60)/5+(b?1.5*b.sk.motivator:0)+(o?(o.pledge==='pay'?5:(o.pledge==='stable'?3:0)):0);}
+export function moraleTarget(S){var o=S.owner,b=S.booker;return 65+$L.dif(S).mor+((S.trust==null?60:S.trust)-60)/5+(b?1.5*b.sk.motivator:0)+(o?(o.pledge==='pay'?5:(o.pledge==='stable'?3:0)):0)-(($L.treeHas&&$L.treeHas(S,'of_lean'))?4:0);}
 E.spendPoint=function(S,k){var b=S.booker,sk=$L.SKILLS[k];if(!sk||b.pts<=0||b.sk[k]>=sk.max)return false;b.sk[k]++;b.pts--;return true;};
 
 /* booking power */

@@ -18,49 +18,49 @@ export const SK_SAYS: any = {
   eye: 'Eye +1: surer road agent reads and potential seen in young wrestlers',
   clout: 'Clout +1: one more point of booking power every week'
 };
-// soon: an action or a trade-off whose effect is not built yet (step 4); it cannot be taken until it is
+// soon: an action or a trade-off whose effect is not built yet; it cannot be taken until it is (step 4 built them all, engine/99-youacts.ts)
 export const TREE: any = {
   creative: { n: 'Creative', d: 'Stories, promos and angles.', nodes: [
     { id: 'cr_pen', t: 0, k: 'bonus', sk: 'creative', n: 'Sharp pen' },
     { id: 'cr_ear', t: 0, k: 'bonus', sk: 'creative', n: 'An ear for a line' },
     { id: 'cr_room', t: 1, k: 'bonus', sk: 'creative', n: 'Run the room' },
     { id: 'cr_pull', t: 1, k: 'bonus', sk: 'clout', n: 'Pull in the office' },
-    { id: 'cr_audible', t: 1, k: 'action', soon: 1, n: 'Call an audible', d: 'Once a show, change a finish while the match is on the air.' },
+    { id: 'cr_audible', t: 1, k: 'action', n: 'Call an audible', d: 'Once a show, when nothing else needs you, call the main event\u2019s finish yourself while it is on the air.' },
     { id: 'cr_twist', t: 2, k: 'bonus', sk: 'creative', n: 'Twist the knife' },
     { id: 'cr_weight', t: 2, k: 'bonus', sk: 'clout', n: 'Weight to throw' },
-    { id: 'cr_shock', t: 2, k: 'trade', soon: 1, n: 'Shock value', d: 'Big angles hit harder, but the owner trusts a wild hand a little less.' },
+    { id: 'cr_shock', t: 2, k: 'trade', n: 'Shock value', d: 'Promos and angles hit harder, but every angle on a show costs the owner\u2019s trust, each more than the last.' },
     { id: 'cr_master', t: 3, k: 'bonus', sk: 'creative', n: 'Master storyteller' },
     { id: 'cr_boss', t: 3, k: 'bonus', sk: 'clout', n: 'The book is yours' },
-    { id: 'cr_third', t: 3, k: 'action', soon: 1, n: 'A third act', d: 'A story can take a third twist before it goes stale.' }
+    { id: 'cr_third', t: 3, k: 'action', n: 'A third act', d: 'A twist gives a story half as much room again before it goes stale.' }
   ] },
   office: { n: 'Office', d: 'Money, contracts and the network.', nodes: [
     { id: 'of_deal', t: 0, k: 'bonus', sk: 'talk', n: 'Deal maker' },
     { id: 'of_read', t: 0, k: 'bonus', sk: 'talk', n: 'Read the table' },
-    { id: 'of_clause', t: 1, k: 'action', soon: 1, n: 'One more clause', d: 'Offer a wrestler one more clause than they ask for.' },
+    { id: 'of_clause', t: 1, k: 'action', n: 'One more clause', d: 'A wrestler can take four clauses in a deal instead of three, and asks for less with each.' },
     { id: 'of_firm', t: 1, k: 'bonus', sk: 'talk', n: 'Firm hand' },
-    { id: 'of_sweeten', t: 2, k: 'action', soon: 1, n: 'Sweeten the deal', d: 'Spend booking power for a better network renewal.' },
+    { id: 'of_sweeten', t: 2, k: 'action', n: 'Sweeten the deal', d: 'On Storylines: three booking power for a better rate at your next network renewal.' },
     { id: 'of_closer', t: 2, k: 'bonus', sk: 'talk', n: 'Closer' },
-    { id: 'of_lean', t: 2, k: 'trade', soon: 1, n: 'Lean books', d: 'Wages cost less, but the roster grumbles about the money.' },
+    { id: 'of_lean', t: 2, k: 'trade', n: 'Lean books', d: 'Wages cost 8% less, but the roster\u2019s mood settles lower.' },
     { id: 'of_shark', t: 3, k: 'bonus', sk: 'talk', n: 'Shark' },
-    { id: 'of_sponsor', t: 3, k: 'action', soon: 1, n: 'Sponsor patience', d: 'A sponsor gives you one more week before walking.' }
+    { id: 'of_sponsor', t: 3, k: 'action', n: 'Sponsor patience', d: 'A sponsor gives you one more week before walking.' }
   ] },
   locker: { n: 'Locker room', d: 'People.', nodes: [
     { id: 'lr_steady', t: 0, k: 'bonus', sk: 'motivator', n: 'Steady voice' },
     { id: 'lr_door', t: 0, k: 'bonus', sk: 'motivator', n: 'Open door' },
-    { id: 'lr_meet', t: 1, k: 'action', soon: 1, n: 'Closed-door meeting', d: 'Once a month, settle real heat between two people.' },
+    { id: 'lr_meet', t: 1, k: 'action', n: 'Closed-door meeting', d: 'In wrestlers\u2019 court, once a month: sit two people with real heat down and settle most of it.' },
     { id: 'lr_trust', t: 1, k: 'bonus', sk: 'motivator', n: 'Earned trust' },
-    { id: 'lr_patience', t: 2, k: 'action', soon: 1, n: 'Patience', d: 'Held problems wait a week longer before they lapse.' },
+    { id: 'lr_patience', t: 2, k: 'action', n: 'Patience', d: 'Held problems wait a week longer before they lapse.' },
     { id: 'lr_leader', t: 2, k: 'bonus', sk: 'motivator', n: 'Leader' },
-    { id: 'lr_hard', t: 2, k: 'trade', soon: 1, n: 'Hard but fair', d: 'Discipline lands harder, but the room warms to you more slowly.' },
+    { id: 'lr_hard', t: 2, k: 'trade', n: 'Hard but fair', d: 'Your rulings in court land harder, but everyone warms to you more slowly.' },
     { id: 'lr_father', t: 3, k: 'bonus', sk: 'motivator', n: 'Locker room leader' },
-    { id: 'lr_extra', t: 3, k: 'action', soon: 1, n: 'One more hour', d: 'One more action point every week.' }
+    { id: 'lr_extra', t: 3, k: 'action', n: 'One more hour', d: 'One more action point every week.' }
   ] },
   eye: { n: 'Eye', d: 'Seeing what is hidden.', nodes: [
     { id: 'ey_scout', t: 0, k: 'bonus', sk: 'eye', n: 'Scout' },
-    { id: 'ey_tape', t: 0, k: 'action', soon: 1, n: 'Watch the tape', d: 'The road agent says a little more about a match you have seen before.' },
+    { id: 'ey_tape', t: 0, k: 'action', n: 'Watch the tape', d: 'The road agent reads more of every match on the sheet.' },
     { id: 'ey_judge', t: 1, k: 'bonus', sk: 'eye', n: 'Good judge' },
-    { id: 'ey_smell', t: 1, k: 'action', soon: 1, n: 'Smell trouble', d: 'See the cause of one held matter early.' },
-    { id: 'ey_word', t: 2, k: 'action', soon: 1, n: 'Read the weather', d: 'The Director\u2019s word on the desk says a little more.' },
+    { id: 'ey_smell', t: 1, k: 'action', n: 'Smell trouble', d: 'See how long each waiting matter has before it lapses.' },
+    { id: 'ey_word', t: 2, k: 'action', n: 'Read the weather', d: 'The word on your desk says what is driving the week.' },
     { id: 'ey_seer', t: 3, k: 'bonus', sk: 'eye', n: 'Seer' }
   ] }
 };

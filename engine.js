@@ -7760,7 +7760,7 @@
     feudPlan(S, f);
     if (f.tww === S.week && f.twR !== S.week) {
       f.twR = S.week;
-      f.fresh = Math.min(100, f.fresh + 30);
+      f.fresh = Math.min(100, f.fresh + (L.treeHas && L.treeHas(S, "cr_third") ? 45 : 30));
     }
     if (amt <= 0) return { amt, cap: 100 };
     var x = 0.3 + 0.7 * f.fresh / 100;
@@ -11500,7 +11500,13 @@
   WEEKX.push(function(S) {
     var P = S.promos[S.player];
     S.sponsors = S.sponsors.filter(function(x) {
-      if (sponsorBroken(S, P, x)) {
+      if (sponsorBroken(S, P, x) && (L.treeHas && L.treeHas(S, "of_sponsor")) && !x.warned) {
+        x.warned = 1;
+        L.news(S, "money", x.name + " is unhappy, but gives you one more week to put it right.");
+        L.note(S, x.name + " gives you one more week", "Put its terms right by the end of next week: " + x.text.toLowerCase() + ".", "bad");
+      } else if (!sponsorBroken(S, P, x)) {
+        if (x.warned) delete x.warned;
+      } else {
         L.news(S, "money", x.name + " pulled its sponsorship: " + x.text.toLowerCase() + " was the deal.");
         P.image = clamp(P.image - 0.3, 5, 100);
         return false;
@@ -13038,7 +13044,7 @@
   }
   function moraleTarget(S) {
     var o = S.owner, b = S.booker;
-    return 65 + L.dif(S).mor + ((S.trust == null ? 60 : S.trust) - 60) / 5 + (b ? 1.5 * b.sk.motivator : 0) + (o ? o.pledge === "pay" ? 5 : o.pledge === "stable" ? 3 : 0 : 0);
+    return 65 + L.dif(S).mor + ((S.trust == null ? 60 : S.trust) - 60) / 5 + (b ? 1.5 * b.sk.motivator : 0) + (o ? o.pledge === "pay" ? 5 : o.pledge === "stable" ? 3 : 0 : 0) - (L.treeHas && L.treeHas(S, "of_lean") ? 4 : 0);
   }
   E.spendPoint = function(S, k) {
     var b = S.booker, sk = L.SKILLS[k];
@@ -13638,42 +13644,42 @@
       { id: "cr_ear", t: 0, k: "bonus", sk: "creative", n: "An ear for a line" },
       { id: "cr_room", t: 1, k: "bonus", sk: "creative", n: "Run the room" },
       { id: "cr_pull", t: 1, k: "bonus", sk: "clout", n: "Pull in the office" },
-      { id: "cr_audible", t: 1, k: "action", soon: 1, n: "Call an audible", d: "Once a show, change a finish while the match is on the air." },
+      { id: "cr_audible", t: 1, k: "action", n: "Call an audible", d: "Once a show, when nothing else needs you, call the main event\u2019s finish yourself while it is on the air." },
       { id: "cr_twist", t: 2, k: "bonus", sk: "creative", n: "Twist the knife" },
       { id: "cr_weight", t: 2, k: "bonus", sk: "clout", n: "Weight to throw" },
-      { id: "cr_shock", t: 2, k: "trade", soon: 1, n: "Shock value", d: "Big angles hit harder, but the owner trusts a wild hand a little less." },
+      { id: "cr_shock", t: 2, k: "trade", n: "Shock value", d: "Promos and angles hit harder, but every angle on a show costs the owner\u2019s trust, each more than the last." },
       { id: "cr_master", t: 3, k: "bonus", sk: "creative", n: "Master storyteller" },
       { id: "cr_boss", t: 3, k: "bonus", sk: "clout", n: "The book is yours" },
-      { id: "cr_third", t: 3, k: "action", soon: 1, n: "A third act", d: "A story can take a third twist before it goes stale." }
+      { id: "cr_third", t: 3, k: "action", n: "A third act", d: "A twist gives a story half as much room again before it goes stale." }
     ] },
     office: { n: "Office", d: "Money, contracts and the network.", nodes: [
       { id: "of_deal", t: 0, k: "bonus", sk: "talk", n: "Deal maker" },
       { id: "of_read", t: 0, k: "bonus", sk: "talk", n: "Read the table" },
-      { id: "of_clause", t: 1, k: "action", soon: 1, n: "One more clause", d: "Offer a wrestler one more clause than they ask for." },
+      { id: "of_clause", t: 1, k: "action", n: "One more clause", d: "A wrestler can take four clauses in a deal instead of three, and asks for less with each." },
       { id: "of_firm", t: 1, k: "bonus", sk: "talk", n: "Firm hand" },
-      { id: "of_sweeten", t: 2, k: "action", soon: 1, n: "Sweeten the deal", d: "Spend booking power for a better network renewal." },
+      { id: "of_sweeten", t: 2, k: "action", n: "Sweeten the deal", d: "On Storylines: three booking power for a better rate at your next network renewal." },
       { id: "of_closer", t: 2, k: "bonus", sk: "talk", n: "Closer" },
-      { id: "of_lean", t: 2, k: "trade", soon: 1, n: "Lean books", d: "Wages cost less, but the roster grumbles about the money." },
+      { id: "of_lean", t: 2, k: "trade", n: "Lean books", d: "Wages cost 8% less, but the roster\u2019s mood settles lower." },
       { id: "of_shark", t: 3, k: "bonus", sk: "talk", n: "Shark" },
-      { id: "of_sponsor", t: 3, k: "action", soon: 1, n: "Sponsor patience", d: "A sponsor gives you one more week before walking." }
+      { id: "of_sponsor", t: 3, k: "action", n: "Sponsor patience", d: "A sponsor gives you one more week before walking." }
     ] },
     locker: { n: "Locker room", d: "People.", nodes: [
       { id: "lr_steady", t: 0, k: "bonus", sk: "motivator", n: "Steady voice" },
       { id: "lr_door", t: 0, k: "bonus", sk: "motivator", n: "Open door" },
-      { id: "lr_meet", t: 1, k: "action", soon: 1, n: "Closed-door meeting", d: "Once a month, settle real heat between two people." },
+      { id: "lr_meet", t: 1, k: "action", n: "Closed-door meeting", d: "In wrestlers\u2019 court, once a month: sit two people with real heat down and settle most of it." },
       { id: "lr_trust", t: 1, k: "bonus", sk: "motivator", n: "Earned trust" },
-      { id: "lr_patience", t: 2, k: "action", soon: 1, n: "Patience", d: "Held problems wait a week longer before they lapse." },
+      { id: "lr_patience", t: 2, k: "action", n: "Patience", d: "Held problems wait a week longer before they lapse." },
       { id: "lr_leader", t: 2, k: "bonus", sk: "motivator", n: "Leader" },
-      { id: "lr_hard", t: 2, k: "trade", soon: 1, n: "Hard but fair", d: "Discipline lands harder, but the room warms to you more slowly." },
+      { id: "lr_hard", t: 2, k: "trade", n: "Hard but fair", d: "Your rulings in court land harder, but everyone warms to you more slowly." },
       { id: "lr_father", t: 3, k: "bonus", sk: "motivator", n: "Locker room leader" },
-      { id: "lr_extra", t: 3, k: "action", soon: 1, n: "One more hour", d: "One more action point every week." }
+      { id: "lr_extra", t: 3, k: "action", n: "One more hour", d: "One more action point every week." }
     ] },
     eye: { n: "Eye", d: "Seeing what is hidden.", nodes: [
       { id: "ey_scout", t: 0, k: "bonus", sk: "eye", n: "Scout" },
-      { id: "ey_tape", t: 0, k: "action", soon: 1, n: "Watch the tape", d: "The road agent says a little more about a match you have seen before." },
+      { id: "ey_tape", t: 0, k: "action", n: "Watch the tape", d: "The road agent reads more of every match on the sheet." },
       { id: "ey_judge", t: 1, k: "bonus", sk: "eye", n: "Good judge" },
-      { id: "ey_smell", t: 1, k: "action", soon: 1, n: "Smell trouble", d: "See the cause of one held matter early." },
-      { id: "ey_word", t: 2, k: "action", soon: 1, n: "Read the weather", d: "The Director\u2019s word on the desk says a little more." },
+      { id: "ey_smell", t: 1, k: "action", n: "Smell trouble", d: "See how long each waiting matter has before it lapses." },
+      { id: "ey_word", t: 2, k: "action", n: "Read the weather", d: "The word on your desk says what is driving the week." },
       { id: "ey_seer", t: 3, k: "bonus", sk: "eye", n: "Seer" }
     ] }
   };
@@ -14008,6 +14014,7 @@
   }
   function youRemember(S, w, k, text, v) {
     if (!w || S.cal) return;
+    if (v > 0 && L.treeHas && L.treeHas(S, "lr_hard")) v = Math.round(v * 0.8 * 10) / 10;
     var Y = S.rmY || (S.rmY = {}), e = Y[w.id] || (Y[w.id] = { v: 0, mem: [] });
     e.v = clamp(e.v + v, -100, 100);
     e.mem.unshift({ w: S.week, k, t: text, v });
@@ -15942,7 +15949,7 @@
     S.pep = null;
   });
   function apMax(S) {
-    return 3 + (S.booker && S.booker.lvl >= 5 ? 1 : 0) + (S.owner && S.owner.me ? 1 : 0);
+    return 3 + (L.treeHas && L.treeHas(S, "lr_extra") ? 1 : 0) + (S.booker && S.booker.lvl >= 5 ? 1 : 0) + (S.owner && S.owner.me ? 1 : 0);
   }
   var PLACES = {
     office: { n: "The owner\u2019s office", d: "Where the money and the booking power come from." },
@@ -15978,6 +15985,10 @@
         L2.push({ id: "case", n: "Hear the case: " + S.w[c.a].name + " against " + S.w[c.b].name, d: c.text, cid: c.id });
       });
       if (!L2.length) L2.push({ id: "none", n: "No cases on the docket", d: "Nobody has brought a dispute this week.", off: true });
+      if (L.treeHas && L.treeHas(S, "lr_meet")) {
+        var mcd = S.lcd && S.lcd.meet, mon = mcd != null && S.week - mcd < 4;
+        L2.push({ id: "meet", n: "Closed-door meeting", d: mon ? "You held one this month. The next can wait until week " + (mcd + 4) + "." : "Two people with real heat, in your office, door shut. Most of the heat goes.", need: "pair", off: mon });
+      }
     } else if (pl === "trainer") {
       L2.push({ id: "treat", n: "Stand over the trainer while they work", d: "One wrestler: eight points off every worn body zone, and a week off an injury of two weeks or more.", need: "w" });
     } else if (pl === "gym") {
@@ -16046,6 +16057,13 @@
     } else if (act === "sponsors") {
       refreshOffers(S);
       msg = "Three new sponsor offers are on the Manage screen, under Deals.";
+    } else if (act === "meet") {
+      if (L.bondOf(S, a.id, b.id) > -L.REL_ON) return { ok: false, msg: a.name + " and " + b.name + " have no real heat to settle." };
+      (S.lcd || (S.lcd = {})).meet = S.week;
+      L.relBump(S, a.id, b.id, { bond: Math.round(-L.bondOf(S, a.id, b.id) * 0.6) }, { k: "meet", keep: true, t: "You sat " + a.name + " and " + b.name + " down behind a closed door." });
+      L.youRemember(S, a, "meet", "You sat them down with " + b.name + " and made them talk it out.", 2);
+      L.youRemember(S, b, "meet", "You sat them down with " + a.name + " and made them talk it out.", 2);
+      msg = a.name + " and " + b.name + " come out of your office without shaking hands, but the worst of it is gone.";
     } else if (act === "case") {
       var res = E.courtRule(S, +o.cid, +o.v);
       if (!res.ok) return res;
@@ -16196,6 +16214,10 @@
     (S.verdicts || (S.verdicts = [])).unshift({ w: S.week, win: win.id, lose: lose.id, fair, judge: byYou ? null : S.lastJudge || null, rep, n: lose.cl });
     if (S.verdicts.length > 20) S.verdicts.length = 20;
     S.lastJudge = null;
+    if (byYou && (L.treeHas && L.treeHas(S, "lr_hard"))) {
+      lose.morale = clamp(lose.morale - 3, 0, 100);
+      win.morale = clamp(win.morale + 2, 0, 100);
+    }
     if (byYou) {
       win.you = clamp((win.you || 0) + 1, -1, 1);
       if (fair) {
@@ -31455,7 +31477,7 @@
     return "";
   }
   function segMean(S, w, bonus) {
-    return 0.62 * micOf(S, w) + 0.38 * w.ovr + (bonus || 0) + (S.booker && w.promo === S.player ? S.booker.sk.creative : 0);
+    return 0.62 * micOf(S, w) + 0.38 * w.ovr + (bonus || 0) + (S.booker && w.promo === S.player ? S.booker.sk.creative + (L.treeHas && L.treeHas(S, "cr_shock") ? 1.5 : 0) : 0);
   }
   function segLook(S, sg, slot) {
     var why = segWhy(S, sg, slot);
@@ -33156,7 +33178,7 @@
     var P = S.promos[S.player], corp = P && P.model === "corporate";
     return Object.keys(L.CLAUSE).filter(function(k) {
       return !(corp && k === "outside") && L.CLAUSE[k].wants(S, w);
-    }).slice(0, 3);
+    }).slice(0, L.treeHas && L.treeHas(S, "of_clause") ? 4 : 3);
   }
   E.clauses = function(S, id) {
     var w = S.w[id];
@@ -34911,6 +34933,7 @@
       if (w.promo !== P.id) return;
       s += w.dl === "show" && w.fee != null ? w.shw === S.week ? w.fee * (w.shn || 1) : 0 : w.wage;
     });
+    if (P.id === S.player && (L.treeHas && L.treeHas(S, "of_lean"))) s = Math.round(s * 0.92);
     return s + deskWage(S, P);
   }
   E.contractOf = function(S, w) {
@@ -35227,9 +35250,13 @@
     return (w ? w.ovr : 50) + (o ? o.ovr * 0.3 : 0) + (tag === "colour" ? -40 : 0) + L.h01("dw" + S.seed + ":" + ev.id) * 3;
   }
   var DIR_NOW = { scrum: 1 };
+  function dirKeep(S) {
+    return DIR_HOLD_WEEKS + (L.treeHas && L.treeHas(S, "lr_patience") ? 1 : 0);
+  }
+  L.dirKeep = dirKeep;
   function dirAlive(S, ev) {
     if (DIR_NOW[ev.type]) return false;
-    if (S.week - (ev.held || S.week) > DIR_HOLD_WEEKS) return false;
+    if (S.week - (ev.held || S.week) > dirKeep(S)) return false;
     for (const k of ["w", "o"]) {
       const x = ev[k] != null ? S.w[ev[k]] : null;
       if (ev[k] != null && (!x || x.promo !== S.player)) return false;
@@ -35420,7 +35447,7 @@
     return clamp((a ? 0.4 + 0.45 * agentQ(a) : 0.25) + fogSkill(S), 0.05, 0.95);
   }
   function reads(S, m, key) {
-    return h01(S.seed + ":rd:" + S.week + ":" + key + ":" + (agentOf(S, m) ? m.agent : "h")) < readP(S, m);
+    return h01(S.seed + ":rd:" + S.week + ":" + key + ":" + (agentOf(S, m) ? m.agent : "h")) < Math.min(0.95, readP(S, m) + (L.treeHas && L.treeHas(S, "ey_tape") ? 0.1 : 0));
   }
   function agentName(S, m) {
     var a = agentOf(S, m);
@@ -38200,6 +38227,103 @@
   L.wrInit = wrInit;
   L.wrName = wrName;
   L.wrPitch = wrPitch;
+
+  // engine/99-youacts.ts
+  LIVEK.callaud = {
+    n: "Call an audible",
+    free: 1,
+    pre: function(S, L2, step) {
+      if (!treeHas(S, "cr_audible") || L2.aud || step.t !== "match" || step.i !== L2.card.length - 1) return null;
+      const M = liveMatch(S, L2, step.i);
+      if (!M || M.c.sides.length !== 2 || M.m.mt === "br" || M.m.call != null || M.m.ff || M.m.nc) return null;
+      L2.aud = 1;
+      const A = M.c.sides[0], B = M.c.sides[1];
+      return {
+        phase: "mid",
+        mi: step.i,
+        who: A[0].id,
+        other: B[0].id,
+        text: "The main event is on, and nothing else needs you. You have the referee\u2019s ear: call the finish, or let them work it out.",
+        why: ["Call an audible: once a show, you can call the main event\u2019s finish on the air"],
+        safe: 0,
+        choices: [
+          { n: "Let it play out", says: "The match goes the way it was going to go." },
+          { n: names(A) + " win" + (A.length > 1 ? "" : "s"), says: "The word goes to the referee. " + names(B) + " will know you called it against them." },
+          { n: names(B) + " win" + (B.length > 1 ? "" : "s"), says: "The word goes to the referee. " + names(A) + " will know you called it against them." }
+        ]
+      };
+    },
+    run: function(S, L2, ev, c) {
+      const M = liveMatch(S, L2, ev.mi);
+      if (!M || !c) return "You leave the finish alone.";
+      const side = c - 1, win = M.c.sides[side], lose = M.c.sides[1 - side];
+      M.m.call = side;
+      win.forEach((w) => L.youRemember(S, w, "audible", "You called the finish on the air and gave them the win.", 3));
+      lose.forEach((w) => L.youRemember(S, w, "audible", "You called the finish on the air, and they took the fall.", -2));
+      return "The referee nods. " + names(win) + " " + (win.length > 1 ? "are" : "is") + " going over.";
+    }
+  };
+  L.LIVE_ORDER.push("callaud");
+  SHOWX.push(function(S, P, show, rep) {
+    if (S.cal || P.id !== S.player || !treeHas(S, "cr_shock") || !S.owner || S.owner.me) return;
+    const n = (rep.segs || []).filter((r) => r && r.booked && L.SEGK[r.booked] && L.SEGK[r.booked].t === "angle").length;
+    if (n) S.owner.trust = clamp(S.owner.trust - 0.75 * n * (n + 1) / 2, 0, 100);
+  });
+  L.PLOT.sweeten = { n: "Sweeten the deal", cost: 3, d: "Wine and dine the network ahead of the next renewal. That deal pays about 8% more, however it goes: stay, move or a bidding war." };
+  function sweetShow(S) {
+    const P = S.promos[S.player];
+    return (P.shows || []).filter((sh) => sh.deal != null && !sh.sweet).sort((a, b) => a.deal - b.deal)[0] || null;
+  }
+  var plotInfo0 = E.plotInfo;
+  E.plotInfo = function(S) {
+    const I = plotInfo0.apply(this, arguments);
+    if (!treeHas(S, "of_sweeten")) I.acts = I.acts.filter((a) => a.id !== "sweeten");
+    else {
+      const sh = sweetShow(S), a = I.acts.find((x) => x.id === "sweeten");
+      if (a) {
+        a.show = sh ? sh.n || sh.name : null;
+        if (!sh) a.can = false;
+      }
+    }
+    return I;
+  };
+  var plotDo0 = E.plotDo;
+  E.plotDo = function(S, id, o) {
+    if (id !== "sweeten") return plotDo0.apply(this, arguments);
+    if (!treeHas(S, "of_sweeten")) return { ok: false, msg: "That is not something booking power buys yet." };
+    const A = L.PLOT.sweeten, sh = sweetShow(S);
+    if (!sh) return { ok: false, msg: "Every network deal is already sweetened." };
+    if (S.bp < A.cost) return { ok: false, msg: A.n + " takes " + A.cost + " booking power. You have " + S.bp + "." };
+    S.bp -= A.cost;
+    sh.sweet = 1;
+    return { ok: true, msg: "The network had a good night on you. " + (sh.n || sh.name || "Your show") + " gets a better rate when its deal is up in week " + sh.deal + "." };
+  };
+  var airSign0 = L.airSign;
+  L.airSign = function(S, P, sh, net, tier, rate) {
+    if (sh && sh.sweet && P.id === S.player) {
+      rate *= 1.08;
+      delete sh.sweet;
+    }
+    return airSign0.call(this, S, P, sh, net, tier, rate);
+  };
+  var PART_WORDS = { open: "the matters already on your desk", clocks: "a clock close to running out", room: "the mood in the locker room", money: "the money", stories: "a story near its peak", wait: "how long it has been quiet" };
+  var dirDesk0 = E.dirDesk;
+  E.dirDesk = function(S) {
+    const D = dirDesk0.apply(this, arguments);
+    if (treeHas(S, "ey_smell")) D.held.forEach((h) => {
+      h.left = Math.max(0, L.dirKeep(S) - (S.week - h.since));
+    });
+    if (treeHas(S, "ey_word")) {
+      const p = E.dirInfo(S).parts;
+      let top = null, v = 0;
+      for (const k in PART_WORDS) if ((p[k] || 0) > v) {
+        v = p[k];
+        top = k;
+      }
+      D.more = top ? "Most of the pressure is " + PART_WORDS[top] + "." : "Nothing much is pressing.";
+    }
+    return D;
+  };
 
   // engine/99-zpodcast.ts
   L.podFirst = podFirst;

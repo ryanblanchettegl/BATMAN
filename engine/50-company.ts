@@ -29,7 +29,9 @@ NEWX.push(function(S){refreshOffers(S);});
 WEEKX.push(function(S){
   var P=S.promos[S.player];
   S.sponsors=S.sponsors.filter(function(x){
-    if(sponsorBroken(S,P,x)){$L.news(S,'money',x.name+' pulled its sponsorship: '+x.text.toLowerCase()+' was the deal.');P.image=clamp(P.image-0.3,5,100);return false;}
+    if(sponsorBroken(S,P,x)&&($L.treeHas&&$L.treeHas(S,'of_sponsor'))&&!x.warned){x.warned=1;$L.news(S,'money',x.name+' is unhappy, but gives you one more week to put it right.');$L.note(S,x.name+' gives you one more week','Put its terms right by the end of next week: '+x.text.toLowerCase()+'.','bad');}
+    else if(!sponsorBroken(S,P,x)){if(x.warned)delete x.warned;}
+    else {$L.news(S,'money',x.name+' pulled its sponsorship: '+x.text.toLowerCase()+' was the deal.');P.image=clamp(P.image-0.3,5,100);return false;}
     x.weeks--;if(x.weeks<=0){$L.news(S,'money','The '+x.name+' sponsorship ran its course.');return false;}
     return true;
   });

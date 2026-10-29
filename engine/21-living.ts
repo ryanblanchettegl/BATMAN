@@ -78,7 +78,7 @@ export function feudPayMult(S,f){
 /* how much a beat adds: freshness, one-sidedness, split attention and real heat change it; a beat costs freshness */
 export function feudHeatRoom(S,f,amt){
   feudPlan(S,f);
-  if(f.tww===S.week&&f.twR!==S.week){f.twR=S.week;f.fresh=Math.min(100,f.fresh+30);}   // a twist gives the story room again
+  if(f.tww===S.week&&f.twR!==S.week){f.twR=S.week;f.fresh=Math.min(100,f.fresh+(($L.treeHas&&$L.treeHas(S,'cr_third'))?45:30));}   // a twist gives the story room again
   if(amt<=0)return {amt:amt,cap:100};
   var x=0.3+0.7*f.fresh/100;
   if((f.matches||0)>=3&&Math.min(f.aw||0,f.bw||0)===0)x*=0.75;   // the crowd needs doubt

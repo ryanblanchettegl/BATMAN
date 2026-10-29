@@ -104,6 +104,7 @@ export function relBump(S,a,b,d,mem?){
 /** A wrestler remembers something you did. v moves where you stand with them (-100..100), and the notification bar says so. */
 export function youRemember(S,w,k,text,v){
   if(!w||S.cal)return;
+  if(v>0&&$L.treeHas&&$L.treeHas(S,'lr_hard'))v=Math.round(v*0.8*10)/10;   // Hard but fair: the room warms more slowly
   var Y=S.rmY||(S.rmY={}),e=Y[w.id]||(Y[w.id]={v:0,mem:[]});
   e.v=clamp(e.v+v,-100,100);e.mem.unshift({w:S.week,k:k,t:text,v:v});if(e.mem.length>$L.REL_MEM)e.mem.length=$L.REL_MEM;
   if(w.promo===S.player)$L.note(S,w.name+' will remember that',text,v>0?'good':(v<0?'bad':''));
