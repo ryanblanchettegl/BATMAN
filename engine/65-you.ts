@@ -42,8 +42,8 @@ export function gainXp(S,n){
 }
 export function initYou(S,opts){
   var d=S.custom&&S.custom.id===S.player?S.custom:$L.DB.promotions.filter(function(p){return p.id===S.player;})[0],o=d.owner||{name:'The owner',style:'stars',roots:'tradition',pledge:'pay'};
-  S.booker={name:String(opts.name||'').trim().slice(0,24)||'The Booker',xp:0,lvl:1,pts:0,sk:{creative:0,talk:0,eye:0,motivator:0,clout:0}};
-  if(opts.booker){S.booker.xp=opts.booker.xp;S.booker.lvl=opts.booker.lvl;S.booker.pts=opts.booker.pts;Object.keys(S.booker.sk).forEach(function(k){S.booker.sk[k]=opts.booker.sk[k]||0;});}
+  S.booker={name:String(opts.name||'').trim().slice(0,24)||'The Booker',xp:0,lvl:1,pts:0,sk:{creative:0,talk:0,eye:0,motivator:0,clout:0},tree:{}};
+  if(opts.booker){S.booker.xp=opts.booker.xp;S.booker.lvl=opts.booker.lvl;S.booker.pts=opts.booker.pts;Object.keys(S.booker.sk).forEach(function(k){S.booker.sk[k]=opts.booker.sk[k]||0;});S.booker.tree=JSON.parse(JSON.stringify(opts.booker.tree||{}));}
   S.owner={name:o.name,trust:55,me:false,style:o.style,roots:o.roots,pledge:o.pledge,lobby:{},asked:0,creedWeek:-99,wage0:wagesWeek(S,S.promos[S.player])};
   S.creedScore=60;S.bp=0;S.stats.calls=0;
   if(d.mine){S.owner.me=true;S.owner.name=S.booker.name;S.owner.creedWeek=1;S.mode='owner';}

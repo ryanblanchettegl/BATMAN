@@ -20,13 +20,7 @@ function You() {
       : <p>{o.name}{'’'}s trust <Meter v={o.trust} kind={o.trust < 25 ? 'hot' : 'cool'} /> <span class="num">{Math.round(o.trust)}</span>{o.trust < 20 ? <> <span class="bad">Your job is in danger.</span></> : null}<br />
         <span class="muted">House style: {style.n}. {o.name} wants {style.likes}.</span></p>}
     {Y ? <p data-t="career-year">Goals for the year <b class={Y.met === 3 ? 'good' : (Y.met <= 1 ? 'bad' : undefined)}>{Y.met} of 3</b> <span class="muted">on course</span> <Btn kind="sm" t="career-goals" onClick={() => openModal({ kind: 'ownyear' })}>Goals</Btn></p> : null}
-    <ul class="list sklist">{Object.keys(E.SKILLS).map(k => {
-      const sk = E.SKILLS[k], lv = b.sk[k] || 0;
-      return <li>
-        <span title={sk.d}><b>{sk.n}</b> <span class="meter au skp" role="img" aria-label={lv + ' of ' + sk.max}>{Array.from({ length: lv }, (_, k) => <s key={k} />)}<i>{Array.from({ length: Math.max(0, sk.max - lv) }, (_, k) => <s key={k} />)}</i></span></span>
-        {b.pts > 0 && lv < sk.max && <Btn kind="sm" t="skill" d={{ k }} label={'Add a point to ' + sk.n} onClick={() => act(() => E.spendPoint(S, k))}>+1</Btn>}
-      </li>;
-    })}</ul>
+    <p data-t="career-tree">Skill tree: <b>{(E as any).treeInfo(S).owned}</b> skills {b.pts ? <span class="mark">{b.pts} {plural(b.pts, 'point')} to spend</span> : null} <Btn kind={b.pts ? undefined : 'sm'} t="tree-open" onClick={() => openModal({ kind: 'tree' })}>Skill tree</Btn></p>
   </Win>;
 }
 
@@ -111,5 +105,24 @@ export function DirStyleWindow(p: { m: any }) {
     <p class="muted">How trouble reaches your desk. It is a taste, not difficulty.{S.iron && S.week > 1 ? ' In iron man it is set for the whole game.' : cost ? ' Changing it now costs a little of the owner\u2019s trust.' : ''}</p>
     <ul class="list">{Object.keys(T).map(id => <li key={id} data-t="dir-opt" data-v={id}><span><b>{T[id].n}</b><br /><span class="muted">{T[id].d}</span></span>
       {id === cur ? <span class="good">Now</span> : <Btn kind="sm" t="dir-pick" d={{ v: id }} disabled={!!(S.iron && S.week > 1)} onClick={() => act(() => { (E as any).dirSetStyle(S, id); })}>Pick</Btn>}</li>)}</ul>
+  </Window>;
+}
+
+/** The booker's skill tree: four branches in tiers; a tier opens as you spend in its branch (engine/65-youtree.ts). */
+const KIND: Record<string, string> = { bonus: 'Bonus', action: 'New action', trade: 'Trade-off' };
+export function TreeWindow(p: { m: any }) {
+  const S = G.S, T = (E as any).treeInfo(S);
+  return <Window title="Skill tree" wide ok="Back">
+    <p class="muted">{T.pts ? T.pts + ' ' + plural(T.pts, 'point') + ' to spend. ' : 'No points to spend; you get one each level. '}Spend in a branch to open its next tier. {T.owned} {plural(T.owned, 'skill')} yours so far.</p>
+    <div class="treecols" data-t="tree">{T.branches.map((b: any) => <div class="treecol" key={b.id} data-t="tree-branch" data-v={b.id}>
+      <h3>{b.n}</h3><p class="muted one">{b.d}</p>
+      {b.tiers.map((t: any) => <div class={'treetier' + (t.open ? '' : ' locked')} key={t.t}>
+        {!t.open ? <p class="muted one">Opens at {t.need} spent here</p> : null}
+        {t.nodes.map((n: any) => <div class={'treenode' + (n.has ? ' has' : '')} key={n.id} data-t="tree-node" data-v={n.id}>
+          <span><b>{n.n}</b> <span class="muted">{KIND[n.k]}{n.c > 1 ? ', ' + n.c + ' points' : ''}</span><br /><span class="small">{n.d}</span></span>
+          {n.has ? <span class="good">Yours</span> : <Btn kind="sm" t="tree-buy" d={{ id: n.id }} disabled={!n.can} onClick={() => act(() => { (E as any).treeSpend(S, n.id); })}>Take</Btn>}
+        </div>)}
+      </div>)}
+    </div>)}</div>
   </Window>;
 }

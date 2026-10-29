@@ -534,3 +534,12 @@ svg.rangebar{width:9em;height:.8em;vertical-align:middle;margin:0 .4em}
 .deskpage{grid-template-rows:minmax(0,1.27fr) minmax(0,1fr);grid-template-areas:"road road tasks" "fire next asst"}
 .deskpage .asstwin .bd p{margin:0;line-height:1.18}
 .crpage{grid-template-areas:"you rep saga" "word word troph"}
+
+/* the booker's skill tree (Career, Skill tree): four branches side by side, tiers as index cards */
+.treecols{display:grid;grid-template-columns:repeat(4,1fr);gap:.8em;max-height:70vh;overflow-y:auto}
+.treecol h3{margin:.1em 0}
+.treetier{border-top:1px dashed rgba(0,0,0,.25);padding:.3em 0}
+.treetier.locked{opacity:.55}
+.treenode{display:flex;justify-content:space-between;align-items:flex-start;gap:.4em;padding:.25em .3em;margin:.2em 0;background:rgba(255,255,255,.55);border-radius:3px}
+.treenode.has{background:rgba(120,190,120,.35)}
+.treenode .small{font-size:.85em}

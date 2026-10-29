@@ -62,6 +62,7 @@ node test-audience.js                               # audience share: six groups
 node test-staff.js                                  # staff made and moved, a title for one show, the overall rating
 node test-progress.js                               # progression: levels, points, what doing it teaches, age, and what talent costs
 node test-gimmicks.js                               # gimmicks: chosen from the character's words, what they shine in, hot and flat pairings
+node test-tree.js                                   # the booker's skill tree: four branches, tiers that open as you spend, the whole tree fillable, the old caps kept
 node test-director.js                               # the Director's tension reading: 0 to 100, eight weeks kept, it moves with the open matters, and reading it changes nothing
 node test-scenes.js                                 # scene hooks, and Create a Player files: checked, kept in a world, carried into a game, written out
 node tools/state-types.js                           # rewrite engine/types.ts, the types of the game state, from six real games (build first)

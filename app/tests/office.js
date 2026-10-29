@@ -37,7 +37,7 @@ async function run(mode) {
   /* everything else the desk keeps is in one pop-up */
   const moreTab = async id => { if (!(await page.$('[data-t="more-tab"]'))) { await page.click('[data-t="desk-more"]'); await page.waitForSelector('[data-t="more-tab"]'); } await page.click('[data-t="more-tab"][data-v="' + id + '"]'); };
   await page.click('[data-t="desk-more"]'); await page.waitForSelector('.win');
-  ok((await page.$$eval('[data-t="more-tab"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'This week|Around the world|Promises|Worth knowing|Clocks|News|Answered', 'The week in full has seven tabs: ' + (await page.$$eval('[data-t="more-tab"]', L => L.map(e => e.innerText.trim()).join('|'))));
+  ok((await page.$$eval('[data-t="more-tab"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'This week|Around the world|Promises|Worth knowing|Clocks|News|Answered|Also this week', 'The week in full has eight tabs: ' + (await page.$$eval('[data-t="more-tab"]', L => L.map(e => e.innerText.trim()).join('|'))));
   ok(await count('.win [data-t="book-show"]') === 1, 'This week lists the shows, with one to book');
   await moreTab('news'); ok(await count('.win .onews li') >= 1, 'office news has a memo');
   await step('the week in full', 'week');
@@ -133,12 +133,14 @@ async function run(mode) {
   await page.click('[data-t="career-legacy"]'); await page.waitForTimeout(150);
   ok(/points/.test(await txt('.scrim')) && /The career/i.test(await txt('.scrim')), 'The whole story opens the legacy');
   await page.keyboard.press('Escape'); await page.waitForTimeout(100);
-  ok(await count('[data-t="skill"]') === 0, 'no skill buttons without a point');
+  ok(await count('[data-t="tree-open"]') === 1, 'Career has the Skill tree button');
   await step('career', 'career');
-  const key = await state(page, S => { S.booker.pts = 1; return Object.keys(window.GP.SKILLS)[0]; }); await redraw(page);
-  const before = await state(page, (S, k) => S.booker.sk[k], key);
-  await page.click('[data-t="skill"][data-k="' + key + '"]');
-  ok(await state(page, (S, k) => S.booker.sk[k], key) === before + 1 && await state(page, S => S.booker.pts) === 0 && await count('[data-t="skill"]') === 0, 'one point buys one skill level, then the buttons go');
+  await state(page, S => { S.booker.pts = 1; }); await redraw(page);
+  await page.click('[data-t="tree-open"]'); await page.waitForSelector('[data-t="tree"]');
+  ok(await count('[data-t="tree-branch"]') === 4, 'the skill tree opens with four branches');
+  await page.click('[data-t="tree-buy"][data-id="cr_pen"]'); await page.waitForTimeout(150);
+  ok(await state(page, S => S.booker.sk.creative) === 1 && await state(page, S => S.booker.pts) === 0 && await count('[data-t="tree-node"][data-v="cr_pen"] .good') === 1, 'one point takes one skill from the tree, and it shows as yours');
+  await page.keyboard.press('Escape'); await page.waitForTimeout(100);
   await step('skill spent');
 
   /* ---- close week 1 through the real button; the week-closed window follows ---- */

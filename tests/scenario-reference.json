@@ -1,7 +1,7 @@
 {
  "rescue": {
-  "start": "7ad469505376354149bac6cdc6e91e73",
-  "end": "9c5e4ee7926fe1dbfebebf9fa873ba63",
+  "start": "9f0df4fddf58be1c5cd5ccf6799e6603",
+  "end": "2827219b80f5addb4fe900c816e2fc99",
   "week": 27,
   "res": {
    "ok": false,
@@ -12,8 +12,8 @@
   }
  },
  "champion": {
-  "start": "e7260b6f96232c935ee10c94ad4a0bf8",
-  "end": "717867f6b17211caab4931aeb1ad23bc",
+  "start": "8b0ac89fcf72bc05f652bc465e03f1ec",
+  "end": "4a6f89ea4129e6575fe21f4277fe5fe9",
   "week": 40,
   "res": {
    "ok": false,
@@ -24,8 +24,8 @@
   }
  },
  "war": {
-  "start": "e5b68cf8ea38091eb5d87c06a48a4494",
-  "end": "3a971a43e0d35000cd34ef7a19aae44b",
+  "start": "e0766b766f4748f75eaa5b44a0204eee",
+  "end": "21de442237db1bcb2fccdabef8669061",
   "week": 27,
   "res": {
    "ok": false,

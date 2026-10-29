@@ -3,7 +3,7 @@
   // engine/_gen/legacy.js
   var L = function(root) {
     "use strict";
-    var DB2, E2, CAL02, dbOf2, MONTHS2, STYLE2, STYLE_NAME2, MT2, STIP2, FIN2, LEN2, starQ2, starG2, starMeets2, PRODF2, PRODN2, RISKN2, RISK_STIP2, RISK_INJ2, TIXN2, TIX_P2, TIX_D2, ADVN2, ADV_H2, ADV_C2, SLOTN2, SLOT_V2, SLOT_MAX2, SLOT_REQ2, SLOT_RISK2, CAPS2, ACH2, FINISH2, ENTR2, clamp2, hash2, h012, rnd2, ri2, pick2, chance2, avg2, flat2, r12, names2, vsLabel2, cal2, PAY_TOP2, payTop2, payRatio2, wageFor2, workRate2, isDev2, rosterOf2, news2, award2, addWrestler2, buildPromo2, formTeam2, teamOf2, dissolveTeam2, partnerOf2, showMult2, msc2, viewersK2, demand2, ticket2, buysK2, capFor2, merchWeek2, wagesWeek2, baselineIncome2, calibrate2, calibrateShows2, calibrateCosts2, restAll2, expected2, activeFeuds2, feudOf2, feudsFor2, inFeud2, feudLabel2, feudStage2, startFeud2, heatUp2, turn2, divOk2, holdLvl2, titleById2, titleFull2, rkey2, titleFits2, eligible2, showTitles2, gimmickFor2, autoBook2, validate2, MODEL_CROWD2, ANGDONE2, EFX2, MQX2, CRX2, FINX2, POST2, SHOWX2, WEEKX2, NEWX2, ANGX2, EVMAKE2, EVR2, QEND2, PREX2, TASKX2, workOf2, chem2, addOvr2, fill2, GR2, sayPick2, expand2, say2, STIPLINE2, CHEAP2, REACT2, pop2, venueFor2, nth2, weeksAgo2, memoryLines2, callMatch2, winOdds2, doMatch2, settleFeud2, vacateFor2, afterBell2, promoScore2, angle2, BEATS2, beatTag2, BEAT_WHO2, ACTN2, feudAct2, nextBigName2, FEUDLETS2, genAngle2, LIVE_FIZZ2, LIVE_FIZZW2, LIVE_SHELF2, LIVE_FLAT2, isBigWeek2, nextBigFrom2, feudPlan2, feudSeg2, PHASE_N2, feudPhase2, feudActAt2, feudActCal2, rivalRipe2, feudDue2, closeChapter2, feudLead2, feudPayMult2, feudHeatRoom2, feudFizzle2, feudFile2, feudEmber2, emberOf2, feudHomeAt2, STORY_COST2, SEASON_N2, bigShort2, STORY_STAKES2, storyTurner2, STIP_NEED2, stipNeed2, stipFitOf2, dirtSheet2, showPool2, cardHype2, hypeParts2, showStart2, showStep2, POP_EDGE2, FIRST_NIGHT2, firstNight2, SEG_OUT2, SEG_CROWD2, segSentences2, segPeople2, stageSeg2, runShow2, showEnd2, dropQuest2, matchQuests2, keptPromise2, LIVE_MAX_TV2, LIVE_MAX_BIG2, LIVE_HM_CD2, LIVEK2, LIVE_ORDER2, LIVE_POST2, liveMatch2, liveLater2, livePut2, liveIntro2, CHAOS_SAFE2, afterBellText2, liveMax2, liveMake2, liveRoom2, livePre2, livePost2, liveFinish2, livePlay2, FACE_CD2, OWNER_CD2, FACE_UP2, FACE_DOWN2, faceOf2, faceHere2, faceOn2, faceHype2, faceWarn2, topNames2, NET_CD2, netClock2, BOTCH_CD2, AUD_CD2, OT_CD2, AUD_CR2, ZONE_WORD2, ringOk2, lcdOk2, lcdSet2, botchRead2, lenUp2, lenDown2, nightNote2, nightWriters2, NIGHT_CD2, NIGHT_OUT2, NIGHT_FURY2, nightFree2, nightMark2, nightMatter2, nightWin2, weekShows2, startWeek2, leaveCompany2, joinCompany2, settle2, hasQuest2, money2, pushEv2, EV2, genEvents2, renewAsk2, EV_TYPES2, evTy2, FLAG_WORDS2, MODEL_YEAR2, evList2, evName2, evRule2, EV_SPN2, EV_SPC2, EV_SPH2, EV_HMAX2, evSpendCost2, evAfterDark2, flagWeekFrom2, SP_TIER2, mkOffer2, refreshOffers2, sponsorBroken2, showKey2, onCard2, replaceOn2, gramPick2, gramCase2, gram2, GR_SHEET2, GR_WEB2, GR_CHAT2, GR_PROMO2, promoSpeech2, MOVES2, GR_SHAPE2, matchShape2, GR_FEUD2, GR_POD2, P2D62, odds2, mkCheck2, rollCheck2, rollText2, moraleMod2, trustMod2, SKILLMOD2, skillMods2, addChecks2, GIMS2, GIMBY2, gimFit2, assignGim2, initGimmicks2, TRAITS2, has2, earn2, bump2, STABLEN2, stableOf2, endStable2, leaveStable2, stableMates2, micOf2, hasMouthpiece2, STYLES2, ROOTS2, PLEDGE2, SKILLS2, cap12, xpNeed2, gainXp2, initYou2, talkDiscount2, pledgeRenew2, moraleTarget2, bpGrant2, grantBP2, matchSetup2, cardCost2, spendBP2, ownerQuest2, directiveDone2, recalibrate2, YEAR_GROW2, YEAR_MIN_SHOWS2, yearNew2, yearInfo2, REL_MEM2, REL_ON2, REL_STRONG2, relBlank2, relState2, relMigrate2, rmAll2, relIdx2, relGet2, relEntry2, bondOf2, respOf2, jealOf2, relOf2, tieOf2, note2, relMine2, relSet2, relBump2, youRemember2, youLean2, relChem2, bondWord2, rankFor2, tournActive2, koPairs2, tournAdvance2, tournPair2, syncTitles2, yearEnd2, powerHeld2, powerScore2, CAMP_CAP2, CAMP_C2, CAMPN2, FOCUS2, campCost2, ovrCap2, phaseOf2, PHASE2, careerLine2, retire2, birthday2, rookieClass2, HIDDEN2, margin2, rng2, ROLE2, ZONES2, INTN2, MEDN2, MED_C2, MED_R2, MED_L2, MED_I2, EXN2, PUSHN2, medCost2, zonesOf2, zoneFloor2, maxZone2, fictional2, assignRoles2, autoMentor2, egoLines2, egoSum2, roomMood2, egoTarget2, stressAdd2, breakdown2, hurtRisk2, hurtZone2, OWNZ2, OPPZ2, bsInit2, HOUSE2, hasRule2, houseSlots2, houseHeat2, ruleMorale2, HOUSE_VIEW2, houseView2, apMax2, PLACES2, ownerMod2, activeRoster2, apActs2, CASES2, mkCase2, courtApply2, CLOCKS2, starPick2, tickClocks2, mAvg2, isMulti2, isGim2, tenureW2, MGC2, mainG2, mNote2, MODELS2, modelOf2, mixOf2, fitFor2, riskRange2, spMax2, modelJoin2, fitMed2, fitShape2, MOOD_WORDS2, STRESS_WORDS2, YOU_WORDS2, wordOf2, dosTies2, PPL_ROOMS2, PPL_MAX2, pplMatter2, pplFeudOf2, pplOther2, pplWorst2, peopleNow2, pplRaise2, pplSide2, pplTxt2, PPL_ACT2, DIFF2, DPART_N2, dif2, FED_SIZE2, FED_REGION2, clean2, mkFedDef2, draftRoster2, mile2, ystat2, BGS2, EMPH2, createStats2, TOPIC2, DELIV2, PKIND2, promoParts2, promoCheck2, planPromo2, promoWords2, xf2, isGuest2, relMod2, TEMPER2, temperOf2, temperKey2, temperMod2, agreeTradeMod2, gapMod2, startXf2, endXf2, tradeVal2, FANS2, fanFor2, netPosts2, SAGA2, sagaChapter2, newSaga2, sagaCheck2, sagaAdvance2, chronicle2, stipUseList2, stipWorn2, REFEREES2, refFor2, CATCHES2, catchFresh2, catchBoost2, barCity2, GUESTS2, HOF_SPEECH2, atHome2, homeWord2, msAward2, gimFresh2, NOTES2, noteMins2, noteSkill2, HOWS2, UNCLEAN2, howOf2, sourMood2, masked2, STIPFIT2, TFIN2, teamSides2, teamFin2, SGRID2, styleKey2, styleBlend2, flagshipWeek2, lpFeud2, presMove2, SROLE_N2, SROLE_D2, srFit2, stableRoles2, stableWeak22, memBetray2, memOf2, S_name2, MOM2, AFTER2, momTop2, momMine2, momLater2, momLose2, KEPT_MAX2, LIFE2, GR_SIFT2, SIFT_N2, SROLES2, staffOf2, SROLE_OTHER2, agentOf2, agentQ2, agentRisk2, SCHEMA_VERSION2, STYLE_KEY2, STYLE_OUT2, RMAP2, ROLES2, PUSH2, REL_TYPES2, ID_RE2, SCHEMAS2, lev2, nearest2, safeRel2, econ2, buildDB2, netsOf2, FALLBACK_NAMES2, slug2, asstInit2, asstLvl2, ASTN2, asstPickLen2, asstBook2, ED_PUSH_N2, ED_STYLE_N2, ED_ROLE_N2, ED_REL_N2, ED_RATINGS2, ED_TABLES2, ED_TABLE_N2, ED_TAB2, edRnd2, edPick2, edShape2, edId2, edFind2, edHome2, edIsWrestler2, ED_LADDER2, edRatings2, edNames2, ED_LISTS2, ED_QUICK2, histWeek2, histApply2, LOOK_ATTIRES2, LOOK_SLOTS2, LOOK_PARTS2, LOOK_KICK2, LOOK_POS2, lkStr2, lkId2, lkNum2, lkPrune2, lookClean2, lkWorker2, lookFin2, FIN_KO2, FIN_PAY2, finProt2, BTRAIT2, repMetric2, BNEED2, RECK2, ccCost2, ccRefusal2, TRVN2, TRV_C2, TRV_R2, travelCost2, holdPeer2, LINEK2, lineHeat2, lineCurve2, linesWeek2, tapeValue2, tapeWeekly2, showCity2, diehard2, sceneOk2, bgOk2, HOOKS2, MAKE_SHOWS2, MAKE_PER_SHOW2, MAKE_WAIT2, MAKE_BELT_GAP2, MAKE_SHOW_GAP2, MAKE_BOOM2, MAKE_CROWD2, WORLD_BELT_GAP2, WORLD_SHOW_GAP2, BELT_NEED2, MAKE_DAYS2, MAKE_SHOW_WORDS2, MAKE_TITLE_WORDS2, MAKE_SIZE2, makeWrestlers2, makeSizeWord2, makeShowIncome2, makeCleanName2, mkCount2, mkOf2, mkLog2, makeShowCost2, showOccasions2, MAKE_SHOW_NONE2, makeShowWhy2, makeShowCheck2, addShow2, removeShow2, makeTitleMax2, makeTitleCost2, makeTitleLevels2, beltOccasions2, MAKE_BELT_NONE2, makeBeltWait2, beltOccasion2, makeTitleWhy2, addTitle2, titleBusy2, makePick2, rivalNew2, rivalGrow2, VSTYLE2, mkVoices2, deskWage2, voiceOf2, voiceChem2, deskQ2, deskHeat2, deskNames2, campers2, trainerQ2, schoolCap2, schoolFee2, schoolRun2, goalTier2, topTitleFor2, GOALK2, newGoal2, goalText2, LOANT2, INVWANT2, financeCost2, LICK2, licStars2, DEPT2, deptSpent2, INDIES2, INDIE_NEW2, INDIE_SIZE2, INDIE_NIGHT2, indieMeta2, indiesOn2, indieOf2, NC_A2, NC_B2, NC_SHOW2, NC_TITLE2, newCompany2, NIGHT_ALT2, nightOf2, regionOf2, nightRivals2, nightOpen2, AIR_NETS2, AIR_TIERN2, AIR_WORD2, AIR_YEAR2, AIR_DEAL_MIN2, AIR_DEAL_SPAN2, AIR_GAP2, AIR_TIER_V2, AIR_TIER_REACH2, airLevelOf2, airWord2, airStep2, airRec2, airNets2, airPickNet2, airTier02, airYears2, airDealWeeks2, airOf2, airPF2, airRate2, airProd2, airReach2, airNight2, airStart2, airPay2, airStay2, airSign2, airFits2, airOffer2, airAsk2, airRival2, airDemote2, airInfo2, BELT_PLATES2, BELT_METALS2, BELT_STRAPS2, BELT_GEMS2, BELT_SIDES2, BELT_SIDE_SHAPES2, BELT_TRIMS2, beltHas2, beltWordClean2, beltWordOf2, beltFill2, starsOf2, boardTouch2, CRITIC2, criticScore2, criticRank2, speechFor2, LOGO_SHAPES2, LOGO_STYLES2, LOGO_LAYS2, LOGO_FINS2, LOGO_FONTS2, LOGO_EXTRAS2, LOGO_COLS2, LOGO_MODEL2, logoHas2, logoLetters2, logoTag2, logoLum2, logoDist2, logoBehind2, logoReads2, logoFix2, logoFill2, logoKey2, NET_TASTE2, NET_KEYS2, netTaste2, netTarget2, netClash2, netPleased2, netCardClash2, REGIONS2, TASTEN2, homeReg2, tourCost2, tourBoost2, tasteVal2, tasteFit2, tasteDraw2, retireCompany2, topTitle2, STRM_PRICE2, STRM_OPEN2, STRM_RUN2, streamOn2, streamCap2, streamOpenCost2, streamRunCost2, CANCEL_WARN2, HOUSE_DRAW2, BACK_RUN2, BACK_CS2, showOff2, MAP_W2, MAP_H2, MAP_ABC2, MAPS2, CITY_AT2, TOWN_AT2, VENUE_RE2, BLD_TIER2, BLD_WORDS2, cityBuildings2, venueName2, cityOfVenue2, placeOf2, mapById2, mapXY2, mapHas2, mapArea2, HOME_KM2, homeKm2, homeNear2, homeWeight2, homeHype2, homeHypeAt2, geoDist2, roadRoute2, roadCity2, soldOutLast2, roadCap2, MKT_WORDS2, mktBase2, mktKnow2, coldNight2, weatherMult2, mktMult2, mktWord2, roadMktNow2, saleSpan2, saleFrac2, stopDraw2, stopSales2, roadSoldNow2, roadAhead2, MAP_FIRST2, roadMap2, roadShape2, CONT_AT2, roadNearest2, SHAPES2, JOB_TERMS2, jobCheck2, isoParts2, chalCheck2, SCN_BUILT2, SCN_OPS2, scnSign2, SCN_WIN2, SCN2, scnFill2, scnLoad2, scnJudge2, scnCut2, SH_HOT2, SH_SLOW2, shIds2, shFacts2, shOpener2, shTopLvl2, SH_MT2, shPrev2, shBreak2, shapeAuto2, SEGLEN2, SEGLENN2, SEGK2, segLen2, segMins2, segSlots2, segList2, segRead2, segPool2, segTitleOf2, segChoices2, segWhy2, segMean2, segLook2, segLabel2, runSeg2, segBooked2, SEGFX2, SEGHEAT2, SEGBOND2, SEGK02, segoClean2, segkClean2, segkSync2, STIP_SETS2, STIP_BASES2, STIP02, STIPNOTE02, STIPLINE02, STIPNEED02, stipBase2, stipClean2, stipSync2, edStipPut2, LF2, LF_PRESS2, crowdWord2, liveFeed2, NET_FEED_MAX2, NET_SHEETS2, netPickH2, netHandle2, netLikes2, netPost2, netStarPost2, NET_WIN_F2, NET_WIN_H2, NET_NEW2, NET_LOSE2, NET_RIVAL2, NET_TURN2, netTurn2, netMentions2, netRumours2, netBackstage2, netThrowback2, netMoment2, netSheet2, taskOpen2, ADV_DAYS2, showDay2, wasNow2, reqOf2, faceCandidates2, CLAUSE2, clausesWanted2, datesFull2, SHOW_LEN2, TIME_OVER2, TIME_FREE2, TIME_LIGHT2, PLAN_MINS2, TOP_GOOD2, TOP_BAD2, MT_OVER2, STIP_SET2, showMins2, bellMins2, brMins2, matchSlot2, hasPlan2, showClock2, OPENS2, openKind2, showTimes2, fitShow2, showFill2, PLOT_PUSH_CD2, PLOT_TAPE2, PLOT_POS2, PLOT2, plotTeams2, plotPushable2, plotTapeOn2, SHOW_WORDS2, GRADES2, gradeIdx2, gradeG2, gradeA2, gradeMeets2, CROWD_PTS2, crowdScoreD2, crowdScore2, repCS2, verdictBand2, cgFix2, showWord2, capW2, showVerdict2, ARCH_KEEP2, ARCH_YEARS2, ARCH_LOG2, FA_CAP2, ROSTER_CAP2, TITLE_KEEP2, archYear2, arcHeels2, arcFaces2, ARCS2, arcFill2, arcEnd2, arcWord2, arcSplit2, AUD2, AUD_MODEL2, AUD_DRIFT2, audInit2, audReach2, audLean2, audTarget2, audBase2, audTotal2, audOffer2, CT_BIG2, CT_INDIE2, CT_ROLL2, ctWeekly2, ctPolicy2, ctFee2, ctAssign2, ctWeek2, payWeek2, DEBUT2, dirInit2, dirParts2, dirRead2, dirTrend2, DIR_TAG2, dirTag2, DIR_STYLES2, dirStyle2, dirRhythm2, dirBudget2, dirCalls2, dirGate2, dirOpen2, dirClose2, KNOW02, knowMake2, gasLimit2, fogSkill2, readP2, reads2, agentName2, matchRead2, fogLook2, EAR_BAD2, EAR_GOOD2, earLine2, cardFlags2, GFX2, GIM_WORDS2, gimFromWords2, gimBestFit2, gimSmart2, gfx2, gimStip2, gimPair2, KF_WORDS2, kfWord2, kfInit2, kfFind2, kfLeakP2, MID_MAX2, midStory2, overallRaw2, overallOf2, BP_CARRY2, AP_CARRY2, bpPerShow2, CLOG_MAX2, CLOG_SKIP2, clog2, pmMoney2, pmReview2, P0month2, PRESS_FIRST2, PRESS_LAST2, PRESS_BEAT2, PRESS_ACT2, pressInit2, pressWord2, pressSources2, pressWho2, PROG_ATTR2, PROG_BY2, DEV2, STYLE_PRI2, GIM_PRI2, progNeed2, progAgeX2, progInit2, progAll2, progCap2, progCost2, progGain2, progUse2, progSpend2, progAuto2, PROG_HC2, progShow2, rgWhy2, rgRow2, progLose2, regWeek2, RW_MOVES2, RW_LINES2, rwMoves2, brSurprisePool2, brFee2, STAFF_TAG2, STAFF_LVL2, staffTag2, staffVoice2, staffUnvoice2, toStaffOk2, SUG_FLAT2, VQ_FEEL2, VQ_SOUND2, VQ_CROWD2, venueQuirks2, DISASTER2, WW_KEEP2, wwCompany2, wwFile2, verdictWord2, WR_STYLE2, GR_WROOM2, WR_FIRST2, WR_LAST2, wrInit2, wrName2, wrPitch2, POD_EPS2, POD_MAX2, POD_SEGS2, podFirst2, podPlain2, podShowName2, podInit2, podTone2, podPickSide2, podWrite2;
+    var DB2, E2, CAL02, dbOf2, MONTHS2, STYLE2, STYLE_NAME2, MT2, STIP2, FIN2, LEN2, starQ2, starG2, starMeets2, PRODF2, PRODN2, RISKN2, RISK_STIP2, RISK_INJ2, TIXN2, TIX_P2, TIX_D2, ADVN2, ADV_H2, ADV_C2, SLOTN2, SLOT_V2, SLOT_MAX2, SLOT_REQ2, SLOT_RISK2, CAPS2, ACH2, FINISH2, ENTR2, clamp2, hash2, h012, rnd2, ri2, pick2, chance2, avg2, flat2, r12, names2, vsLabel2, cal2, PAY_TOP2, payTop2, payRatio2, wageFor2, workRate2, isDev2, rosterOf2, news2, award2, addWrestler2, buildPromo2, formTeam2, teamOf2, dissolveTeam2, partnerOf2, showMult2, msc2, viewersK2, demand2, ticket2, buysK2, capFor2, merchWeek2, wagesWeek2, baselineIncome2, calibrate2, calibrateShows2, calibrateCosts2, restAll2, expected2, activeFeuds2, feudOf2, feudsFor2, inFeud2, feudLabel2, feudStage2, startFeud2, heatUp2, turn2, divOk2, holdLvl2, titleById2, titleFull2, rkey2, titleFits2, eligible2, showTitles2, gimmickFor2, autoBook2, validate2, MODEL_CROWD2, ANGDONE2, EFX2, MQX2, CRX2, FINX2, POST2, SHOWX2, WEEKX2, NEWX2, ANGX2, EVMAKE2, EVR2, QEND2, PREX2, TASKX2, workOf2, chem2, addOvr2, fill2, GR2, sayPick2, expand2, say2, STIPLINE2, CHEAP2, REACT2, pop2, venueFor2, nth2, weeksAgo2, memoryLines2, callMatch2, winOdds2, doMatch2, settleFeud2, vacateFor2, afterBell2, promoScore2, angle2, BEATS2, beatTag2, BEAT_WHO2, ACTN2, feudAct2, nextBigName2, FEUDLETS2, genAngle2, LIVE_FIZZ2, LIVE_FIZZW2, LIVE_SHELF2, LIVE_FLAT2, isBigWeek2, nextBigFrom2, feudPlan2, feudSeg2, PHASE_N2, feudPhase2, feudActAt2, feudActCal2, rivalRipe2, feudDue2, closeChapter2, feudLead2, feudPayMult2, feudHeatRoom2, feudFizzle2, feudFile2, feudEmber2, emberOf2, feudHomeAt2, STORY_COST2, SEASON_N2, bigShort2, STORY_STAKES2, storyTurner2, STIP_NEED2, stipNeed2, stipFitOf2, dirtSheet2, showPool2, cardHype2, hypeParts2, showStart2, showStep2, POP_EDGE2, FIRST_NIGHT2, firstNight2, SEG_OUT2, SEG_CROWD2, segSentences2, segPeople2, stageSeg2, runShow2, showEnd2, dropQuest2, matchQuests2, keptPromise2, LIVE_MAX_TV2, LIVE_MAX_BIG2, LIVE_HM_CD2, LIVEK2, LIVE_ORDER2, LIVE_POST2, liveMatch2, liveLater2, livePut2, liveIntro2, CHAOS_SAFE2, afterBellText2, liveMax2, liveMake2, liveRoom2, livePre2, livePost2, liveFinish2, livePlay2, FACE_CD2, OWNER_CD2, FACE_UP2, FACE_DOWN2, faceOf2, faceHere2, faceOn2, faceHype2, faceWarn2, topNames2, NET_CD2, netClock2, BOTCH_CD2, AUD_CD2, OT_CD2, AUD_CR2, ZONE_WORD2, ringOk2, lcdOk2, lcdSet2, botchRead2, lenUp2, lenDown2, nightNote2, nightWriters2, NIGHT_CD2, NIGHT_OUT2, NIGHT_FURY2, nightFree2, nightMark2, nightMatter2, nightWin2, weekShows2, startWeek2, leaveCompany2, joinCompany2, settle2, hasQuest2, money2, pushEv2, EV2, genEvents2, renewAsk2, EV_TYPES2, evTy2, FLAG_WORDS2, MODEL_YEAR2, evList2, evName2, evRule2, EV_SPN2, EV_SPC2, EV_SPH2, EV_HMAX2, evSpendCost2, evAfterDark2, flagWeekFrom2, SP_TIER2, mkOffer2, refreshOffers2, sponsorBroken2, showKey2, onCard2, replaceOn2, gramPick2, gramCase2, gram2, GR_SHEET2, GR_WEB2, GR_CHAT2, GR_PROMO2, promoSpeech2, MOVES2, GR_SHAPE2, matchShape2, GR_FEUD2, GR_POD2, P2D62, odds2, mkCheck2, rollCheck2, rollText2, moraleMod2, trustMod2, SKILLMOD2, skillMods2, addChecks2, GIMS2, GIMBY2, gimFit2, assignGim2, initGimmicks2, TRAITS2, has2, earn2, bump2, STABLEN2, stableOf2, endStable2, leaveStable2, stableMates2, micOf2, hasMouthpiece2, STYLES2, ROOTS2, PLEDGE2, SKILLS2, cap12, xpNeed2, gainXp2, initYou2, talkDiscount2, pledgeRenew2, moraleTarget2, bpGrant2, grantBP2, matchSetup2, cardCost2, spendBP2, ownerQuest2, directiveDone2, recalibrate2, TREE_CAP2, TREE_TIER2, treeNeed2, TREE2, treeNode2, treeSpent2, treeTotal2, treeSync2, treeHas2, YEAR_GROW2, YEAR_MIN_SHOWS2, yearNew2, yearInfo2, REL_MEM2, REL_ON2, REL_STRONG2, relBlank2, relState2, relMigrate2, rmAll2, relIdx2, relGet2, relEntry2, bondOf2, respOf2, jealOf2, relOf2, tieOf2, note2, relMine2, relSet2, relBump2, youRemember2, youLean2, relChem2, bondWord2, rankFor2, tournActive2, koPairs2, tournAdvance2, tournPair2, syncTitles2, yearEnd2, powerHeld2, powerScore2, CAMP_CAP2, CAMP_C2, CAMPN2, FOCUS2, campCost2, ovrCap2, phaseOf2, PHASE2, careerLine2, retire2, birthday2, rookieClass2, HIDDEN2, margin2, rng2, ROLE2, ZONES2, INTN2, MEDN2, MED_C2, MED_R2, MED_L2, MED_I2, EXN2, PUSHN2, medCost2, zonesOf2, zoneFloor2, maxZone2, fictional2, assignRoles2, autoMentor2, egoLines2, egoSum2, roomMood2, egoTarget2, stressAdd2, breakdown2, hurtRisk2, hurtZone2, OWNZ2, OPPZ2, bsInit2, HOUSE2, hasRule2, houseSlots2, houseHeat2, ruleMorale2, HOUSE_VIEW2, houseView2, apMax2, PLACES2, ownerMod2, activeRoster2, apActs2, CASES2, mkCase2, courtApply2, CLOCKS2, starPick2, tickClocks2, mAvg2, isMulti2, isGim2, tenureW2, MGC2, mainG2, mNote2, MODELS2, modelOf2, mixOf2, fitFor2, riskRange2, spMax2, modelJoin2, fitMed2, fitShape2, MOOD_WORDS2, STRESS_WORDS2, YOU_WORDS2, wordOf2, dosTies2, PPL_ROOMS2, PPL_MAX2, pplMatter2, pplFeudOf2, pplOther2, pplWorst2, peopleNow2, pplRaise2, pplSide2, pplTxt2, PPL_ACT2, DIFF2, DPART_N2, dif2, FED_SIZE2, FED_REGION2, clean2, mkFedDef2, draftRoster2, mile2, ystat2, BGS2, EMPH2, createStats2, TOPIC2, DELIV2, PKIND2, promoParts2, promoCheck2, planPromo2, promoWords2, xf2, isGuest2, relMod2, TEMPER2, temperOf2, temperKey2, temperMod2, agreeTradeMod2, gapMod2, startXf2, endXf2, tradeVal2, FANS2, fanFor2, netPosts2, SAGA2, sagaChapter2, newSaga2, sagaCheck2, sagaAdvance2, chronicle2, stipUseList2, stipWorn2, REFEREES2, refFor2, CATCHES2, catchFresh2, catchBoost2, barCity2, GUESTS2, HOF_SPEECH2, atHome2, homeWord2, msAward2, gimFresh2, NOTES2, noteMins2, noteSkill2, HOWS2, UNCLEAN2, howOf2, sourMood2, masked2, STIPFIT2, TFIN2, teamSides2, teamFin2, SGRID2, styleKey2, styleBlend2, flagshipWeek2, lpFeud2, presMove2, SROLE_N2, SROLE_D2, srFit2, stableRoles2, stableWeak22, memBetray2, memOf2, S_name2, MOM2, AFTER2, momTop2, momMine2, momLater2, momLose2, KEPT_MAX2, LIFE2, GR_SIFT2, SIFT_N2, SROLES2, staffOf2, SROLE_OTHER2, agentOf2, agentQ2, agentRisk2, SCHEMA_VERSION2, STYLE_KEY2, STYLE_OUT2, RMAP2, ROLES2, PUSH2, REL_TYPES2, ID_RE2, SCHEMAS2, lev2, nearest2, safeRel2, econ2, buildDB2, netsOf2, FALLBACK_NAMES2, slug2, asstInit2, asstLvl2, ASTN2, asstPickLen2, asstBook2, ED_PUSH_N2, ED_STYLE_N2, ED_ROLE_N2, ED_REL_N2, ED_RATINGS2, ED_TABLES2, ED_TABLE_N2, ED_TAB2, edRnd2, edPick2, edShape2, edId2, edFind2, edHome2, edIsWrestler2, ED_LADDER2, edRatings2, edNames2, ED_LISTS2, ED_QUICK2, histWeek2, histApply2, LOOK_ATTIRES2, LOOK_SLOTS2, LOOK_PARTS2, LOOK_KICK2, LOOK_POS2, lkStr2, lkId2, lkNum2, lkPrune2, lookClean2, lkWorker2, lookFin2, FIN_KO2, FIN_PAY2, finProt2, BTRAIT2, repMetric2, BNEED2, RECK2, ccCost2, ccRefusal2, TRVN2, TRV_C2, TRV_R2, travelCost2, holdPeer2, LINEK2, lineHeat2, lineCurve2, linesWeek2, tapeValue2, tapeWeekly2, showCity2, diehard2, sceneOk2, bgOk2, HOOKS2, MAKE_SHOWS2, MAKE_PER_SHOW2, MAKE_WAIT2, MAKE_BELT_GAP2, MAKE_SHOW_GAP2, MAKE_BOOM2, MAKE_CROWD2, WORLD_BELT_GAP2, WORLD_SHOW_GAP2, BELT_NEED2, MAKE_DAYS2, MAKE_SHOW_WORDS2, MAKE_TITLE_WORDS2, MAKE_SIZE2, makeWrestlers2, makeSizeWord2, makeShowIncome2, makeCleanName2, mkCount2, mkOf2, mkLog2, makeShowCost2, showOccasions2, MAKE_SHOW_NONE2, makeShowWhy2, makeShowCheck2, addShow2, removeShow2, makeTitleMax2, makeTitleCost2, makeTitleLevels2, beltOccasions2, MAKE_BELT_NONE2, makeBeltWait2, beltOccasion2, makeTitleWhy2, addTitle2, titleBusy2, makePick2, rivalNew2, rivalGrow2, VSTYLE2, mkVoices2, deskWage2, voiceOf2, voiceChem2, deskQ2, deskHeat2, deskNames2, campers2, trainerQ2, schoolCap2, schoolFee2, schoolRun2, goalTier2, topTitleFor2, GOALK2, newGoal2, goalText2, LOANT2, INVWANT2, financeCost2, LICK2, licStars2, DEPT2, deptSpent2, INDIES2, INDIE_NEW2, INDIE_SIZE2, INDIE_NIGHT2, indieMeta2, indiesOn2, indieOf2, NC_A2, NC_B2, NC_SHOW2, NC_TITLE2, newCompany2, NIGHT_ALT2, nightOf2, regionOf2, nightRivals2, nightOpen2, AIR_NETS2, AIR_TIERN2, AIR_WORD2, AIR_YEAR2, AIR_DEAL_MIN2, AIR_DEAL_SPAN2, AIR_GAP2, AIR_TIER_V2, AIR_TIER_REACH2, airLevelOf2, airWord2, airStep2, airRec2, airNets2, airPickNet2, airTier02, airYears2, airDealWeeks2, airOf2, airPF2, airRate2, airProd2, airReach2, airNight2, airStart2, airPay2, airStay2, airSign2, airFits2, airOffer2, airAsk2, airRival2, airDemote2, airInfo2, BELT_PLATES2, BELT_METALS2, BELT_STRAPS2, BELT_GEMS2, BELT_SIDES2, BELT_SIDE_SHAPES2, BELT_TRIMS2, beltHas2, beltWordClean2, beltWordOf2, beltFill2, starsOf2, boardTouch2, CRITIC2, criticScore2, criticRank2, speechFor2, LOGO_SHAPES2, LOGO_STYLES2, LOGO_LAYS2, LOGO_FINS2, LOGO_FONTS2, LOGO_EXTRAS2, LOGO_COLS2, LOGO_MODEL2, logoHas2, logoLetters2, logoTag2, logoLum2, logoDist2, logoBehind2, logoReads2, logoFix2, logoFill2, logoKey2, NET_TASTE2, NET_KEYS2, netTaste2, netTarget2, netClash2, netPleased2, netCardClash2, REGIONS2, TASTEN2, homeReg2, tourCost2, tourBoost2, tasteVal2, tasteFit2, tasteDraw2, retireCompany2, topTitle2, STRM_PRICE2, STRM_OPEN2, STRM_RUN2, streamOn2, streamCap2, streamOpenCost2, streamRunCost2, CANCEL_WARN2, HOUSE_DRAW2, BACK_RUN2, BACK_CS2, showOff2, MAP_W2, MAP_H2, MAP_ABC2, MAPS2, CITY_AT2, TOWN_AT2, VENUE_RE2, BLD_TIER2, BLD_WORDS2, cityBuildings2, venueName2, cityOfVenue2, placeOf2, mapById2, mapXY2, mapHas2, mapArea2, HOME_KM2, homeKm2, homeNear2, homeWeight2, homeHype2, homeHypeAt2, geoDist2, roadRoute2, roadCity2, soldOutLast2, roadCap2, MKT_WORDS2, mktBase2, mktKnow2, coldNight2, weatherMult2, mktMult2, mktWord2, roadMktNow2, saleSpan2, saleFrac2, stopDraw2, stopSales2, roadSoldNow2, roadAhead2, MAP_FIRST2, roadMap2, roadShape2, CONT_AT2, roadNearest2, SHAPES2, JOB_TERMS2, jobCheck2, isoParts2, chalCheck2, SCN_BUILT2, SCN_OPS2, scnSign2, SCN_WIN2, SCN2, scnFill2, scnLoad2, scnJudge2, scnCut2, SH_HOT2, SH_SLOW2, shIds2, shFacts2, shOpener2, shTopLvl2, SH_MT2, shPrev2, shBreak2, shapeAuto2, SEGLEN2, SEGLENN2, SEGK2, segLen2, segMins2, segSlots2, segList2, segRead2, segPool2, segTitleOf2, segChoices2, segWhy2, segMean2, segLook2, segLabel2, runSeg2, segBooked2, SEGFX2, SEGHEAT2, SEGBOND2, SEGK02, segoClean2, segkClean2, segkSync2, STIP_SETS2, STIP_BASES2, STIP02, STIPNOTE02, STIPLINE02, STIPNEED02, stipBase2, stipClean2, stipSync2, edStipPut2, LF2, LF_PRESS2, crowdWord2, liveFeed2, NET_FEED_MAX2, NET_SHEETS2, netPickH2, netHandle2, netLikes2, netPost2, netStarPost2, NET_WIN_F2, NET_WIN_H2, NET_NEW2, NET_LOSE2, NET_RIVAL2, NET_TURN2, netTurn2, netMentions2, netRumours2, netBackstage2, netThrowback2, netMoment2, netSheet2, taskOpen2, ADV_DAYS2, showDay2, wasNow2, reqOf2, faceCandidates2, CLAUSE2, clausesWanted2, datesFull2, SHOW_LEN2, TIME_OVER2, TIME_FREE2, TIME_LIGHT2, PLAN_MINS2, TOP_GOOD2, TOP_BAD2, MT_OVER2, STIP_SET2, showMins2, bellMins2, brMins2, matchSlot2, hasPlan2, showClock2, OPENS2, openKind2, showTimes2, fitShow2, showFill2, PLOT_PUSH_CD2, PLOT_TAPE2, PLOT_POS2, PLOT2, plotTeams2, plotPushable2, plotTapeOn2, SHOW_WORDS2, GRADES2, gradeIdx2, gradeG2, gradeA2, gradeMeets2, CROWD_PTS2, crowdScoreD2, crowdScore2, repCS2, verdictBand2, cgFix2, showWord2, capW2, showVerdict2, ARCH_KEEP2, ARCH_YEARS2, ARCH_LOG2, FA_CAP2, ROSTER_CAP2, TITLE_KEEP2, archYear2, arcHeels2, arcFaces2, ARCS2, arcFill2, arcEnd2, arcWord2, arcSplit2, AUD2, AUD_MODEL2, AUD_DRIFT2, audInit2, audReach2, audLean2, audTarget2, audBase2, audTotal2, audOffer2, CT_BIG2, CT_INDIE2, CT_ROLL2, ctWeekly2, ctPolicy2, ctFee2, ctAssign2, ctWeek2, payWeek2, DEBUT2, dirInit2, dirParts2, dirRead2, dirTrend2, DIR_TAG2, dirTag2, DIR_STYLES2, dirStyle2, dirRhythm2, dirBudget2, dirCalls2, dirGate2, dirOpen2, dirClose2, KNOW02, knowMake2, gasLimit2, fogSkill2, readP2, reads2, agentName2, matchRead2, fogLook2, EAR_BAD2, EAR_GOOD2, earLine2, cardFlags2, GFX2, GIM_WORDS2, gimFromWords2, gimBestFit2, gimSmart2, gfx2, gimStip2, gimPair2, KF_WORDS2, kfWord2, kfInit2, kfFind2, kfLeakP2, MID_MAX2, midStory2, overallRaw2, overallOf2, BP_CARRY2, AP_CARRY2, bpPerShow2, CLOG_MAX2, CLOG_SKIP2, clog2, pmMoney2, pmReview2, P0month2, PRESS_FIRST2, PRESS_LAST2, PRESS_BEAT2, PRESS_ACT2, pressInit2, pressWord2, pressSources2, pressWho2, PROG_ATTR2, PROG_BY2, DEV2, STYLE_PRI2, GIM_PRI2, progNeed2, progAgeX2, progInit2, progAll2, progCap2, progCost2, progGain2, progUse2, progSpend2, progAuto2, PROG_HC2, progShow2, rgWhy2, rgRow2, progLose2, regWeek2, RW_MOVES2, RW_LINES2, rwMoves2, brSurprisePool2, brFee2, STAFF_TAG2, STAFF_LVL2, staffTag2, staffVoice2, staffUnvoice2, toStaffOk2, SUG_FLAT2, VQ_FEEL2, VQ_SOUND2, VQ_CROWD2, venueQuirks2, DISASTER2, WW_KEEP2, wwCompany2, wwFile2, verdictWord2, WR_STYLE2, GR_WROOM2, WR_FIRST2, WR_LAST2, wrInit2, wrName2, wrPitch2, POD_EPS2, POD_MAX2, POD_SEGS2, podFirst2, podPlain2, podShowName2, podInit2, podTone2, podPickSide2, podWrite2;
     root.GP = E2;
     return { get DB() {
       return DB2;
@@ -1349,6 +1349,42 @@
       return recalibrate2;
     }, set recalibrate(v) {
       recalibrate2 = v;
+    }, get TREE_CAP() {
+      return TREE_CAP2;
+    }, set TREE_CAP(v) {
+      TREE_CAP2 = v;
+    }, get TREE_TIER() {
+      return TREE_TIER2;
+    }, set TREE_TIER(v) {
+      TREE_TIER2 = v;
+    }, get treeNeed() {
+      return treeNeed2;
+    }, set treeNeed(v) {
+      treeNeed2 = v;
+    }, get TREE() {
+      return TREE2;
+    }, set TREE(v) {
+      TREE2 = v;
+    }, get treeNode() {
+      return treeNode2;
+    }, set treeNode(v) {
+      treeNode2 = v;
+    }, get treeSpent() {
+      return treeSpent2;
+    }, set treeSpent(v) {
+      treeSpent2 = v;
+    }, get treeTotal() {
+      return treeTotal2;
+    }, set treeTotal(v) {
+      treeTotal2 = v;
+    }, get treeSync() {
+      return treeSync2;
+    }, set treeSync(v) {
+      treeSync2 = v;
+    }, get treeHas() {
+      return treeHas2;
+    }, set treeHas(v) {
+      treeHas2 = v;
     }, get YEAR_GROW() {
       return YEAR_GROW2;
     }, set YEAR_GROW(v) {
@@ -12963,7 +12999,7 @@
     var d = S.custom && S.custom.id === S.player ? S.custom : L.DB.promotions.filter(function(p) {
       return p.id === S.player;
     })[0], o = d.owner || { name: "The owner", style: "stars", roots: "tradition", pledge: "pay" };
-    S.booker = { name: String(opts.name || "").trim().slice(0, 24) || "The Booker", xp: 0, lvl: 1, pts: 0, sk: { creative: 0, talk: 0, eye: 0, motivator: 0, clout: 0 } };
+    S.booker = { name: String(opts.name || "").trim().slice(0, 24) || "The Booker", xp: 0, lvl: 1, pts: 0, sk: { creative: 0, talk: 0, eye: 0, motivator: 0, clout: 0 }, tree: {} };
     if (opts.booker) {
       S.booker.xp = opts.booker.xp;
       S.booker.lvl = opts.booker.lvl;
@@ -12971,6 +13007,7 @@
       Object.keys(S.booker.sk).forEach(function(k) {
         S.booker.sk[k] = opts.booker.sk[k] || 0;
       });
+      S.booker.tree = JSON.parse(JSON.stringify(opts.booker.tree || {}));
     }
     S.owner = { name: o.name, trust: 55, me: false, style: o.style, roots: o.roots, pledge: o.pledge, lobby: {}, asked: 0, creedWeek: -99, wage0: wagesWeek(S, S.promos[S.player]) };
     S.creedScore = 60;
@@ -13581,6 +13618,150 @@
   L.ownerQuest = ownerQuest;
   L.directiveDone = directiveDone;
   L.recalibrate = recalibrate;
+
+  // engine/65-youtree.ts
+  var TREE_CAP = { creative: 5, talk: 5, eye: 3, motivator: 5, clout: 3 };
+  var TREE_TIER = [0, 1, 2, 3];
+  function treeNeed(br, t) {
+    let s = 0;
+    TREE[br].nodes.forEach((n) => {
+      if (n.t < t) s += n.c;
+    });
+    return Math.ceil(s * 0.6);
+  }
+  var TREE = {
+    creative: { n: "Creative", d: "Stories, promos and angles.", nodes: [
+      { id: "cr_pen", t: 0, c: 1, k: "bonus", sk: "creative", n: "Sharp pen", d: "Hotter feuds and better angles." },
+      { id: "cr_ear", t: 0, c: 1, k: "bonus", sk: "creative", n: "An ear for a line", d: "Promos land better." },
+      { id: "cr_room", t: 1, c: 1, k: "bonus", sk: "creative", n: "Run the room", d: "Better odds on creative gambles." },
+      { id: "cr_pull", t: 1, c: 2, k: "bonus", sk: "clout", n: "Pull in the office", d: "One more point of booking power every week." },
+      { id: "cr_audible", t: 1, c: 2, k: "action", n: "Call an audible", d: "Once a show, change a finish while the match is on the air." },
+      { id: "cr_twist", t: 2, c: 1, k: "bonus", sk: "creative", n: "Twist the knife", d: "Twists give a story more back." },
+      { id: "cr_weight", t: 2, c: 2, k: "bonus", sk: "clout", n: "Weight to throw", d: "One more point of booking power every week." },
+      { id: "cr_shock", t: 2, c: 2, k: "trade", n: "Shock value", d: "Big angles hit harder, but the owner trusts a wild hand a little less." },
+      { id: "cr_master", t: 3, c: 2, k: "bonus", sk: "creative", n: "Master storyteller", d: "The best feuds burn longer." },
+      { id: "cr_boss", t: 3, c: 3, k: "bonus", sk: "clout", n: "The book is yours", d: "One more point of booking power every week." },
+      { id: "cr_third", t: 3, c: 3, k: "action", n: "A third act", d: "A story can take a third twist before it goes stale." }
+    ] },
+    office: { n: "Office", d: "Money, contracts and the network.", nodes: [
+      { id: "of_deal", t: 0, c: 1, k: "bonus", sk: "talk", n: "Deal maker", d: "Contracts cost a little less." },
+      { id: "of_read", t: 0, c: 1, k: "bonus", sk: "talk", n: "Read the room", d: "Better odds when you have to talk someone round." },
+      { id: "of_clause", t: 1, c: 2, k: "action", n: "One more clause", d: "Offer a wrestler one more clause than they ask for." },
+      { id: "of_firm", t: 1, c: 1, k: "bonus", sk: "talk", n: "Firm hand", d: "Contracts cost a little less." },
+      { id: "of_sweeten", t: 2, c: 2, k: "action", n: "Sweeten the deal", d: "Spend booking power for a better network renewal." },
+      { id: "of_closer", t: 2, c: 1, k: "bonus", sk: "talk", n: "Closer", d: "Better odds at the table." },
+      { id: "of_lean", t: 2, c: 2, k: "trade", n: "Lean books", d: "Wages cost less, but the roster is a little less happy with the money." },
+      { id: "of_shark", t: 3, c: 2, k: "bonus", sk: "talk", n: "Shark", d: "Contracts cost less still." },
+      { id: "of_sponsor", t: 3, c: 3, k: "action", n: "Sponsor patience", d: "A sponsor gives you one more week before walking." }
+    ] },
+    locker: { n: "Locker room", d: "People.", nodes: [
+      { id: "lr_steady", t: 0, c: 1, k: "bonus", sk: "motivator", n: "Steady voice", d: "Steadier morale." },
+      { id: "lr_door", t: 0, c: 1, k: "bonus", sk: "motivator", n: "Open door", d: "More effort in the ring." },
+      { id: "lr_meet", t: 1, c: 2, k: "action", n: "Closed-door meeting", d: "Once a month, settle real heat between two people." },
+      { id: "lr_trust", t: 1, c: 1, k: "bonus", sk: "motivator", n: "Earned trust", d: "Steadier morale." },
+      { id: "lr_patience", t: 2, c: 2, k: "action", n: "Patience", d: "Held problems wait a week longer before they lapse." },
+      { id: "lr_leader", t: 2, c: 1, k: "bonus", sk: "motivator", n: "Leader", d: "More effort in the ring." },
+      { id: "lr_hard", t: 2, c: 2, k: "trade", n: "Hard but fair", d: "Discipline lands harder, but the room warms to you more slowly." },
+      { id: "lr_father", t: 3, c: 2, k: "bonus", sk: "motivator", n: "Locker room leader", d: "The steadiest morale." },
+      { id: "lr_extra", t: 3, c: 3, k: "action", n: "One more hour", d: "One more action point every week." }
+    ] },
+    eye: { n: "Eye", d: "Seeing what is hidden.", nodes: [
+      { id: "ey_scout", t: 0, c: 1, k: "bonus", sk: "eye", n: "Scout", d: "See potential in young wrestlers; the road agent reads surer." },
+      { id: "ey_tape", t: 0, c: 1, k: "action", n: "Watch the tape", d: "The road agent says a little more about a match you have seen before." },
+      { id: "ey_judge", t: 1, c: 2, k: "bonus", sk: "eye", n: "Good judge", d: "Surer reads on every match." },
+      { id: "ey_smell", t: 1, c: 2, k: "action", n: "Smell trouble", d: "See the cause of one held matter early." },
+      { id: "ey_word", t: 2, c: 2, k: "action", n: "Read the weather", d: "The Director\u2019s word on the desk says a little more." },
+      { id: "ey_seer", t: 3, c: 3, k: "bonus", sk: "eye", n: "Seer", d: "Your staff spot more problems, and the agent tells you more about each match." }
+    ] }
+  };
+  for (const b in TREE) TREE[b].nodes.forEach((n) => {
+    n.c = n.t === 3 ? 2 : 1;
+  });
+  function treeNode(id) {
+    for (const b in TREE) for (const n of TREE[b].nodes) if (n.id === id) return Object.assign({ br: b }, n);
+    return null;
+  }
+  function treeSpent(bk, br) {
+    let s = 0;
+    TREE[br].nodes.forEach((n) => {
+      if (bk.tree && bk.tree[n.id]) s += n.c;
+    });
+    return s;
+  }
+  function treeTotal() {
+    let s = 0;
+    for (const b in TREE) TREE[b].nodes.forEach((n) => {
+      s += n.c;
+    });
+    return s;
+  }
+  function treeSync(bk) {
+    if (!bk) return;
+    if (!bk.tree) bk.tree = {};
+    const sk = { creative: 0, talk: 0, eye: 0, motivator: 0, clout: 0 };
+    for (const b in TREE) TREE[b].nodes.forEach((n) => {
+      if (n.k === "bonus" && bk.tree[n.id]) sk[n.sk] = Math.min(TREE_CAP[n.sk], sk[n.sk] + 1);
+    });
+    bk.sk = sk;
+  }
+  function treeHas(S, id) {
+    const b = S && S.booker;
+    return !!(b && b.tree && b.tree[id]);
+  }
+  E.TREE = TREE;
+  E.treeInfo = function(S) {
+    const bk = S.booker;
+    if (!bk.tree) bk.tree = {};
+    return {
+      pts: bk.pts,
+      lvl: bk.lvl,
+      total: treeTotal(),
+      owned: Object.keys(bk.tree).length,
+      branches: Object.keys(TREE).map((b) => {
+        const sp = treeSpent(bk, b);
+        return {
+          id: b,
+          n: TREE[b].n,
+          d: TREE[b].d,
+          spent: sp,
+          tiers: TREE_TIER.map((t) => {
+            const need = treeNeed(b, t);
+            return {
+              t,
+              need,
+              open: sp >= need,
+              nodes: TREE[b].nodes.filter((n) => n.t === t).map((n) => ({
+                id: n.id,
+                n: n.n,
+                d: n.d,
+                k: n.k,
+                c: n.c,
+                has: !!bk.tree[n.id],
+                can: !bk.tree[n.id] && sp >= need && bk.pts >= n.c
+              }))
+            };
+          })
+        };
+      })
+    };
+  };
+  E.treeSpend = function(S, id) {
+    const bk = S.booker, n = treeNode(id);
+    if (!n) return { ok: false, msg: "There is no such skill." };
+    if (!bk.tree) bk.tree = {};
+    if (bk.tree[id]) return { ok: false, msg: "You already have " + n.n + "." };
+    if (treeSpent(bk, n.br) < treeNeed(n.br, n.t)) return { ok: false, msg: "Spend " + (treeNeed(n.br, n.t) - treeSpent(bk, n.br)) + " more in " + TREE[n.br].n + " to open this." };
+    if (bk.pts < n.c) return { ok: false, msg: "It costs " + n.c + " skill point" + (n.c > 1 ? "s" : "") + "." };
+    bk.pts -= n.c;
+    bk.tree[id] = 1;
+    treeSync(bk);
+    return { ok: true, msg: n.n + ": " + n.d };
+  };
+  E.spendPoint = function() {
+    return false;
+  };
+  L.treeHas = treeHas;
+  L.treeSync = treeSync;
 
   // engine/66-owner-year.ts
   L.yearNew = yearNew;

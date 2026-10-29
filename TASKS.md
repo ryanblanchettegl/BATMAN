@@ -231,6 +231,7 @@ Levels with no cap, a four-branch tree (Creative, Office, Locker room, Eye) of b
 - [x] Gate 2: the questions, answered 28 October (section 8): both kinds of points kept separate; 6, 4, then 3 levels a year with no cap; the whole tree can be filled in a long career; rival bookers level up too, named with a style; perks are signature moves; respec any time at a cost; experience the same whatever the company; old saves are not a concern (Ryan, 29 October: "I don't care about old saves"), so nothing is built for them.
 - [x] Gate 3: Ryan's go-ahead, 28 October: "you pick" (on the order: the Director's last steps first, then this).
 - [x] Step 1 (29 October): levels come at about 6 the first year, 4 the second, then 3 a year (`xpNeed` 100 + 60 a level), with no cap; booking power no longer grows with level. Balance passes; recordings redone.
+- [x] Steps 2 and 3 (29 October): the tree as data (`engine/65-youtree.ts`, `TREE`): four branches, four tiers each, 43 points in all (a node costs 1, the top tier 2), a tier opens at about three fifths of the branch's lower tiers; bonus nodes add to the old five numbers capped where they were, so every system that reads them is unchanged; actions and trade-offs are owned flags (`treeHas`) whose effects come in step 4. Career has a Skill tree button that opens the tree in a pop-up. `test-tree.js`.
 
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
