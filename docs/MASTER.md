@@ -210,3 +210,8 @@ Order: O1 → O3 → O4/O5 → O6 → O7/O8 → O9 → O2 → rest. One PR each.
 
 ## 12. Roadmap after the switch
 1 Balance · 2 First hour · 3 Screens (Clock Wall first) · 4 Live show core (Director, 40 new calls) · 5 People/world (perception, morale ledger, regional popularity, relationship types, health pools) · 5b Wrestler look · 6a Public-domain default world · 6 Sound + ship (Steam) · 7 Post-launch (politics, scandals, narratives, eras, alliances, career/owner modes).
+
+<!-- 29 October: the decision sets and concept pages from the other workspace are saved beside this file:
+     tools/decisions/2026-10-26-{architecture,booker,characters,screens}.js (and architecture.json), and the concept pages
+     docs/concepts/booker-r4.html (the booking screen finalists: Clock Wall 8.6, Production Truck 8.3, ...) and
+     docs/concepts/characters-r15.html. Images they point to (concepts/review/*.jpg) were not uploaded. -->
