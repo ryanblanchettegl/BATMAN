@@ -15,6 +15,7 @@ export interface Piece {
   layer?: 'back' | 'front'; // part of the set: drawn once and kept (back behind everybody, front before them)
   soft?: boolean;           // a soft shadow on the floor, not a piece of card
   fin?: 'foil' | 'corr' | 'neon' | 'denim' | 'leather';   // a card that is not plain matte (Create a Player swatches)
+  ln?: string;              // a darker edge cut round it (style C: arms and fists, so an arm across the chest still reads as an arm)
 }
 export interface View { s: number; ox: number; oy: number }   // pixels per unit; the pixel position of x = 0, y = 0 (y up)
 
@@ -54,9 +55,11 @@ export function strip(a: Pt, b: Pt, w0: number, w1: number, bow = 0, n = 8): Pt[
   }
   return top.concat(bot.reverse());
 }
-export interface Head { cx: number; cy: number; rx: number; ryt: number; ryb: number; sq: number; chin: number }
+export interface Head { cx: number; cy: number; rx: number; ryt: number; ryb: number; sq: number; chin: number;
+  /** Cut in straight snips (style C, Bill 29 October): about this many corners round the whole head, so the head, its hair and its mask share the same cuts. */ facet?: number }
 /** A head's outline: a round top, and a jaw from round (sq 2) to square (sq 4) that narrows to the chin. */
 export function headPoly(h: Head, k = 1, t0 = 0, t1 = Math.PI * 2, n = 36, dy = 0): Pt[] {
+  if (h.facet) n = Math.max(2, Math.round(h.facet * Math.abs(t1 - t0) / (Math.PI * 2)));
   const o: Pt[] = [];
   for (let i = 0; i <= n; i++) {
     const t = t0 + (t1 - t0) * i / n, c = Math.cos(t), s = Math.sin(t);
@@ -178,7 +181,8 @@ function drawPieces(ctx: CanvasRenderingContext2D, list: Piece[], v: View) {
       ctx.beginPath(); if (p.fin === 'corr') for (let x = x0; x <= x1; x += step) { ctx.moveTo(x, y0); ctx.lineTo(x, y1); } else for (let x = x0 - (y1 - y0); x <= x1; x += step) { ctx.moveTo(x, y1); ctx.lineTo(x + (y1 - y0), y0); }
       ctx.stroke(); ctx.restore(); path(ctx, v, p.pts);
     }
-    ctx.strokeStyle = shade(p.col, 1.35); ctx.globalAlpha = 0.6; ctx.lineWidth = edge; ctx.stroke(); ctx.globalAlpha = 1;   // the paler core along the cut
+    if (p.ln) { ctx.strokeStyle = p.ln; ctx.lineWidth = edge; ctx.stroke(); }
+    else if (!clean) { ctx.strokeStyle = shade(p.col, 1.35); ctx.globalAlpha = 0.6; ctx.lineWidth = edge; ctx.stroke(); ctx.globalAlpha = 1; }   // the paler core along the cut (people are flat colour: no core)
   }
   ctx.restore();
 }
@@ -200,6 +204,8 @@ export function drawScene(ctx: CanvasRenderingContext2D, pieces: Piece[], v: Vie
   });
   const Fr = layer(k + 'n', W, H, c => drawPieces(c, front.sort((a, b) => a.z - b.z), v));
   ctx.drawImage(B, 0, 0);
+  // the paper grain goes on the set only: people are cut from flat colour (style C, Bill 29 October)
+  if (!bare) { ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = ctx.createPattern(grain(), 'repeat')!; ctx.fillRect(0, 0, W, H); ctx.restore(); }
   // each wrestler throws one shadow, down and to the right, onto whatever is behind them; they themselves stay clean
   const figs = mid.filter(p => p.own != null && !p.soft && !p.txt && p.pts.length >= 3);
   if (figs.length) {
@@ -219,10 +225,9 @@ export function drawScene(ctx: CanvasRenderingContext2D, pieces: Piece[], v: Vie
     const g = c.createRadialGradient(W * 0.48, H * 0.38, H * 0.15, W * 0.5, H * 0.5, Math.hypot(W, H) * 0.6);
     g.addColorStop(0, 'rgba(255,244,214,0.10)'); g.addColorStop(0.55, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(4,6,20,0.55)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
   });
-  // `bare`: a figure on nothing (a fan in the crowd): the light and the paper grain go on the figure only, never on empty space
+  // `bare`: a figure on nothing (a fan in the crowd): the light goes on the figure only, never on empty space
   if (bare) ctx.globalCompositeOperation = 'source-atop';
   ctx.drawImage(L, 0, 0);
-  ctx.save(); ctx.globalCompositeOperation = bare ? 'source-atop' : 'multiply'; if (!bare) { ctx.fillStyle = ctx.createPattern(grain(), 'repeat')!; ctx.fillRect(0, 0, W, H); } ctx.restore();
   ctx.globalCompositeOperation = 'source-over';
 }
 

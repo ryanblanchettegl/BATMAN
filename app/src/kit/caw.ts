@@ -189,7 +189,7 @@ const FACIAL_N: Record<string, [number, number]> = { none: [0, 0], stubble: [1, 
 export const PAINT: [string, string][] = [['', 'None'], ['stripes', 'Stripes under the eyes'], ['war', 'War paint'], ['half', 'The upper half'], ['full', 'The whole face'], ['skull', 'A skull']];
 /** Designs that can be painted over the first: the first list's designs, and some that only make sense on top. */
 export const PAINT_LAYERS: [string, string][] = [['eyes', 'Round the eyes'], ['tear', 'A tear'], ['grin', 'A painted grin'], ['cross', 'A cross'], ['stripes', 'Stripes under the eyes'], ['war', 'War paint'], ['half', 'The upper half']];
-/** Eyes, noses and mouths to choose from (drawn in head() in kit/puppet.ts). Heads have no ears now (22 October); the list stays so old files still read. */
+/** Eyes, noses and mouths to choose from (drawn in head() in kit/puppet.ts). Style C (Bill, 29 October) brings small ears back, cut in the shape picked here. */
 export const FEATURES: Record<'eyes' | 'nose' | 'mouth' | 'ears', [string, string][]> = {
   eyes: [['almond', 'Almond'], ['round', 'Round'], ['narrow', 'Narrow'], ['hooded', 'Hooded'], ['deep', 'Deep set'], ['lashes', 'With lashes'], ['dot', 'Classic dots']],
   nose: [['straight', 'Straight'], ['button', 'Button'], ['broad', 'Broad'], ['hooked', 'Hooked'], ['flat', 'Flat and broken'], ['pointed', 'Long and pointed']],
