@@ -5,7 +5,8 @@
    costs one draw each. */
 import { useEffect, useRef } from 'preact/hooks';
 import { Scene, build, viewFor, POSES, WAIST } from './scene';
-import { Recipe, legs, LEGS0, HEAD_MID, HEAD_SCALE } from './puppet';
+import { Recipe } from './puppet';
+import { headAim } from './stylec';
 import { AttireKey } from './caw';
 import { drawScene, shade } from './paper';
 
@@ -31,10 +32,10 @@ export function drawPortrait(r: Recipe, ps: PortraitSet = {}, card = '#8a8478', 
   const c = document.createElement('canvas'); c.width = c.height = px;
   const ctx = c.getContext('2d'); if (!ctx) return c;
   const pd = (POSES.find(x => x[0] === (ps.pose || 'stand')) || POSES[0])[1];
-  const headY = WAIST + (legs(r) - LEGS0) + 1.95 * r.h * (r.th || 1) + HEAD_MID, chest = ps.frame === 'chest';
+  const aim = headAim(r), headY = WAIST + aim.y, chest = ps.frame === 'chest';
   const sc: Scene = { v: 1, id: 'portrait', name: 'Portrait', when: 'portrait', set: 'none', attire: ps.attire || 'primary_ring', slots: [{ id: 'A', n: r.name, role: 'a' }],
     keys: [{ t: 0, figs: { A: { x: 0, y: pd.y ?? WAIST, r: pd.r || 0, f: 1, z: 0.6, p: { ...pd.p }, e: ps.expr != null ? ps.expr : pd.e || '' } },
-      props: ps.pose === 'mic' ? [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] : [], cam: chest ? { x: 0.1, y: headY - 1.0 * HEAD_SCALE, z: 4.4 / HEAD_SCALE } : { x: 0.0, y: headY - 0.12, z: 7.4 } }] };
+      props: ps.pose === 'mic' ? [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] : [], cam: chest ? { x: 0.1, y: headY - 0.6, z: 7.3 / aim.s } : { x: 0.0, y: headY - 0.12, z: 7.4 / aim.s } }] };
   const bg = card, k = sc.keys[0], v = viewFor(px, px, k.cam);
   if (bg !== 'none') {   // 'none': no card at all, for people drawn on something else (the crowd on the broadcast)
     ctx.fillStyle = bg; ctx.fillRect(0, 0, px, px);
