@@ -20,6 +20,20 @@ Two more lists sit beside this one, both finished:
 
 ## Ryan's decisions (do not reopen these)
 
+### From the master document (Ryan's other workspace, decided 26 and 27 October; saved as `docs/MASTER.md`, merged 29 October)
+
+- D1, popularity: per region (the road's areas). Not built yet.
+- D2, relationship types: now, with full screens (family, personal, romantic on top of the matrix); to confirm with Bill against the feature pause. Not built yet.
+- D3, schema library for content: zod. Not used yet.
+- D4, engine build: esbuild. Done (the engine is bundled by esbuild).
+- D5, the Steam default world: public domain, the parody world opt-in; to confirm with Bill and the lawyer. Today the parody world is the default (16 October); this reverses it when confirmed.
+- D6, morale and backstage: two modules.
+- D7, health: four pools (head, body, arms, legs); any at zero ends a career. Not built yet.
+- The booking screen: the Clock Wall (critic 8.6; `docs/plans/booking-clock-wall.md` in the other workspace, summarised in `docs/MASTER.md` section 9). Not built yet.
+- The wrestler look: G, the paper doll, after Ryan's reference picture (critic 9.3; plan summarised in `docs/MASTER.md` section 9). Not built yet.
+- Layout, game-wide: every main page is three windows, 22 / 56 / 22 (list, centre wall, picked pane). See rule 5f.
+- Gimmicks drive acting, dialogue and relationships only, never looks or match ratings (27 October). Today `GFX` in `engine/99-gimmicks.ts` changes match crowd reactions; its fate needs a rule 9d decision.
+
 | Topic | Decision |
 | --- | --- |
 | The match screen, 22 Oct | Fewer kick-outs. When there is no match picture for the moment, the picture cuts to the commentators. The animation never loops while the commentary catches up; it flows. Build: an instant replay of the finish, a big referee count on near falls, paper-flip cuts between pictures, a finisher close-up with the move's name, cinema mode (the picture fills the screen), the winner celebrating after the bell, big moments for each match rule (ladder, cage, tables), run-ins drawn as their own pictures. The night's highlights go on After the show. The feed is livelier and each poster has a personality of their own; the company's sign-off post comes once, after the main event, not after every match. |
