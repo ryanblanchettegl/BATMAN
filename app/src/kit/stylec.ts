@@ -107,19 +107,19 @@ const C = (s: Swatch | string | undefined, d: string) => !s ? d : typeof s === '
     recipe's head shape, mood and features; their gear from what they wear. The same wrestler always gets the same. */
 export function lookOf(r: Recipe, expr: string): Look {
   const h = (k: string, n: number) => hashS(r.key + '|' + k) % n, fem = r.fem, K = r.kit;
-  const m = Math.max(0.75, Math.min(1.5, r.w / (fem ? 0.84 : 1))), mm = r.mm || 1, up = Math.pow(m, 1.7) * (1 + (mm - 1) * 0.5), fat = r.belly || 0;
-  const base = fem ? { sw: 0.13, cw: 0.115, ww: 0.088, hw: 0.115, au: 0.03, af: 0.026, th: 0.046, sh: 0.035 } : { sw: 0.15, cw: 0.132, ww: 0.11, hw: 0.112, au: 0.038, af: 0.033, th: 0.046, sh: 0.037 };
+  const m = Math.max(0.75, Math.min(1.5, r.w / (fem ? 0.84 : 1))), mm = r.mm || 1, up = Math.pow(m, 2.3) * (1 + (mm - 1) * 0.5), fat = r.belly || 0;
+  const base = fem ? { sw: 0.122, cw: 0.11, ww: 0.083, hw: 0.115, au: 0.028, af: 0.024, th: 0.045, sh: 0.033 } : { sw: 0.15, cw: 0.132, ww: 0.11, hw: 0.112, au: 0.038, af: 0.033, th: 0.046, sh: 0.037 };
   const tw = r.tw || 1;
   // a neck shows on everybody (Bill, 29 October)
   const L: any = { skin: r.skin, hc: r.hairCol, fem, key: r.key,
-    sw: base.sw * up * tw, cw: base.cw * up * tw, ww: base.ww * Math.pow(m, 1.2) + fat * 0.12, hw: base.hw * Math.pow(m, 1.1), bel: fat > 0.05 ? fat * 0.42 : 0,
+    sw: base.sw * up * tw, cw: base.cw * up * tw, ww: base.ww * Math.pow(m, 1.6) + fat * 0.2, hw: base.hw * Math.pow(m, 1.1), bel: fat > 0.04 ? fat * 0.6 : 0,
     au: base.au * up, af: base.af * up, th: base.th * Math.pow(m, 1.35), sh: base.sh * Math.pow(m, 1.3), traps: fem ? 0.1 : Math.max(0, (m - 1) * 3 + 0.2),
     abs: fem || fat > 0.05 ? 0 : m < 1.05 ? 4 : m > 1.2 ? 6 : 4, neck: fem ? 0.14 : m < 1.05 ? 0.14 : m > 1.25 ? 0.08 : 0.11, tape: !!r.tape || (!!K && K.acc.indexOf('wrist_tape_white') >= 0), chestHair: (r.bodyHair || 0) > 0, veins: m > 1.2, quad: fem };
   // the face
   const hd = r.head, wide = (hd.rx - 1.04) / 0.28, sq = hd.sq >= 4, pointy = hd.chin >= 0.35;
   const crw = 0.42 + 0.12 * Math.max(0, Math.min(1, wide));
   const md = r.mood || 'face', sh = ['shout', 'roar', 'snarl'].indexOf(expr) >= 0, hurt = ['hurt', 'pain', 'cry', 'shut'].indexOf(expr) >= 0;
-  L.hd = { cr: hd.ryt > 1.46 ? 'long' : sq ? 'bullet' : pointy ? 'egg' : ['round', 'round', 'long', 'egg'][h('cr', 4)], crw, jaw: sq ? (m > 1.15 ? 'anvil' : 'block') : pointy ? 'v' : hd.chin > 0.2 ? 'square' : 'round',
+  L.hd = { cr: hd.ryt > 1.46 ? 'long' : sq && r.hair !== 'bald' ? 'bullet' : sq ? 'round' : pointy ? 'egg' : ['round', 'round', 'long', 'egg'][h('cr', 4)], crw, jaw: sq ? (m > 1.15 ? 'anvil' : 'block') : pointy ? 'v' : hd.chin > 0.2 ? 'square' : 'round',
     jw: sq ? crw * (m > 1.15 ? 1.45 : 1.25) : pointy ? 0.32 : crw * (hd.chin > 0.2 ? 0.92 : 0.88), len: Math.max(0.95, Math.min(1.3, hd.ryb / 1.6 * 1.06 * (m > 1.2 ? 1.08 : 1))),
     eye: hurt ? 'slit' : fem ? 'lash' : md === 'fierce' ? 'slit' : md === 'cocky' ? 'lid' : 'almond', ey: -0.03, et: md === 'fierce' || md === 'heel' ? -5 : md === 'sad' ? 6 : 2,
     brow: md === 'fierce' ? 'slab' : md === 'heel' ? 'thick' : md === 'cocky' || md === 'happy' ? (fem ? 'arch' : 'raised') : fem ? 'arch' : r.brow > 0.15 ? 'thick' : 'flat',
@@ -160,7 +160,7 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   const piece = (pts: Pt[], col: string, edge?: number) => P.poly(cut(pts, r, false), col, edge === 1 ? shade(col, 0.8) : undefined);
   const nar = 0.86, len = h.len * hu * 1.04, jw = h.jw * hu * nar, crw = h.crw * hu * nar;
   const top = -len * 0.55, bot = len * 0.45, face = Math.max(crw, jw);
-  const ey = h.ey * len, eg = face * 0.45, es = face * 0.165 * Math.pow(h.es || 1, 0.3), browY = ey - face * 0.33 - (h.bu || 0) * hu, jt = browY + es * 0.2 + (h.bu || 0) * hu;
+  const ey = h.ey * len, eg = face * 0.45, es = face * 0.2 * Math.pow(h.es || 1, 0.3), browY = ey - face * 0.33 - (h.bu || 0) * hu, jt = browY + es * 0.2 + (h.bu || 0) * hu;
   // hair behind the head (and, seen from behind, over it)
   const behind = () => {
     const hr = a.hair;
@@ -177,7 +177,7 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   };
   behind();
   // ears
-  const ed = r() * 0.05 * len, ek = h.ear * 0.75;
+  const ed = r() * 0.05 * len, ek = h.ear * 0.95;
   for (const sd of [-1, 1]) { const ex0 = sd * face * 0.93, ey0 = ey + (sd > 0 ? ed : 0); piece([[ex0, ey0 - len * 0.1], [ex0 + sd * ek * hu * 0.15, ey0 - len * 0.06], [ex0 + sd * ek * hu * 0.13, ey0 + len * 0.1], [ex0, ey0 + len * 0.12]], shade(sk, 0.93)); if (!back) mkS(`M${ex0 + sd * ek * hu * 0.05} ${ey0 - len * 0.03} q${sd * hu * 0.04} ${len * 0.05} 0 ${len * 0.1}`, 1.2, dk); }
   // the skull and the jaw
   const CR: Record<string, Pt[]> = { bullet: [[-crw * 0.75, top + len * 0.1], [-crw * 0.45, top], [crw * 0.45, top], [crw * 0.76, top + len * 0.1], [crw, jt], [-crw, jt]], round: [[-crw * 0.88, top + len * 0.18], [-crw * 0.55, top], [crw * 0.55, top], [crw * 0.9, top + len * 0.18], [crw, jt], [-crw, jt]],
@@ -241,7 +241,7 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   else if (!a.fem) { P.path(`M${-mw * 0.8} ${my + hu * 0.01} Q0 ${my + hu * 0.08} ${mw * 0.8} ${my + hu * 0.01}Z`, shade(sk, 0.75)); mkS(MO[h.mouth], 2.2, shade(sk, 0.4)); }
   else { P.path(`M${-mw} ${my} Q${-mw * 0.4} ${my - hu * 0.07} 0 ${my - hu * 0.03} Q${mw * 0.4} ${my - hu * 0.07} ${mw} ${my} Q${mw * 0.4} ${my + hu * 0.03} ${-mw} ${my}Z`, shade(lipc, 0.85)); P.path(`M${-mw * 0.85} ${my + hu * 0.01} Q0 ${my + hu * 0.1} ${mw * 0.85} ${my + hu * 0.01}Z`, lipc); mkS(`M${-mw} ${my} Q0 ${my + hu * 0.02} ${mw} ${my}`, 1.4, shade(lipc, 0.5)); }
   // the beard and the moustache
-  const BC = a.hc < '#333333' ? a.hc : shade(a.hc, 0.88), lng = a.beard === 'full' ? len * 0.22 : 0, shortB = a.beard === 'short';
+  const BC = a.hc < '#333333' ? a.hc : shade(a.hc, 0.76), lng = a.beard === 'full' ? len * 0.22 : 0, shortB = a.beard === 'short';
   if (a.beard === 'full' || shortB) piece([[-jw * 1.06, jt + len * 0.12], [-jw, bot - len * 0.02], [-jw * 0.35, bot + len * (shortB ? 0.12 : 0.24) + lng], [jw * 0.4, bot + len * (shortB ? 0.1 : 0.2) + lng], [jw * 1.02, bot - len * 0.04], [jw * 1.06, jt + len * 0.12], [jw * 0.55, my + hu * 0.03], [0, my - hu * 0.07], [-jw * 0.55, my + hu * 0.03]], BC);
   if (a.beard === 'full' && a.braid) for (let q = 0; q < 4; q++) P.poly(ell((q % 2 ? 0.03 : -0.03) * hu, bot + lng + len * 0.2 + q * hu * 0.12, hu * 0.08, hu * 0.08, 10), q % 2 ? shade(BC, 0.8) : BC);
   if (a.beard === 'goatee' || a.beard === 'vandyke') piece([[-mw * 0.7, my + hu * 0.06], [-mw * 0.28, bot + len * 0.18], [mw * 0.32, bot + len * 0.17], [mw * 0.7, my + hu * 0.06], [0, my + hu * 0.1]], BC);
@@ -267,7 +267,7 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   const TOP: Record<string, string> = { crew: 'crew', cap: 'cap', flat: 'flat', slick: 'slick', undercut: 'slick', mullet: 'mullet', afro: 'puff', tower: 'puff', curls: 'puff', buzz: 'buzz', braids: 'buzz', dreads: 'buzz', long: a.fem ? '' : 'long', bob: 'bob' };
   const hr = a.hair;
   if (hr === 'undercut') piece(HT.buzz, shade(a.hc, 0.72));
-  if (hr === 'mohawk') { piece(HT.buzz, mixC(a.hc, sk, 0.62)); const fin: Pt[] = [[-crw * 0.22, top + len * 0.22]]; for (let q = 0; q <= 4; q++) { const yq = top + len * (0.18 - q * 0.05); fin.push([-crw * 0.22 + q * crw * 0.09, yq], [-crw * 0.15 + q * crw * 0.09, yq - hu * (0.2 + 0.05 * (q % 2))]); } fin.push([crw * 0.22, top - hu * 0.05], [crw * 0.22, top + len * 0.22]); piece(fin, a.hc); }
+  if (hr === 'mohawk') { piece(HT.buzz, mixC(a.hc, sk, 0.62)); const fin: Pt[] = [[-crw * 0.32, top + len * 0.22]]; for (let q = 0; q <= 4; q++) { const yq = top + len * (0.18 - q * 0.05); fin.push([-crw * 0.32 + q * crw * 0.13, yq], [-crw * 0.24 + q * crw * 0.13, yq - hu * (0.24 + 0.06 * (q % 2))]); } fin.push([crw * 0.32, top - hu * 0.05], [crw * 0.32, top + len * 0.22]); piece(fin, a.hc); }
   if (TOP[hr] && HT[TOP[hr]]) piece(HT[TOP[hr]], a.hc);
   if (hr === 'ponytail' || hr === 'pigtails' || hr === 'bun' || hr === 'braid') piece(pulled(0.5), a.hc);
   if (hr === 'bun') P.poly(ell(0, top - hu * 0.14, hu * 0.2, hu * 0.15, 12), a.hc);
@@ -408,12 +408,13 @@ export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr
   // the neck and the head
   const nk = child(to, [0, 1.95 * H], P0.head); note('head', nk, to, true);
   const Nk = pen(nk, 0.5, 'head'), neckL = a.neck * hu;
-  piece(Nk, [[-shn * 1.05, hu * 0.25], [-shn * 0.82, -hu * 0.3 - neckL], [shn * 0.82, -hu * 0.3 - neckL], [shn * 1.05, hu * 0.25]], sk);
+  piece(Nk, [[-shn * 1.05, hu * 0.25], [-shn * 0.82, -hu * 0.36 - neckL], [shn * 0.82, -hu * 0.36 - neckL], [shn * 1.05, hu * 0.25]], sk);
   if (!a.fem && !bk) Nk.stroke(`M${-shn * 0.6} ${-hu * 0.15 - neckL} L${-hu * 0.04} ${hu * 0.2} M${shn * 0.6} ${-hu * 0.15 - neckL} L${hu * 0.04} ${hu * 0.2}`, 1.1, dk);
   if (a.hd.adam && !bk) Nk.stroke(`M${-hu * 0.035} ${-hu * 0.05} l${hu * 0.035} ${hu * 0.06} l${hu * 0.035} ${-hu * 0.06}`, 1.4, dk);
   const Hd = pen(nk, 0.56, 'head');
-  Hd.group(0, -hu * 0.5 - neckL, (rr() - 0.5) * 4, () => headC(Hd, a, hu, rngOf(r.key + '|Ch'), bk, mk));
-  rig.anchors.head = W_(nk, [0, (hu * 0.5 + neckL) * k]);
+  const HK = 1.16, hh = hu * HK;   // the head a touch bigger than the concept's unit, so the figure stands about 6.8 heads (critic, 29 October)
+  Hd.group(0, -hh * 0.5 - neckL, (rr() - 0.5) * 4, () => headC(Hd, a, hh, rngOf(r.key + '|Ch'), bk, mk));
+  rig.anchors.head = W_(nk, [0, (hh * 0.5 + neckL) * k]);
   rig.anchors.shoulders = W_(to, [0, -(ySh + hu * 0.1) * k]);
   arm('n', 0.95);
   const hn = rig.anchors.hand_n, hf = rig.anchors.hand_f; rig.anchors.hands = [(hn[0] + hf[0]) / 2, (hn[1] + hf[1]) / 2];
