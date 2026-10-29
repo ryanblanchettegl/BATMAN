@@ -9,7 +9,7 @@ import { LegacyPanel } from './GameOver';
 const role = () => G.S.owner.me ? 'owner and booker' : 'booker';
 
 function You() {
-  const S = G.S, b = S.booker, o = S.owner, P = me(), need = E.xpNeed(b.lvl), style = E.STYLES[o.style], Y = E.ownerYear(S);
+  const S = G.S, b = S.booker, o = S.owner, P = me(), need = E.xpNeed(b.lvl), style = E.STYLES[o.style], Y = E.ownerYear(S), owned = (E as any).treeInfo(S).owned;
   return <Win title={b.name} area="you" t="career-you" right={'Level ' + b.lvl}>
     <p>{role().charAt(0).toUpperCase() + role().slice(1)} of {P.name}</p>
     <p class="muted">Difficulty: {(E.DIFF[S.diff] || E.DIFF.normal).n}{E.diffSummary(S) ? ' (' + E.diffSummary(S) + ')' : ''}</p>
@@ -21,7 +21,7 @@ function You() {
       : <p>{o.name}{'’'}s trust <Meter v={o.trust} kind={o.trust < 25 ? 'hot' : 'cool'} /> <span class="num">{Math.round(o.trust)}</span>{o.trust < 20 ? <> <span class="bad">Your job is in danger.</span></> : null}<br />
         <span class="muted">House style: {style.n}. {o.name} wants {style.likes}.</span></p>}
     {Y ? <p data-t="career-year">Goals for the year <b class={Y.met === 3 ? 'good' : (Y.met <= 1 ? 'bad' : undefined)}>{Y.met} of 3</b> <span class="muted">on course</span> <Btn kind="sm" t="career-goals" onClick={() => openModal({ kind: 'ownyear' })}>Goals</Btn></p> : null}
-    <p data-t="career-tree">Skill tree: <b>{(E as any).treeInfo(S).owned}</b> {plural((E as any).treeInfo(S).owned, 'skill')}, {need - b.xp} XP to level {b.lvl + 1}{b.pts ? <> {'·'} <span class="mark">{b.pts} {plural(b.pts, 'point')} to spend</span></> : null} <Btn kind={b.pts ? undefined : 'sm'} t="tree-open" onClick={() => openModal({ kind: 'tree' })}>Skill tree</Btn></p>
+    <p data-t="career-tree">Skill tree: <b>{owned}</b> {plural(owned, 'skill')}, {need - b.xp} XP to level {b.lvl + 1}{b.pts ? <> {'·'} <span class="mark">{b.pts} {plural(b.pts, 'point')} to spend</span></> : null} <Btn kind={b.pts ? undefined : 'sm'} t="tree-open" onClick={() => openModal({ kind: 'tree' })}>Skill tree</Btn></p>
   </Win>;
 }
 
@@ -129,7 +129,7 @@ export function TreeWindow(p: { m: any }) {
       </div>)}
     </div>)}</div>
     <div class="treepick" data-t="tree-pick">{P ? <>
-      <span><b>{P.n}</b> <span class="muted">{KIND[P.k]}, {P.c} {plural(P.c, 'point')}, {P.br.n}</span><br />{P.d}{P.soon ? ' Coming in a later update.' : ''}</span>
+      <span><b>{P.n}</b> <span class="muted">{KIND[P.k]}, {P.c} {plural(P.c, 'point')}, {P.br.n}</span><br />{P.d}{P.soon ? ' Coming in a later update.' : ''}{P.k === 'bonus' && T.stand[P.sk] ? <><br /><b class="mark">{T.stand[P.sk].n} {T.stand[P.sk].v}{P.has ? '' : ' \u2192 ' + Math.min(T.stand[P.sk].cap, T.stand[P.sk].v + 1)} of {T.stand[P.sk].cap}</b></> : null}</span>
       {P.has ? <span class="good">Yours</span> : <Btn t="tree-buy" d={{ id: P.id }} disabled={!P.can} tip={P.soon ? 'Coming in a later update.' : !P.tier.open ? 'Spend ' + (P.tier.need - P.br.spent) + ' more in ' + P.br.n + ' to open this tier.' : T.pts < P.c ? 'You need ' + P.c + ' ' + plural(P.c, 'point') + '.' : 'Take it now.'}
         onClick={() => act(() => { (E as any).treeSpend(S, P.id); })}>Take</Btn>}
     </> : <span class="muted">Pick a skill to read it in full.</span>}</div>

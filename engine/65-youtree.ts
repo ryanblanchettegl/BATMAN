@@ -86,9 +86,11 @@ export function treeSync(bk: any) {
 export function treeHas(S: any, id: string) { const b = S && S.booker; return !!(b && b.tree && b.tree[id]); }
 
 E.TREE = TREE;
+E.bpGrantOf = function (S: any) { return $L.bpGrant(S); };   // reads only
 E.treeInfo = function (S: any) {   // reads only
   const bk = Object.assign({}, S.booker, { tree: S.booker.tree || {} });
-  return { pts: bk.pts, lvl: bk.lvl, total: treeTotal(), owned: Object.keys(bk.tree).length,
+  const sk = bk.sk || {}, stand: any = {}; for (const k in TREE_CAP) stand[k] = { v: sk[k] || 0, cap: TREE_CAP[k], n: SK_SAYS[k].split(' +')[0] };
+  return { pts: bk.pts, lvl: bk.lvl, stand, total: treeTotal(), owned: Object.keys(bk.tree).length,
     branches: Object.keys(TREE).map(b => { const sp = treeSpent(bk, b);
       return { id: b, n: TREE[b].n, d: TREE[b].d, spent: sp,
         tiers: TREE_TIER.map(t => { const need = treeNeed(b, t); return { t, need, open: sp >= need,

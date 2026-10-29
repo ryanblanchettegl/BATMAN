@@ -548,7 +548,8 @@ svg.rangebar{width:9em;height:.8em;vertical-align:middle;margin:0 .4em}
 .treecard:focus-visible{outline:3px solid #2d6cdf;outline-offset:1px}
 .treecard.can{border-top-color:#6cbf5a}
 .treecard.has{background:#e3f3d9;border-top-color:#3f9a3a}
-.treecard.soon{opacity:.6;border-top-style:dashed}
+.treecard.soon{opacity:.38;filter:grayscale(1);box-shadow:none;border-top-style:dashed}
+.treecard.soon:hover,.treecard.soon:focus-visible{opacity:.75}
 .treecard.on{box-shadow:0 0 0 3px #ffcc33,2px 4px 0 rgba(0,0,0,.2)}
 .treetier.locked .treecard{opacity:.55}
 .treepick{display:flex;justify-content:space-between;align-items:center;gap:1em;margin-top:.6em;padding:.45em .7em;background:var(--lk-note,#fff7b8) 0 0/100% 100%;min-height:3.2em}
