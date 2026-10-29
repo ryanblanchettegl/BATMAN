@@ -40,9 +40,9 @@ function seg(a: Pt, b: Pt, wa: number, wb: number): Pt[] {
 /** A shin with a calf and a notch at the knee. */
 function shin(k: Pt, f: Pt, w: number, sd: number): Pt[] {
   const dx = f[0] - k[0], dy = f[1] - k[1], L = Math.hypot(dx, dy) || 1, nx = -dy / L * sd, ny = dx / L * sd, at = (t: number, s: number): Pt => [k[0] + dx * t + nx * w * s, k[1] + dy * t + ny * w * s];
-  return [at(-0.04, -0.95), at(0, 0.95), [k[0] + dx * 0.06 + nx * w * 0.75, k[1] + dy * 0.06 + ny * w * 0.75], at(0.12, 1.0), at(0.35, 1.12), at(1, 0.7), at(1, -0.7), at(0.35, -1.05), at(0.06, -0.9)];
+  return [at(-0.04, -0.95), at(0, 0.95), [k[0] + dx * 0.06 + nx * w * 0.75, k[1] + dy * 0.06 + ny * w * 0.75], at(0.12, 0.92), at(0.35, 1.2), at(0.6, 0.95), at(1, 0.68), at(1, -0.68), at(0.6, -0.9), at(0.35, -1.1), at(0.06, -0.9)];
 }
-const UA = [[0, 1, 1], [0.28, 1.1, 1.04], [0.5, 1.14, 1.0], [0.78, 0.98, 0.93], [1, 0.86, 0.84]], FA = [[0, 1, 1], [0.22, 1.12, 1.04], [0.5, 0.97, 0.92], [0.82, 0.78, 0.8], [1, 0.7, 0.72]], TH = [[0, 1, 1], [0.2, 1.12, 1.0], [0.4, 1.07, 1.02], [0.62, 0.96, 0.97], [0.9, 0.86, 0.88], [1, 0.82, 0.84]];
+const UA = [[0, 1, 1], [0.28, 1.12, 1.04], [0.5, 1.18, 1.0], [0.78, 0.98, 0.93], [1, 0.86, 0.84]], FA = [[0, 1, 1], [0.22, 1.16, 1.04], [0.5, 0.97, 0.9], [0.82, 0.76, 0.76], [1, 0.7, 0.7]], TH = [[0, 1, 1], [0.2, 1.16, 1.0], [0.45, 1.2, 1.04], [0.7, 1.0, 0.97], [0.9, 0.86, 0.86], [1, 0.82, 0.82]];
 function limb(a: Pt, b: Pt, w0: number, w1: number, f: number[][]): Pt[] {
   const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L, ux = dx / L, uy = dy / L, W = (t: number) => w0 + (w1 - w0) * t, P = (t: number, k: number): Pt => [a[0] + dx * t + nx * W(t) * k, a[1] + dy * t + ny * W(t) * k];
   return ([[a[0] - ux * w0 * 0.3, a[1] - uy * w0 * 0.3]] as Pt[]).concat(f.map(([t, k]) => P(t, k)), [[b[0] + ux * w1 * 0.35, b[1] + uy * w1 * 0.35]] as Pt[], f.slice().reverse().map(([t, , k]) => P(t, -k)));
@@ -111,26 +111,28 @@ export function lookOf(r: Recipe, expr: string): Look {
   const base = fem ? { sw: 0.122, cw: 0.11, ww: 0.083, hw: 0.115, au: 0.028, af: 0.024, th: 0.045, sh: 0.033 } : { sw: 0.15, cw: 0.132, ww: 0.11, hw: 0.112, au: 0.038, af: 0.033, th: 0.046, sh: 0.037 };
   const tw = r.tw || 1;
   // a neck shows on everybody (Bill, 29 October)
-  const L: any = { skin: r.skin, hc: r.hairCol, fem, key: r.key,
+  const tone = (c: string) => { const n = parseInt(c.slice(1), 16), v = [(n >> 16) & 255, (n >> 8) & 255, n & 255], lum = (v[0] + v[1] + v[2]) / 765, d = (h('tone', 5) - 2) * 0.035 * (lum > 0.55 ? 1 : 0.4), warm = (h('warm', 3) - 1) * 6; return '#' + v.map((x, i) => Math.max(0, Math.min(255, Math.round(x * (1 + d) + (i === 0 ? warm : i === 2 ? -warm : 0))))).map(x => x.toString(16).padStart(2, '0')).join(''); };   // light skins spread over more steps
+  const L: any = { skin: tone(r.skin), hc: r.hairCol, fem, key: r.key,
     sw: base.sw * up * tw, cw: base.cw * up * tw, ww: base.ww * Math.pow(m, 1.6) + fat * 0.2, hw: base.hw * Math.pow(m, 1.1), bel: fat > 0.04 ? fat * 0.6 : 0,
     au: base.au * up, af: base.af * up, th: base.th * Math.pow(m, 1.35), sh: base.sh * Math.pow(m, 1.3), traps: fem ? 0.1 : Math.max(0, (m - 1) * 3 + 0.2),
     build: fat > 0.05 ? 'belly' : m > 1.2 ? 'heavy' : m < 0.98 ? 'skinny' : 'lean', hs: fem ? 1 : Math.max(0.9, Math.min(1.12, 0.94 + (m - 0.95) * 0.35 + fat * 0.4)),
     abs: fem || fat > 0.05 ? 0 : m < 1.05 ? 4 : m > 1.2 ? 6 : 4, neck: fem ? 0.14 : m < 1.05 ? 0.14 : m > 1.25 ? 0.08 : 0.11, tape: !!r.tape || (!!K && K.acc.indexOf('wrist_tape_white') >= 0), chestHair: (r.bodyHair || 0) > 0, veins: m > 1.2, quad: fem };
   // the face
   const hd = r.head, wide = (hd.rx - 1.04) / 0.28, sq = hd.sq >= 4, pointy = hd.chin >= 0.35;
-  const crw = 0.42 + 0.12 * Math.max(0, Math.min(1, wide));
+  const crw = 0.46 + 0.12 * Math.max(0, Math.min(1, wide)) + (m > 1.2 || fat > 0.05 ? 0.05 : 0);
   const md = r.mood || 'face', sh = ['shout', 'roar', 'snarl'].indexOf(expr) >= 0, hurt = ['hurt', 'pain', 'cry', 'shut'].indexOf(expr) >= 0;
-  L.hd = { cr: hd.ryt > 1.46 ? 'long' : sq && r.hair !== 'bald' ? 'bullet' : sq ? 'round' : pointy ? 'egg' : ['round', 'round', 'long', 'egg'][h('cr', 4)], crw, jaw: sq ? (m > 1.15 ? 'anvil' : 'block') : pointy ? 'v' : hd.chin > 0.2 ? 'square' : 'round',
-    jw: sq ? crw * (m > 1.15 ? 1.45 : 1.25) : pointy ? 0.32 : crw * (hd.chin > 0.2 ? 0.92 : 0.88), len: Math.max(0.95, Math.min(1.3, hd.ryb / 1.6 * 1.06 * (m > 1.2 ? 1.08 : 1))),
+  L.hd = { cr: hd.ryt > 1.46 ? 'long' : sq && r.hair !== 'bald' ? 'bullet' : sq ? 'round' : pointy ? 'egg' : ['round', 'round', 'long', 'egg'][h('cr', 4)], crw, jaw: fat > 0.05 ? 'jowl' : sq ? (m > 1.15 ? 'anvil' : 'block') : pointy || m < 0.98 ? 'v' : hd.chin > 0.2 ? 'square' : 'round',
+    jw: sq ? crw * (m > 1.15 ? 1.4 : 1.2) : pointy || m < 0.98 ? crw * 0.62 : crw * (hd.chin > 0.2 ? 0.82 : 0.78), len: Math.max(0.95, Math.min(1.3, hd.ryb / 1.6 * 1.06 * (m > 1.2 ? 1.08 : 1))),
     eye: hurt ? 'slit' : fem ? (h('ey', 2) ? 'lid' : 'lash') : md === 'fierce' ? 'slit' : md === 'cocky' ? 'lid' : ['almond', 'almond', 'almond', 'almond', 'slit', 'round'][h('ey', 6)], shadow: fem && h('ey', 2) ? ['#7a3fa0', '#2c62ad', '#a8326a', '#3a7a5a', '#8a5a2a'][h('sh', 5)] : undefined, ey: -0.03, et: md === 'fierce' || md === 'heel' ? -5 : md === 'sad' ? 6 : 2,
     brow: md === 'fierce' ? 'slab' : md === 'heel' ? 'thick' : md === 'cocky' || md === 'happy' ? (fem ? 'arch' : 'raised') : fem ? ['arch', 'thin', 'arch'][h('br', 3)] : r.brow > 0.15 ? 'thick' : ['flat', 'thick', 'thin', 'raised', 'flat'][h('br', 5)],
-    mouth: sh ? 'grit' : expr === 'talk' ? 'grin' : hurt ? 'grim' : expr === 'smirk' ? 'smirk' : md === 'happy' ? 'grin' : md === 'cocky' || md === 'heel' ? 'smirk' : md === 'fierce' ? 'grim' : md === 'sad' ? 'flat' : ['grin', 'grin', 'grin', 'smile', 'smile', 'flat', 'grim', 'wide', 'smirk', 'smile'][h('mo', 10)],
+    mouth: sh ? 'grit' : expr === 'talk' ? 'grin' : hurt ? 'grim' : expr === 'smirk' ? 'smirk' : md === 'happy' ? 'grin' : md === 'cocky' || md === 'heel' ? 'smirk' : md === 'fierce' ? 'grim' : md === 'sad' ? 'flat' : ['grin', 'grin', 'grin', 'flat', 'flat', 'smirk', 'smirk', 'grim', 'smirk', 'wide'][h('mo', 10)],
     ear: m > 1.2 ? 1.1 : 1 + (h('ear', 5) - 2) * 0.08, cheek: fem ? 1 : 0,
     es2: 0.86 + h('es', 7) * 0.05 + ((r.fs || {}).eyeS ? (r.fs!.eyeS! - 1) : 0), eg: 0.92 + h('eg', 5) * 0.04 + ((r.fs || {}).eyeG ? (r.fs!.eyeG! - 1) * 0.5 : 0), mw: 0.84 + h('mw', 5) * 0.08 * (r.fs && r.fs.mouthW ? r.fs.mouthW : 1), bt: 1.35 + Math.min(0.2, r.brow) * 3,
     nose: (r.feat && r.feat.nose) || (r.noseW > 0.48 ? 'broad' : r.noseL > 0.6 ? 'long' : r.noseL < 0.47 ? 'button' : ['straight', 'straight', 'hook', 'small'][h('nose', 4)]), nw: 0.75 + r.noseW * 0.6, nl: 0.7 + r.noseL * 0.55, lip: fem ? ['#b8285a', '#b84a4a', '#8a2a3a', '#a03a50'][h('lip', 4)] : undefined, freck: r.freckles ? 1 : 0, scar: (r.scars || []).length ? 1 : 0, jowl: fat > 0.1 ? 1 : 0, adam: !fem && m < 1.05 ? 1 : 0 } as Hd;
   L.iris = r.eyeCol || ['#5a3a22', '#3d2a1c', '#4f6a3a', '#3f6c94', '#6b5530'][h('eye', 5)];
   L.hair = r.mask ? 'bald' : r.hair || 'cap';   // every hair style of the game, each cut in the concept's manner (headC)
   L.beard = r.mask ? 'none' : r.beard === 1 || r.beard === 9 ? 'stubble' : r.beard === 2 || r.beard === 7 ? 'goatee' : r.beard === 8 ? 'chin' : r.beard === 3 ? 'vandyke' : r.beard === 4 ? 'short' : r.beard === 5 ? 'full' : r.beard === 6 ? 'sideburns' : r.beard === 10 ? 'chinstrap' : 'none';
+  if ((L.beard === 'full' || L.beard === 'short') && (L.hd.mouth === 'grin' || L.hd.mouth === 'wide')) L.hd.mouth = 'flat';   // a grin would show through the beard
   L.mus = r.mask ? 0 : r.mus || 0; L.braid = !!r.braid;
   if (L.build === 'belly') { L.bel = Math.max(L.bel, 0.03 + fat * 0.5); L.ww = Math.max(L.ww, L.cw * 1.05); L.abs = 0; }
   if (L.build === 'skinny') { L.sw *= 0.86; L.cw *= 0.86; L.au *= 0.85; L.af *= 0.88; L.th *= 0.9; L.traps = 0; }
@@ -163,13 +165,13 @@ export function lookOf(r: Recipe, expr: string): Look {
 function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   const h = a.hd, sk = a.skin, dk = shade(sk, 0.72), mkS = (d: string, w = 2.4, col = '#1b1b1d') => P.stroke(d, w, col);
   const piece = (pts: Pt[], col: string, edge?: number) => P.poly(cut(pts, r, false), col, edge === 1 ? shade(col, 0.8) : undefined);
-  const nar = 0.86, len = h.len * hu * 1.04, jw = h.jw * hu * nar, crw = h.crw * hu * nar;
+  const nar = 0.93, len = h.len * hu * 1.02, jw = h.jw * hu * nar, crw = h.crw * hu * nar;
   const top = -len * 0.55, bot = len * 0.45, face = Math.max(crw, jw);
   const ey = h.ey * len, eg = face * 0.45 * (h.eg || 1), es = face * 0.2 * Math.pow(h.es || 1, 0.3) * (h.es2 || 1), browY = ey - face * 0.33 - (h.bu || 0) * hu, jt = browY + es * 0.2 + (h.bu || 0) * hu;
   // hair behind the head (and, seen from behind, over it)
   const behind = () => {
     const hr = a.hair;
-    if (hr === 'long' && !a.fem && a.beard !== 'none') piece([[-crw * 1.02, top + len * 0.15], [-crw * 0.9, top - hu * 0.05], [crw * 0.9, top - hu * 0.05], [crw * 1.02, top + len * 0.15], [crw * 1.06, jt + len * 0.1], [crw * 1.02, bot + hu * 0.25], [-crw * 1.02, bot + hu * 0.25], [-crw * 1.06, jt + len * 0.1]], shade(a.hc, 0.9));   // with a beard: tied back, so the beard has skin round it
+    if (hr === 'long' && !a.fem && a.beard !== 'none') piece([[crw * 0.55, top + len * 0.1], [crw * 0.95, top + len * 0.25], [crw * 1.15, bot + hu * 0.45], [crw * 0.9, bot + hu * 0.6], [crw * 0.75, bot + hu * 0.1]], shade(a.hc, 0.9));   // with a beard: tied back in a tail, so the face and the beard have skin round them
     else if (hr === 'long' && !a.fem) piece([[-crw * 1.1, top + len * 0.2], [-crw * 0.9, top - hu * 0.05], [crw * 0.9, top - hu * 0.05], [crw * 1.1, top + len * 0.2], [crw * 1.18, bot + hu * 0.55], [crw * 0.95, bot + hu * 0.68], [crw * 0.6, bot + hu * 0.5], [-crw * 0.6, bot + hu * 0.5], [-crw * 0.95, bot + hu * 0.68], [-crw * 1.18, bot + hu * 0.55]], shade(a.hc, 0.9));   // tucked behind the shoulders, so the face and the beard stand out
     if ((hr === 'long' && a.fem) || hr === 'wild') { const wl = hr === 'wild' ? 1.18 : 1; piece([[-crw * 1.5 * wl, -len * 0.05], [-crw * 1.25 * wl, top - hu * 0.1], [0, top - hu * 0.22], [crw * 1.3 * wl, top - hu * 0.08], [crw * 1.55 * wl, 0], [crw * 1.75 * wl, bot + hu * 0.55], [crw * 1.35, bot + hu * 0.45], [crw * 1.5 * wl, bot + hu * 0.8], [crw * 0.9, bot + hu * 0.55], [-crw * 0.9, bot + hu * 0.6], [-crw * 1.55 * wl, bot + hu * 0.85], [-crw * 1.4, bot + hu * 0.5], [-crw * 1.75 * wl, bot + hu * 0.6]], a.hc); }
     if (hr === 'bob') piece([[-crw * 1.18, top + len * 0.15], [-crw * 0.95, top - hu * 0.08], [crw * 0.95, top - hu * 0.08], [crw * 1.18, top + len * 0.15], [crw * 1.22, bot - len * 0.02], [crw * 0.75, bot + len * 0.02], [-crw * 0.75, bot + len * 0.02], [-crw * 1.22, bot - len * 0.02]], a.hc);
@@ -192,6 +194,7 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   const JW: Record<string, Pt[]> = { anvil: [[-crw, jt], [crw, jt], [jw, jt + len * 0.22], [jw * 0.94, bot], [-jw * 0.94, bot], [-jw, jt + len * 0.22]], block: [[-crw, jt], [crw, jt], [jw * 0.98, jt + len * 0.28], [jw * 0.78, bot], [-jw * 0.78, bot], [-jw * 0.98, jt + len * 0.28]],
     jowl: [[-crw, jt], [crw, jt], [jw * 1.06, bot - len * 0.22], [jw * 0.82, bot + len * 0.04], [0, bot + len * 0.08], [-jw * 0.82, bot + len * 0.04], [-jw * 1.06, bot - len * 0.22]], square: [[-crw, jt], [crw, jt], [jw, bot - len * 0.2], [jw * 0.62, bot], [-jw * 0.62, bot], [-jw, bot - len * 0.2]],
     v: [[-crw, jt], [crw, jt], [Math.max(jw * 1.1, crw * 0.95), jt + len * 0.18], [jw * 0.25, bot], [-jw * 0.25, bot], [-Math.max(jw * 1.1, crw * 0.95), jt + len * 0.18]], round: [[-crw, jt], [crw, jt], [jw * 1.06, bot - len * 0.24], [jw * 0.6, bot], [-jw * 0.6, bot], [-jw * 1.06, bot - len * 0.24]] };
+  JW.v = [[-crw, jt], [crw, jt], [crw * 1.02, jt + len * 0.2], [jw * 0.9, bot - len * 0.12], [jw * 0.45, bot], [-jw * 0.45, bot], [-jw * 0.9, bot - len * 0.12], [-crw * 1.02, jt + len * 0.2]];   // cheekbones, then a taper to the chin
   const jaw = (JW[h.jowl ? 'jowl' : h.jaw] || JW.round).slice(), cr = more(more(CR[h.cr] || CR.round));
   if (h.jaw !== 'jowl' && h.jaw !== 'v' && !h.jowl) { const i = jaw.findIndex(p => p[1] === bot && p[0] > 0); if (i >= 0) jaw.splice(i + 1, 0, [0, bot + len * 0.04]); }
   if (a.mask) {
@@ -271,10 +274,10 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   // the hair on top: every style of the game, cut as the concept cuts hair
   const pulled = (k2: number): Pt[] => [[-crw * 1.0, jt - es * k2], [-crw * 0.9, top - hu * 0.04], [crw * 0.9, top - hu * 0.04], [crw * 1.0, jt - es * k2], [crw * 0.7, top + len * 0.12], [-crw * 0.7, top + len * 0.12]];   // pulled back off the face
   const HT: Record<string, Pt[]> = {
-    buzz: [[-crw * 0.98, jt - es * 0.2], [-crw * 0.8, top + len * 0.06], [-crw * 0.45, top - hu * 0.03], [crw * 0.45, top - hu * 0.03], [crw * 0.8, top + len * 0.06], [crw * 0.98, jt - es * 0.2], [crw * 0.7, top + len * 0.15], [-crw * 0.7, top + len * 0.15]],
-    crew: [[-crw * 1.0, jt - es * 0.4], [-crw * 0.86, top - hu * 0.06], [crw * 0.86, top - hu * 0.06], [crw * 1.0, jt - es * 0.4], [crw * 0.78, top + len * 0.13], [-crw * 0.78, top + len * 0.13]],
+    buzz: [[-crw * 0.98, jt - es * 0.2], [-crw * 0.8, top + len * 0.06], [-crw * 0.45, top - hu * 0.03], [crw * 0.45, top - hu * 0.03], [crw * 0.8, top + len * 0.06], [crw * 0.98, jt - es * 0.2], [crw * 0.7, top + len * 0.15], [0, top + len * 0.2], [-crw * 0.7, top + len * 0.15]],
+    crew: [[-crw * 1.0, jt - es * 0.4], [-crw * 0.86, top - hu * 0.06], [-crw * 0.2, top - hu * 0.1], [crw * 0.86, top - hu * 0.04], [crw * 1.0, jt - es * 0.4], [crw * 0.78, top + len * 0.13], [crw * 0.25, top + len * 0.15], [0, top + len * 0.21], [-crw * 0.25, top + len * 0.15], [-crw * 0.78, top + len * 0.13]],
     cap: [[-crw * 1.03, jt - es * 0.8], [-crw * 0.95, top - hu * 0.05], [crw * 0.9, top - hu * 0.09], [crw * 1.04, jt - es * 0.4], [crw * 0.8, top + len * 0.14], [crw * 0.05, top + len * 0.2], [-crw * 0.3, top + len * 0.12], [-crw * 0.85, top + len * 0.16]],
-    flat: [[-crw * 1.0, jt - es * 0.4], [-crw * 0.96, top - hu * 0.24], [crw * 0.96, top - hu * 0.24], [crw * 1.0, jt - es * 0.4], [crw * 0.76, top + len * 0.13], [-crw * 0.76, top + len * 0.13]],
+    flat: [[-crw * 1.0, jt - es * 0.4], [-crw * 0.96, top - hu * 0.24], [crw * 0.96, top - hu * 0.22], [crw * 1.0, jt - es * 0.4], [crw * 0.76, top + len * 0.13], [0, top + len * 0.18], [-crw * 0.76, top + len * 0.13]],
     slick: [[-crw * 1.02, jt - es * 0.5], [-crw * 0.9, top - hu * 0.06], [crw * 0.1, top - hu * 0.12], [crw * 0.95, top - hu * 0.02], [crw * 1.03, jt - es * 0.5], [crw * 0.75, top + len * 0.1], [-crw * 0.2, top + len * 0.08], [-crw * 0.8, top + len * 0.14]],
     mullet: [[-crw * 1.05, jt - es * 0.5], [-crw * 0.95, top - hu * 0.05], [crw * 0.95, top - hu * 0.08], [crw * 1.06, jt - es * 0.5], [crw * 0.55, top + len * 0.16], [-crw * 0.45, top + len * 0.22]],
     puff: [[-crw * 1.04, jt - es * 0.3], [-crw * 0.9, top - hu * 0.03], [crw * 0.9, top - hu * 0.03], [crw * 1.04, jt - es * 0.3], [crw * 0.85, top + len * 0.2], [-crw * 0.85, top + len * 0.2]],
@@ -320,7 +323,7 @@ function tattoo(P: Pen, st: string, L: number, w: number, sk: string, r: R) {
 /** Cut and pin a doll in style C. The same arguments and rig as `puppet()`. */
 export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig {
   const big0 = r.w > 1.15 || (r.belly || 0) > 0.05 ? 8 : 0, jit = (k2: string, d: number) => ((hashS(r.key + '|st' + k2) % 1000) / 1000 - 0.5) * d;
-  const STC: Record<string, number> = { ...STAND, sh_n: 18 + big0 + jit('sn', 8), el_n: 22 + jit('en', 10), sh_f: -16 - big0 + jit('sf', 8), el_f: -22 + jit('ef', 10), hip_n: 6 + jit('hn', 4), hip_f: -6 + jit('hf', 4), kn_n: -3, kn_f: 3, an_n: -4, an_f: 4, head: jit('hd', 6), torso: jit('to', 2) };   // style C stands easy (critic, 29 October)
+  const STC: Record<string, number> = { ...STAND, sh_n: 18 + big0 + jit('sn', 8), el_n: 30 + jit('en', 8), sh_f: -16 - big0 + jit('sf', 8), el_f: -30 + jit('ef', 8), hip_n: 6 + jit('hn', 4), hip_f: -6 + jit('hf', 4), kn_n: -3, kn_f: 3, an_n: -4, an_f: 4, head: jit('hd', 6), torso: jit('to', 2) };   // style C stands easy (critic, 29 October)
   const a = lookOf(r, expr), out0 = out.length;
   const n0 = out0, bk = !!pl.b, P0 = { ...STC, ...pose }, h = r.h * a.hs, ll = r.ll || 1, H = h * (r.th || 1), K = r.kit;
   const rr = rngOf(r.key + '|C'), hu = HU, k = GH * h / HU, sk = a.skin, dk = shade(sk, 0.74);
@@ -346,7 +349,7 @@ export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr
     const ul = px(L.up), fl = px(L.fore), A = pen(sh, z, 'sh_' + s), col = a.sleeve || sk;
     piece(A, limb([0, 0], [0, ul], au, au * 0.8, UA), col, true);
     if (a.tat && a.tat.arm.indexOf(sd) >= 0 && !a.sleeve) A.group(0, ul * 0.15, 0, () => tattoo(A, a.tat!.st, ul * 0.85, au * 0.8, sk, rr));
-    piece(A, [[-sd * au * 0.7, -hu * 0.24], [sd * au * 1.2, -hu * 0.08], [sd * au * 1.15, hu * 0.4], [-sd * au * 0.3, hu * 0.34]], a.sleeve ? col : shade(col, 0.9));   // the shoulder
+    A.poly(cut(ell(sd * au * 0.25, hu * 0.06, au * 1.25, hu * 0.36, 11), rr), a.sleeve ? col : shade(col, 0.95));   // the shoulder
     const el = child(sh, [0, -L.up], P0['el_' + s]); note('el_' + s, el, sh);
     const E = pen(el, z + 0.04, 'el_' + s), fw = Math.max(af * 1.08, au * 0.78);
     piece(E, limb([0, -fw * 0.5], [0, fl], fw, fw * 0.6, FA), a.sleeve || sk, true);
@@ -386,11 +389,12 @@ export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr
   const Tp = pen(to, 0.42, 'torso'), side = (sd: number): Pt[] => [[sd * shn * 1.05, yN + hu * 0.05], [sd * sw * 0.62, ySh - hu * 0.04], [sd * sw, ySh + hu * 0.14], [sd * cw * 1.02, ySh + hu * 0.6], [sd * cw * (a.fem ? 0.93 : 1), yCh], [sd * (ww + bel), yW + (bel ? hu * 0.18 : 0)], [sd * hw, yC - hu * 0.02]];
   const bodyC = a.topC && a.top === 'shirt' ? a.topC : sk;
   piece(Tp, more(side(-1).concat([[0, yC + hu * 0.08]], side(1).reverse()), 0.012), bodyC);
-  const trp = a.traps * (a.fem ? 0.45 : 1); if (a.traps > 0.3) piece(Tp, [[-sw * 0.62, ySh + hu * 0.02], [-shn * 1.2 * trp - hu * 0.15, yN - hu * (a.fem ? 0.15 : 0.35)], [shn * 1.2 * trp + hu * 0.15, yN - hu * (a.fem ? 0.12 : 0.32)], [sw * 0.62, ySh + hu * 0.02]], shade(bodyC, 0.97));
+  const trp = Math.max(0.5, a.traps) * (a.fem ? 0.45 : 1); if (a.traps > 0.3 || !a.fem) piece(Tp, [[-sw * 0.62, ySh + hu * 0.02], [-shn * 1.2 * trp - hu * 0.15, yN - hu * (a.fem ? 0.15 : 0.35)], [shn * 1.2 * trp + hu * 0.15, yN - hu * (a.fem ? 0.12 : 0.32)], [sw * 0.62, ySh + hu * 0.02]], shade(bodyC, 0.97));
   const bare = bodyC === sk && !bk;
-  if (bel > 0 && bare) { piece(Tp, [[-(ww + bel) * 0.85, yW - hu * 0.25], [0, yW - hu * 0.5], [(ww + bel) * 0.87, yW - hu * 0.24], [(ww + bel) * 0.98, yW + hu * 0.28], [0, yW + hu * 0.56], [-(ww + bel) * 0.96, yW + hu * 0.3]], sk); for (const sd of [-1, 1]) Tp.stroke(`M${sd * (ww + bel) * 0.9} ${yW + hu * 0.12} q${-sd * hu * 0.06} ${hu * 0.03} ${-sd * hu * 0.1} 0`, 1.3, dk); }
+  if (bel > 0) { const bc = a.top === 'singlet' || a.top === 'shirt' ? a.topC! : sk, bwd = Math.max(ww + bel, cw * 1.2); piece(Tp, [[-bwd * 0.85, yW - hu * 0.55], [0, yW - hu * 0.75], [bwd * 0.87, yW - hu * 0.54], [bwd * 1.0, yW + hu * 0.1], [bwd * 0.8, yW + hu * 0.5], [0, yW + hu * 0.66], [-bwd * 0.8, yW + hu * 0.5], [-bwd * 0.98, yW + hu * 0.1]], bc); Tp.stroke(`M${-bwd * 0.75} ${yW + hu * 0.46} Q0 ${yW + hu * 0.72} ${bwd * 0.75} ${yW + hu * 0.46}`, 1.6, shade(bc, 0.72)); }
+  if (bel > 0 && bare) { if (0) for (const sd of [-1, 1]) Tp.stroke(`M${sd * (ww + bel) * 0.9} ${yW + hu * 0.12} q${-sd * hu * 0.06} ${hu * 0.03} ${-sd * hu * 0.1} 0`, 1.3, dk); }
   if (bare) {
-    if (!a.fem && !bel && a.build !== 'skinny') for (const sd of [-1, 1]) piece(Tp, [[sd * cw * 0.05, ySh + hu * 0.35], [sd * cw * 0.92, ySh + hu * 0.42], [sd * cw * 0.85, ySh + hu * 0.82], [sd * cw * 0.1, ySh + hu * 0.9]], shade(sk, 0.84));
+    if (!a.fem && !bel && a.build !== 'skinny') for (const sd of [-1, 1]) piece(Tp, [[sd * cw * 0.06, ySh + hu * 0.52], [sd * cw * 0.5, ySh + hu * 0.44], [sd * cw * 0.92, ySh + hu * 0.5], [sd * cw * 0.86, ySh + hu * 0.66], [sd * cw * 0.55, ySh + hu * 0.86], [sd * cw * 0.12, ySh + hu * 0.88]], shade(sk, 0.9));   // a pec, firm only at its lower edge
     Tp.stroke(`M${-sw * 0.62} ${ySh + hu * 0.06} Q${-shn * 1.4} ${ySh + hu * 0.18} ${-shn * 0.4} ${ySh + hu * 0.2} M${sw * 0.62} ${ySh + hu * 0.06} Q${shn * 1.4} ${ySh + hu * 0.18} ${shn * 0.4} ${ySh + hu * 0.2}`, 1.4, dk);
     Tp.stroke(`M${-hu * 0.04} ${ySh + hu * 0.24} l${hu * 0.04} ${hu * 0.06} l${hu * 0.04} ${-hu * 0.06}`, 1.2, dk);
     if (!a.fem) Tp.stroke(`M${-cw * 0.8} ${ySh + hu * 0.82} Q${-cw * 0.3} ${ySh + hu * 1.0} 0 ${ySh + hu * 0.74} M${cw * 0.12} ${ySh + hu * 0.82} Q${cw * 0.5} ${ySh + hu * 0.98} ${cw * 0.82} ${ySh + hu * 0.78}`, 1.5, dk);
