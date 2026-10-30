@@ -2,7 +2,7 @@
 
 The hand-over from the build thread, written 2 October 2026 at version 0.11. Work top to bottom unless Ryan says otherwise. Read `CLAUDE.md` first for how the project works, and `docs/feature-list.md` for the full wording of each feature.
 
-**`NEXT.md` is the work queue.** It turns the tasks below into ordered steps for an unattended run. Start there.
+**`docs/MASTER.md` §7 is the work queue** (30 October). `NEXT.md` and `docs/roadmap.md` are retired to `docs/archive/`.
 
 **`IDEAS.md` is shelved.** Ryan scrapped the "next 100 ideas" direction on 3 October. None of them were built. The work is now fine-tuning the engine, the game loop, its logic and its rewards, one step at a time.
 
@@ -138,6 +138,19 @@ Two more lists sit beside this one, both finished:
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
+
+### Q. The queue in MASTER §7 (30 October; rows and gates there)
+
+- [ ] L1: structured causal log for five meters (`meterAdd`), at least 95% explained by named causes, golden games identical.
+- [ ] L2: two bots on one model nightly, `tools/bots/report.js`, baseline recorded in MASTER §7.
+- [ ] L3: five bots plus the exploit bot, failing gates on 3-seed medians.
+- [ ] 1: the spine, rule 9d (`docs/plans/spine.md`: gate 1 started).
+- [ ] 2: first hour (0ac).
+- [ ] 3: art bible and look freeze.
+- [ ] 4: broadcast weight (0au).
+- [ ] 5: merges.
+- [ ] 6: ship.
+- [ ] 7: outside proof.
 
 ### 0an2. The engine in TypeScript modules (Ryan, 23 October: "do it")
 

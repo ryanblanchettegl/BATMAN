@@ -9,7 +9,7 @@ Owner: Ryan (decides design, art, names). Co-planner: Bill. Built 30 October 202
 ## 0. Session boot (do this, in order, and no more)
 
 1. This file is already in context. Do **not** re-read `CLAUDE.md`, `TASKS.md` or the whole code map.
-2. `git status -sb && git log --oneline -5` — know the branch and the last work.
+2. `git status -sb && git log --oneline -5` — know the branch and the last work. Read the last 10 lines of `docs/LESSONS.md`.
 3. Read §7 (the queue) and pick the top unblocked item, or do what Ryan asked.
 4. Open only what that item needs: the one blueprint in `docs/plans/`, the one bullet in `docs/notes/code-map.md` (grep the file name), the one skill.
 5. Work the pipeline in §2. End with §9 (update this file if anything here changed).
@@ -20,22 +20,18 @@ Owner: Ryan (decides design, art, names). Co-planner: Bill. Built 30 October 202
 2. **Art direction = three concepts.** Any art, look, style or visual-UX decision goes to Ryan as **exactly three concepts, each of which has already passed a critic run at ≥ 8.5**. Ryan picks; never decide a look alone (`design-decision` skill).
 3. **Spend fewer tokens every session.** Keep this file short and current; read narrowly; delegate wide searches to one Explore agent instead of dumping files; never paste large outputs; log every saving in §10. Each session should leave the next one cheaper.
 
-## 2. The pipeline for every change
+## 2. The pipeline, sized by tier
 
-| step | what | tool |
-|---|---|---|
-| 0 | Is it new (mode, system, major feature)? → rule 9d gates first: blueprint `docs/plans/<x>.md` → question vault (one question at a time) → Ryan's plain go-ahead, dated in `TASKS.md`. Small fixes, polish, tools: skip. | `AskUserQuestion` |
-| 1 | Research: tools already here, free/OSS that solves it, skills/plugins that apply | `free-tools-first`, `SearchPlugins`, `SearchSkills` |
-| 2 | Design the data/hooks before code | `wrestlecraft-architecture`; big change → `engineering:architecture` ADR in `docs/adr/` |
-| 3 | Build: engine first (`engine/NN-name.ts`, `E.*`, headless `test-name.js`, 60 weeks errs 0 NaN 0), then the screen | — |
-| 4 | **Critic ≥ 8.5** (separate agent, no edits) | `critic-review` |
-| 5 | Page touched → `design:design-critique`, `design:accessibility-review`; new words → `design:ux-copy` | design plugin |
-| 6 | Tests: `npm run check`, `node tools/headless-tests.js`, `node test-golden.js` (after engine change that should not change play), browser test for the section + `journey.js` | — |
-| 7 | `simplify` + `engineering:code-review`; saves/files/network/Steam → `security-review` | — |
-| 8 | Commit (what changed for the player + critic score + one-line reasons), push to the session branch, open PR, subscribe | git, GitHub MCP |
-| 9 | `impl_count += 1` (§8). At every 5th → `efficiency-review` before the next task. Nightly/milestone → publish live page (§6) | — |
+| tier | what counts | steps | done means |
+|---|---|---|---|
+| **S** | fix, polish, wording, tool, doc | build → tests for the area → commit | tests green, nothing else moved |
+| **M** | feature inside an approved plan | S + `free-tools-first` + critic ≥ 8.5 + design skills if a page changed | S + critic score in commit, handoff to next phase named (rule 7a) |
+| **L** | new mode, system, major feature | rule 9d gates (blueprint → question vault → Ryan's dated go-ahead) → `wrestlecraft-architecture` (ADR if big) → M steps → bot-booker run (§7 row 0) → `security-review` if saves/files/network/Steam | M + Director tag, what it replaces, measurable gate met |
+| **Art** | any look, style, visual UX, motion | three concepts → each critic ≥ 8.5 → Ryan picks → M steps | Ryan's pick logged in `TASKS.md` |
 
-Art/look: steps 1→ three concepts → critic each ≥ 8.5 → Ryan picks → then steps 2–9.
+Common to all: engine first (`engine/NN-name.ts`, `E.*`, headless test 60 weeks errs 0 NaN 0), then the screen. Commit says what changed for the player. Push the session branch, open a PR, subscribe. M and L: `impl_count += 1`; every 5th → `efficiency-review`. Nightly/milestone → live page (§6).
+
+**Critic protocol** (`critic-review`): written rubric (fun, fit with the spine, correctness and tests, readability and look, cost in code and tokens), each 1–10, total is the mean; two independent critics on L and Art, take the median; cap 3 rounds, then Ryan decides with the critic's notes; log every score in `docs/notes/critic-log.md`. Calibration: every 5th review also re-scores 3 frozen past changes (listed in the log); drift ≥ 0.5 → recalibrate the brief. Two critics ≥ 1.5 apart → Ryan decides. Audit: each `efficiency-review` re-files a sample of 5 tier-S commits; any that was really M gets a late critic.
 
 ## 3. Hard rules (short form; full text and Ryan's quotes: `docs/notes/rules.md`)
 
@@ -117,26 +113,34 @@ NODE_PATH=<pw dir> node app/tests/<name>.js
 ```
 Full list: `docs/notes/commands.md`. Live page: https://claude.ai/artifact/J6CziDiPFPTsrCNhhy39qa — nightly + milestone builds only. Read the live version first (another thread publishes too), merge anything missing, then publish `dist/gorilla-position.html`; note the version in the report.
 
-## 7. The queue (top first; detail and boxes in `TASKS.md`)
+## 7. The queue, in thesis order (detail and boxes in `TASKS.md`; why: `docs/reviews/2026-10-30-game-review.md`)
 
-| # | item | state | gate |
+No new system starts until rows 1–3 meet their gates. Every gate is a number a script checks. Thresholds are set as margins over the L2 baseline; revise once after it is recorded, then fix them.
+
+| # | epic | tier | measurable gate |
 |---|---|---|---|
-| 1 | **Default world switch** (D5: original/public-domain leads, parody opt-in) | decided, unbuilt | Bill + lawyer confirm |
-| 2 | **0ao move 2: the promise ledger** (one visible ledger of promised wins, title shots, open threads, ripe feuds, each with a payoff window) | idea | 9d blueprint `docs/plans/promise-ledger.md` |
-| 3 | **0ao move 3: three clocks with ceremonies** (week stamp, monthly magazine 0af, era verdict) | idea | 9d `docs/plans/three-clocks.md` |
-| 4 | **0ao move 4: preview before consequence** (pencil marks in words on every choice) | idea | 9d or Ryan rules it polish |
-| 5 | **0aq booking demands** (forced finishes/matches from writers, wrestlers, business) | approved, after Director | build |
-| 6 | **Booking Clock Wall** (22/56/22 card builder; summary in `docs/archive/MASTER-2026-10-28.md` §9) | approved (critic 8.6, clears 8.5) | build |
-| 7 | **0ap loops**: feud ending window, slights come due, cold city → home market, renewal countdown, feed/starve a reporter | listed | short 9d each |
-| 8 | **0at** backstage decisions on the desk list | approved | build |
-| 9 | **0au** animation weight (twos, hit-stop, TV camera, crowd density, choreography, UI motion) | polish | each motion picked by Ryan (3 concepts) |
-| 10 | **Wrestler style C** (in progress, critic rounds 1–11) and paper 3D wrestlers / movesets blueprints | in progress | critic ≥ 8.5 per round |
-| 11 | **Ship path**: Windows installer + icon, Steam achievements on app 480, cloud save, Workshop worlds | not started | Ryan go-ahead (spends/publishes) |
-| 12 | Strict TS module by module; wraps → hook lists | ongoing | `engine-next` |
-| 13 | D1 regional popularity, D2 relationship types, D7 four health pools | decided, unbuilt | 9d blueprints |
-| Later | 0ar scouting anomalies, 0as industry wear, magazine, traits/perks, word travels, hallway, politics, corkboard, careers, owner mode (post-launch) | parked | — |
+| L1 | **Structured causal log**, two steps, each `test-golden.js` identical. **L1a funnel:** every write to the five meters goes through `meterAdd(S, meter, delta, cause)` — cash `P.cash` (22 files by `grep -rl "P.cash *[-+]=" engine`; exact counts vary with the pattern, so recount with the command), popularity `P.image` (the company's popularity; `grep -rl "P.image *[-+]=" engine`), owner trust `S.trust`, crowd score `rep.cs` (one write, `engine/30-show.ts:158`), morale the roster mean of `w.morale` (writes in about 36 to 39 files depending on the pattern, many as `clamp(w.morale+…)`; recount with grep). **L1b attribute:** each call names `{cause, decision}` in `engine/99-postmortem.ts`, replacing the `note`/`news` wrap; a test checks ≥ 95% of each meter's weekly change is explained by causes other than `other`, median of 3 seeds | L (tool: short blueprint, no vault) | both golden-identical; 95% test green |
+| L2 | **Two bots, one model, nightly** (`tools/bots/`: Suggest-only and thoughtful, from `test-balance.js`'s bookers), writing a JSON report; then **record the baseline** into this row | M | report in CI; **trace share** = Σ\|delta\| of entries caused by a player decision (today: matter answers, booking, action points, people actions; after row 1: ledger lines) ÷ Σ\|delta\| of all entries (including `other`), per meter per season, median of 3 seeds, computed by `tools/bots/report.js`; baseline written: trace share __, week 1–3 grade __, week-1 desk words __ |
+| L3 | **Grow the lab**: greedy, story-first, chaos and an **exploit bot** that searches one-action loops; report fails if one repeated action causes > 25% of the season's grade, popularity or cash gain, or a meter never changes an outcome in 2 seasons; every bot gate is the median of 3 seeds | M | nightly report green or names the exploit |
+| 1 | **The spine** (its blueprint and question vault start now, beside L1–L3, so Ryan's answers are ready when the lab is): one blueprint merging the promise ledger, preview before consequence and three clocks (0ao moves 2–4); Director (built) is its gate | L | `docs/plans/spine.md` (gate 1 written 30 Oct, 12-question vault waiting for Ryan); ledger-line trace share ≥ 0.80 for the thoughtful bot, defined in `docs/plans/spine.md` §7 (Σ\|delta\| with `decision` = a line id ÷ Σ\|delta\| of all `meterAdd` entries, per meter, per season, median of 3 seeds; the bar is absolute since lines do not exist before row 1) and total decision share ≥ L2 baseline + 10 points; Book the show and After the show carry a `data-t="ledger"` line in every browser run: the most urgent open promise, or "No promises open: make one" with a button (a browser assertion) |
+| 2 | **First hour**: 0ac the last booker's mess as the default new game | L | thoughtful bot's median grade over weeks 1–3, 3 seeds, ≥ B (today's year median: B- to B+; Suggest C, from `test-balance.js`); week-1 desk ≤ 3 tasks and ≤ half the baseline words (browser test); 5 outside players then reorder this queue (`design:research-synthesis`) |
+| 3 | **Art bible and look freeze**: finish wrestler style C, page chrome, motion language; then freeze until launch and convert every page to craft + 22/56/22 | Art | Ryan approves a baseline screenshot per page first; then lint: no page uses the old window CSS tokens; nightly screenshot diff at 1080p/1440p/4K against approved baselines; vision critic (rubric in `critic-review`) ≥ 8.5 per page |
+| 4 | **Broadcast weight** (0au): poses on twos, hit-stop by weight, TV-director camera, crowd density, boos | Art + M | p95 frame time ≤ 16.7 ms on the CI reference profile; Ryan watches a big event without skipping |
+| 5 | **Merges**: press + podcast + Web + magazine → one media voice; booking demands (0aq) + writers' room → rows in the ledger under the Director | L | fewer screens and fewer desk words than today (counted by test); bots show no lost depth |
+| 6 | **Ship**: Windows installer + icon, Steam achievements, cloud save, Workshop worlds, default world switch (D5, needs Bill + lawyer) | L | clean install on a fresh Windows VM plays a scripted year; Steam calls pass on app 480 |
+| 7 | **Outside proof**: 20 outside players, two fix rounds | — | ≥ 50% start a second season unprompted |
+| After | Clock Wall (approved 8.6), 0ap loops, 0at desk list, D1 regions, D2 relationship types, D7 health pools, 0ar, 0as, traits, careers, owner mode | — | each re-scoped as a ledger row or parked |
+| Always | strict TS module by module, wraps → hook lists (`engine-next`) | S | `test-golden.js` identical |
 
-Scope guard (Bill's review, 21 Oct): finish and polish before adding. A new idea goes to `TASKS.md` "Later" unless it closes a gap in the core loop.
+### Risk register
+| risk | trigger | answer |
+|---|---|---|
+| Art pivots again | a new look proposed after row 3 freezes | refuse; log it for after launch |
+| Scope creep | a new system before rows 1–3 meet gates | goes to "After" |
+| Critic inflation or loops | a score rises with no code change, or round 4 | median of two critics; Ryan decides |
+| D5 lawyer / parody | no answer by row 6 | ship the original world only |
+| Steam untested | row 6 slips | installer + app 480 test in a spare session early |
+| Perf on modest PC | p95 > 16.7 ms | quality setting lowers crowd density first |
 
 ## 8. Counters
 
@@ -148,6 +152,7 @@ Scope guard (Bill's review, 21 Oct): finish and polish before adding. A new idea
 
 ## 9. Keeping this file true (every session, last step)
 
+- **Learn:** add one line to `docs/LESSONS.md` (what went wrong or was wasted, and the rule or skill that prevents it). Promote a lesson seen twice into this file or a skill.
 - Changed a rule, system, decision, queue item or command? Edit the one line here in the same commit.
 - Finished a queue item → delete its row (history lives in git and `TASKS.md`).
 - This file stays under ~16 KB. If it grows, move detail to `docs/notes/` and leave a one-line pointer.
@@ -161,6 +166,7 @@ Standing habits: grep before read; read with offset/limit; `| tail`/`| head` lon
 | date | saving |
 |---|---|
 | 30 Oct | `CLAUDE.md` 95 KB → ~1.5 KB core that imports this file; code map, rules, commands moved verbatim to `docs/notes/` and read on demand (≈ 22k tokens less per session). Old master archived. |
+| target | Always-loaded text (CLAUDE.md + MASTER) ≤ 18 KB, measured each session with `wc -c CLAUDE.md docs/MASTER.md` and written here when it moves. Promote a lesson to MASTER or a skill when it appears twice. |
 | next | Archive done items in `TASKS.md` (233 open boxes, 1,090 lines) to `docs/archive/`; untrack `dist/` + `engine.js` (−85 MB, CI builds); parallel headless runner. |
 
 ## 11. Where things live
@@ -170,7 +176,8 @@ Standing habits: grep before read; read with offset/limit; `| tail`/`| head` lon
 | `docs/MASTER.md` | this: boot, golden rules, pipeline, queue, counters |
 | `docs/notes/rules.md` · `code-map.md` · `commands.md` | full rules · per-area code notes + things that bite · every command |
 | `TASKS.md` | Ryan's decisions (do not reopen) and task boxes |
-| `NEXT.md`, `docs/roadmap.md` | old unattended queues, mostly done; superseded by §7 |
+| `docs/LESSONS.md`, `docs/notes/critic-log.md` | what sessions learned; every critic score |
+| `docs/archive/NEXT.md`, `docs/archive/roadmap.md` | retired queues (superseded by §7) |
 | `docs/plans/*.md` | blueprints (rule 9d) |
 | `docs/research/` | Bill's reviews (`plans/*.md` text copies), TEW IX research, genre lessons, UI study |
 | `docs/design.md`, `docs/feature-list.md` | design target and feature wording (older; pillars still hold) |
