@@ -1,217 +1,179 @@
-<!-- Saved 29 October 2026 from Ryan's upload (built 28 October in another workspace). Ryan's answer: "Merge its decisions in".
-     How it fits this repo:
-     - Its decisions (section 7) and its layout rule are now in TASKS.md ("Ryan's decisions") and CLAUDE.md (rule 5f).
-     - Its section 6 (the ES5 to TS port) is DONE here a different way: every file is a module in engine/*.ts, with
-       imports and the $L registry for wraps (docs/adr/0001, 0002), not engine/systems/<domain>/ with api/ and events.
-       The systems/, api/, events and zod layout in its section 5 is a target, not the current shape.
-     - Files it names that are not in this repo yet: docs/ARCHITECTURE.md, docs/TOOLSET.md (here: docs/toolset.md),
-       docs/plans/booking-clock-wall.md, docs/plans/wrestler-look-scrapbook.md, docs/plans/gimmick-signatures.md,
-       tools/decision-picker.html, docs/research/tew9/. The plans in its section 9 are summarised there only.
-     - Its "one step per go-ahead" (section 2, rule 9) differs from CLAUDE.md rule 9a (approved plans run unattended,
-       Ryan 23 October); rule 9a stands until Ryan says otherwise.
-     - impl_count starts at 0 here on 29 October. -->
-# WrestleCraft — Master Document for Claude
+# WrestleCraft: Be The Booker — MASTER
 
-One file that gives a fresh Claude session the whole project: rules, state, architecture, decisions, plans and workflows.
-Built 2026-10-28 from `CLAUDE.md`, `docs/MASTER.md`, `docs/ARCHITECTURE.md`, `docs/TOOLSET.md`, `docs/plans/*`, `.claude/skills/*`.
-Source docs win on detail. Change any of them → update this file in the same change.
+The first thing every development session reads. Written for Opus 5.5. Loaded automatically through `CLAUDE.md`.
+Owner: Ryan (decides design, art, names). Co-planner: Bill. Built 30 October 2026 from every doc, plan, review and the code.
+**Precedence:** §1 golden rules > Ryan's words in this session > `docs/notes/rules.md` > everything else. Source files win on detail.
 
 ---
 
-## 1. Project
-| key | value |
-|---|---|
-| game | WrestleCraft: Be The Booker, v0.88.0 |
-| repo | `BATMAN/` — github.com/ryanblanchettegl/BATMAN |
-| owner | Ryan (decides design/art). Bill = co-planner (6 plan PDFs, 21 Oct) |
-| stack today | Electron + Preact/TS UI (`app/`), ES5 sim (`src/*.js` → `engine.js` via `build.js`), output `dist/index.html` |
-| stack target | TypeScript engine package `engine/` (strangler port, §6) |
-| tests | 59 root `test-*.js` + 42 browser tests `app/tests/`; `npm run check` green before merge |
-| impl_count | 0 · next efficiency review at 5 |
+## 0. Session boot (do this, in order, and no more)
 
-## 2. Hard rules
-1. **Free-first** — before building/buying: skill `free-tools-first`. Record picks in `docs/TOOLSET.md`.
-2. **Decisions** — any design/art/UX/audio/naming choice → skill `design-decision`: 3 best options in `tools/decision-picker.html`, Ryan picks. Never decide silently. Concepts pass the critic agent first; only scores ≥ Ryan's bar reach him (desk: 8.5).
-3. **Efficiency cycle** — `impl_count += 1` per finished implementation in `docs/MASTER.md`; every multiple of 5 → skill `efficiency-review` before the next task.
-4. **Doc sync** — any system/tool/decision change → update the matching Master Document in the same turn.
-5. **Assets** — sources `assets/src/`, exports `assets/export/`, large binaries via Git LFS.
-6. **Style** — bullets, tables, key:value. Paths + exact commands. No padding.
-7. **Layout** — every main page uses three windows **22 / 56 / 22** (left list · centre wall · right picked pane), plus top menu, notification bar, bottom line with SPACE.
-8. **Naming** — no real-world or TEW names in game content. Research = mechanics only.
-9. **Blueprint gates (rule 9d)** — blueprint → Ryan's questions answered → go-ahead → build, one step per go-ahead.
+1. This file is already in context. Do **not** re-read `CLAUDE.md`, `TASKS.md` or the whole code map.
+2. `git status -sb && git log --oneline -5` — know the branch and the last work.
+3. Read §7 (the queue) and pick the top unblocked item, or do what Ryan asked.
+4. Open only what that item needs: the one blueprint in `docs/plans/`, the one bullet in `docs/notes/code-map.md` (grep the file name), the one skill.
+5. Work the pipeline in §2. End with §9 (update this file if anything here changed).
 
-## 3. Master documents
-| file | holds |
-|---|---|
-| `CLAUDE.md` | rules |
-| `docs/MASTER.md` | state, systems, decisions log, impl counter, efficiency reviews |
-| `docs/ARCHITECTURE.md` | TS engine target (draft v0.2) |
-| `docs/TOOLSET.md` | free/OSS tools + install status |
-| `docs/research/README.md` | research index: Bill's PDFs, TEW IX notes, Create a Player, UI study |
-| `docs/plans/` | blueprints: booking Clock Wall, wrestler look, gimmick signatures |
+## 1. Golden rules (Ryan, 30 October 2026 — these win)
 
-## 4. Skills (installed project + user level)
-| skill | use when |
-|---|---|
-| `free-tools-first` | before building any feature/asset/pipeline step |
-| `design-decision` | any design/art/UX/audio/naming choice |
-| `efficiency-review` | impl_count hits a multiple of 5 |
-| `wrestlecraft-architecture` | before any engine system, data model, save field, event, screen data flow |
-| `ts-engine-port` | porting ES5 `src/*.js` → TS `engine/` |
-| `tew9-systems-transfer` | editor tables, relationships, backstage, morale, company management |
-| `create-a-player` (`wrestlecraft-create-a-player`) | creator / world-editor worker suite |
+1. **Great, not good.** Act as a master game designer. Before any addition: check which tools, skills and plugins apply (§5) and research what already solves it (`free-tools-first`). Every new addition or feature is reviewed by a separate critic agent and scored 1–10. **Only 8.5 or higher passes** (replaces rule 9j's "over 8"). Below 8.5: rework what the critic named, fresh critic, again.
+2. **Art direction = three concepts.** Any art, look, style or visual-UX decision goes to Ryan as **exactly three concepts, each of which has already passed a critic run at ≥ 8.5**. Ryan picks; never decide a look alone (`design-decision` skill).
+3. **Spend fewer tokens every session.** Keep this file short and current; read narrowly; delegate wide searches to one Explore agent instead of dumping files; never paste large outputs; log every saving in §10. Each session should leave the next one cheaper.
 
-### Skill workflows (short)
-- **free-tools-first**: read TOOLSET → else `gh search repos "<concept> godot" --sort stars --limit 10` + web (itch, OpenGameArt, Kenney, Poly Haven) → filter license (CC0/MIT/BSD/Apache/zlib; GPL tool OK; NC → flag), commit < 2y, Windows → table `tool | fits | license | effort | install` → add to TOOLSET, `winget install --id <id> -e`.
-- **design-decision**: 3 distinct options (title, pitch, pros, cons, visual) → `tools/decisions/<yyyy-mm-dd>-<slug>.json` + `.js` (`window.DECISIONS = {...}`) → open picker → wait → log in MASTER decisions → apply.
-- **efficiency-review**: top 3 wins across build time, dead code/dupes, doc compression, slow manual steps, new plugins → log row, `next_efficiency_review_at += 5`.
-- **wrestlecraft-architecture**: pick module → optional state fields + migrate → events/modifiers, never wraps → `rng`/`hash01` → moddable content as schema → expose via `api/` → pref flag if heavy → tests → update ARCHITECTURE + MASTER.
-- **ts-engine-port**: read domain files + every `wraps:` touching them → types from a real save → move to `engine/systems/<domain>/` → wraps → events/modifiers in original order → `rnd(S)`→`rng`, `h01`→`hash01` → re-export via `api/` → parity seeds 3/11/29 × 60 weeks, diff empty → no behaviour change → tick MASTER, bump impl_count.
-- **tew9-systems-transfer**: start `docs/research/tew9/wrestlecraft-tew9-gap-audit.md` + `tew9-the-loop.md`; evidence tags `[doc] [bin] [code] [infer]` (never promote `[infer]`); additive migrations; never copy TEW text/data; unknown constants = labelled tunables.
-- **create-a-player**: creator derives stats via `edRatings()` (`src/86-editor.js`); pick one approach — A widen inputs (default) · B advanced mode with point budget · C presentation. New fields optional; seeded random only (`edRnd`/`edPick`); test in `test-create.js`; `E.edCheck(pkg)` clean after round trip.
+## 2. The pipeline for every change
 
-## 5. Architecture (target TS engine)
-Pure deterministic TS sim owns all state as plain JSON; typed command/query API; UI only reads queries and sends commands; systems talk via events; content is schema-validated data; the live show is the centre.
+| step | what | tool |
+|---|---|---|
+| 0 | Is it new (mode, system, major feature)? → rule 9d gates first: blueprint `docs/plans/<x>.md` → question vault (one question at a time) → Ryan's plain go-ahead, dated in `TASKS.md`. Small fixes, polish, tools: skip. | `AskUserQuestion` |
+| 1 | Research: tools already here, free/OSS that solves it, skills/plugins that apply | `free-tools-first`, `SearchPlugins`, `SearchSkills` |
+| 2 | Design the data/hooks before code | `wrestlecraft-architecture`; big change → `engineering:architecture` ADR in `docs/adr/` |
+| 3 | Build: engine first (`engine/NN-name.ts`, `E.*`, headless `test-name.js`, 60 weeks errs 0 NaN 0), then the screen | — |
+| 4 | **Critic ≥ 8.5** (separate agent, no edits) | `critic-review` |
+| 5 | Page touched → `design:design-critique`, `design:accessibility-review`; new words → `design:ux-copy` | design plugin |
+| 6 | Tests: `npm run check`, `node tools/headless-tests.js`, `node test-golden.js` (after engine change that should not change play), browser test for the section + `journey.js` | — |
+| 7 | `simplify` + `engineering:code-review`; saves/files/network/Steam → `security-review` | — |
+| 8 | Commit (what changed for the player + critic score + one-line reasons), push to the session branch, open PR, subscribe | git, GitHub MCP |
+| 9 | `impl_count += 1` (§8). At every 5th → `efficiency-review` before the next task. Nightly/milestone → publish live page (§6) | — |
 
-### Principles
+Art/look: steps 1→ three concepts → critic each ≥ 8.5 → Ryan picks → then steps 2–9.
+
+## 3. Hard rules (short form; full text and Ryan's quotes: `docs/notes/rules.md`)
+
 | # | rule |
 |---|---|
-| P1 | engine owns state; UI never writes `S` |
-| P2 | same seed + same commands = byte-identical state |
-| P3 | `rng(stream)` for outcomes, `hash01(key)` for flavour; flavour never touches `rng` |
-| P4 | save = versioned JSON; new fields optional with default; old saves always load |
-| P5 | no module reaches into another's state; events or public API only |
-| P6 | content is data with a schema |
-| P7 | direction legible, magnitude hidden (words for player, numbers in debug "dirt sheet") |
-| P8 | every heavy system has an on/off pref |
-| P9 | player is an entity, same rules as rival bookers |
-| P10 | perf budgets in CI: new game < 3 s, week advance < 300 ms |
+| 0 | Steam desktop game (Electron, `desktop/`). 1080p base, scales to 1440p/4K/ultrawide. No tablet/TV/phone/portrait layouts or tests. Every control still works by touch, mouse, keys, pad (Android later). Diorama renderer is the graphics engine: real depth, 60 fps on a modest PC. |
+| 1 | Engine owns the game. Screens never write `S`; they call `E.x(S, …)` in `act()`. `test-lint.js` enforces. |
+| 2 | External assets OK if free for commercial use, credited in a `CREDITS.md` beside their tool, shipped offline. Fonts embedded. |
+| 2a | The look: the workbench, made by hand. Black construction-paper board, torn cream windows, navy strips with yellow marker, cut-card buttons slightly off straight. Permanent Marker / Patrick Hand / Gochi Hand. No dot matrix, no CRT. Wrestlers flat colour, one shadow. Very readable. `app/styles/craft.css` last. |
+| 3 | Original content only. No real promotion/wrestler/title/event names. Public-domain world rules. Parody world allowed (changed joking names, no logos/photos, disclaimer). |
+| 4 | No dice wording: "attempts" with % chance and what helps/hurts. |
+| 5 | Every control a real button/select/input with a `data-t`. Nothing hover-only. |
+| 5a | Top: menu bar (company + date right), notification bar. Bottom: one line — numbers, Help/Options/Music, SPACE key right. Never wraps at 1920×1080. Tasks live on the desk only. |
+| 5b | One screen, no page scroll (`.onescreen`, `fits(page)`). Windows may scroll inside. Wrestler lists scroll. |
+| 5c | Wrestler always drawn full length beside wrestler lists. |
+| 5d/5e | World Editor: dropdowns for word choices; labels are short nouns; "Included" for shipped content. |
+| 5f | New/rebuilt main pages: 22 / 56 / 22 (list · wall · picked pane). Old pages move one at a time with Ryan's go-ahead. |
+| 6/6a | Sections: Office, Booking, Roster, Web, Manage, Company. Manage holds choices; Company and Web are information. Choices = buttons that open pop-ups. |
+| 7/7a | Readable first; every action shows its result. No clean stopping point: Office → Booking → Show each hands the next something unresolved. |
+| 8–8c | Plain writing, no em dashes. Stars after the bell only, never forecasts. Show = letter grade vs its own crowd (`crowdScore`, `E.repGrade`, `E.showVerdict`). Money: `cash()` short, `full()` headline. |
+| 9 | Save key `ewf9000-save-4`. Old saves not protected during development (Ryan, 29 Oct). |
+| 9a/9f | Approved plans run unattended. Tests are the gate: nothing merges unless every headless test passes. |
+| 9b/9c | Relationships are the centre (`relBump`, `youRemember`). Every booking choice is a scene (`SEG_SCENES`, `BEAT_SCENES`). |
+| 9g | Every new system names its Director tag (problem/chance/colour), what it hands the next phase, what it replaces. |
+| 9h | Ryan plays an hour at every milestone; his notes become the next plan (`design:research-synthesis`). |
+| 10/10a | Small commits; tick `TASKS.md` in the same commit. `VER` (`app/src/store.ts`) moves after ≥ 5 changes. |
+| Never | `Math.random` or the clock in the engine (use `rnd(S)`; flavour via `h01()`). No `rnd(S)` at all in: Director, relations, net, podcast, sound. Never omit keys on Preact lists. No model IDs in game text, source or PR bodies (the commit attribution line is fine). |
 
-### Layout
-```
-app/      Preact UI — reads engine/api only
-engine/
-  core/     state, rng, hash, events, clock, tick, schema (zod), save, flags
-  systems/  match show live night story people relations morale perception backstage
-            company world media road titles net meta editor
-  api/      commands.ts (mutations) · queries.ts (pure, memoised)
-  content/  schemas + loaders
-data/     world packages (parody, public_domain)
-tools/    Blender bpy, builders, balance probes
-tests/    unit, headless, golden saves, browser (Playwright)
-```
-Import rules enforced in CI (ESLint `import/no-restricted-paths` or dependency-cruiser).
+### Things that bite (full list: end of `docs/notes/code-map.md`)
+- `node build.js` before any test; tests open `dist/index.html` and `engine.js`.
+- `calibrate()` sets crowd expectations from sample shows: after a scoring change compare rating minus expectation, never raw ratings.
+- A game year is 48 weeks (12 × 4, `cal()`).
+- While a show is on air the report is `S.live.st.rep`, not `S.reports[0]`.
+- A call ignores input for 400 ms; browser tests wait before picking. Calls have cooldowns in `S.lcd`: clear it to test one (`app/tests/calls.js`).
+- Browser tests start with tasks as reminders (`E.setGate(S,false)`); pass `gate: true` to test stopping. They run on the public-domain world unless `uni: 'parody'`.
+- A show's city is the next road stop; `venueFor()` still burns one number so seeds replay.
+- New symbols need `tools/build-font.py`. A pop-up focuses its close button unless a control has `data-first`.
+- One-screen pages: menu and bottom line must not be offset (`fits(page)` checks).
+- Headless sims never sign anyone, so rosters shrink: that is the sim, not a bug.
 
-### Week tick (`core/tick.ts`)
-1 week.start (decay) → 2 world.plan (AI, read-only snapshot) → 3 contracts/health → 4 narratives → 5 director → 6 each show: pre-show → perception.freeze → card → live → grade → apply atomically (ratings → popularity → momentum → morale → money) → 7 after-show → 8 week.end (finance, history, podcast, yearly archive).
-Old hooks → events: `MQX`→`match.quality`, `CRX`→`match.crowd`, `FINX`→`match.finish`, `EFX`→`match.effects`, `POST`→`match.post`, `SHOWX`→`show.done`, `WEEKX`→`week.end`, `NEWX`→`game.new`, `PREX`→`show.pre`, `TASKX`→`tasks.collect`. Value wraps → `modifiers.register(name, fn, {order})`.
+## 4. The game in one screen
 
-### Key models
-| model | shape |
+**Pitch:** you are the booker. Build the card, run the live show from the gorilla position, and live with people who remember every call. Paper-diorama broadcast. Extreme Warfare / TEW tradition, with a stronger live show.
+**Loop:** Office (desk: a fire with a deadline, tasks, backstage people) → Booking (run sheet on a 2h/3h clock; chemistry, wear, morale, promises; fog of war, agent reads) → Show (live broadcast, 2–3 calls, stars, grade) → After the show (one matter to answer) → desk. Clocks: week (grade), month (big event), year (flagship, arc payoff).
+**Facts (30 Oct):** v0.88 · 110 engine modules (`engine/*.ts`, esbuild → `engine.js`) · Preact/TS UI `app/src/` · 58 root `test-*.js` + 42 browser tests (`app/tests/*.js`, helpers included) · balance suite green (Suggest ≈ C and risks the job; a thinking booker B to B+ and grows) · default world `universes/parody/` (EWE first); public-domain world built in · CI runs headless shards + golden on push, browser nightly · Steam calls and a Windows installer never run.
+
+**Built systems** (detail: `docs/notes/code-map.md`): match sim + 9 company models · living storylines (heat/freshness) · relationship matrix + memory · live show & gorilla-position calls (`LIVEK`) · Director (tension 0–100, event gate, call caps, 3 styles) · After the show · fog of war & agent reads · running order & show clock · segments/promos with grammar · road, maps, markets, tickets, hometowns · networks, streaming, nights, cancellation · contracts, clauses, pay by size · progression/regression, overall rating, gimmicks · staff · booker levels + 4-branch skill tree · rival bookers · company arcs · invasions · press, podcast, Web section, writers' room, kayfabe, post-mortems · belts, logos, Create a Player, Create a Scene (3 studios), World Editor (stories, rules, backdrops) · soundtrack + broadcast/office SFX (Ryan-picked).
+
+## 5. Tools, skills, plugins — when to use which
+
+| need | use |
 |---|---|
-| Worker vs Contract | Worker = identity, body, attributes 1–100, health, look, traits, popularity; Contract = per employer: alignment, gimmick, momentum, role, clauses, pay |
-| Popularity | worker × region, company × region (regions = road areas) |
-| Morale | incident ledger `{reason, sev 1..4, week, source, playerCaused}`, decayed sum; `stress` gauge |
-| Perception | frozen snapshot at `liveBegin` |
-| Relationships | numeric `strength` + memory, plus optional `family`/`personal`/`romantic` enums |
-| Chemistry | `preset` + `discovered` (fog of war) |
-| Match type | composable `{props[], winConditions[], timeMin/Max, injuryRisk, contentRisk}` |
-| Health | four pools head/body/arms/legs; any at 0 = career over |
-| Aging | lowers caps, not stats |
-| rng streams | `match live world people ai gen` |
+| Before building anything | `free-tools-first` (docs/toolset.md), `SearchPlugins`/`SearchSkills` once per new kind of work |
+| Engine system / save field / hook | `wrestlecraft-architecture`; reshaping without play change → `engine-next` + `test-golden.js` |
+| TEW-style systems (editor tables, politics, morale) | `tew9-systems-transfer` (+ `docs/research/tew9/`) |
+| Creator suite | `create-a-player` |
+| Score a change | `critic-review` (threshold 8.5) |
+| Art / look / visual UX | `design-decision`: three concepts, each critic-passed ≥ 8.5, Ryan picks |
+| Sound, words, names | `design-decision`: three options, Ryan picks (no critic gate needed) |
+| Every 5th implementation, each milestone | `efficiency-review`, `engineering:tech-debt` |
+| Bug not obvious | `engineering:debug` |
+| Test planning | `engineering:testing-strategy` |
+| Pages | `design:design-critique`, `design:accessibility-review`, `design:ux-copy` |
+| Ryan's play notes | `design:research-synthesis` |
+| Visual concept pages, picker, live page | `Artifact` (load `artifact-design` first; picker via `artifact-capabilities`) |
+| Wide code search | one `Explore` agent with a precise question; never several |
+| Run/screenshot the game | `run` skill, Playwright (pre-installed; `NODE_PATH` per `docs/notes/commands.md`) |
+| GitHub | GitHub MCP tools (`mcp__github__*`) per the session's instructions; Figma/Canva/Notion etc. need auth |
 
-### Saves and tests
-- Envelope `{v, created, game}`, `migrate[v]` chain, golden saves in CI, errors surfaced, yearly archive (< 1.5 MB at week 150).
-- Gates: unit · 60-week headless (errs 0, NaN 0) · golden state hash · balance (3 seeds, 2 years) · parity (during port) · browser nightly · perf.
+## 6. Commands and the live page
 
-## 6. ES5 → TS port (strangler, no big-bang)
-1. Scaffold `engine/` (strict TS, esbuild), types from a real save.
-2. Wrap: `engine/legacy.ts` loads old engine; typed API re-exports `E.*`; UI switches to it.
-3. Parity harness old vs new per seed, per week.
-4. Port leaf first: net → titles → road → media → company → people/relations → story → show/match → live.
-5. Cut legacy (`build.js` concat, `test-buildorder.js`, numeric prefixes).
-6. Then new models one at a time behind flags, each with a save migration.
-No behaviour change in steps 1–5. Old-file → module map: `docs/ARCHITECTURE.md` §3.1.
+```
+cd app && npm ci && cd ..          # once
+node build.js                       # always before tests
+npm run check                       # build + types + 20-week sim
+node tools/headless-tests.js        # all headless (SHARD=1/4 for a quarter)
+node test-golden.js                 # 60 recorded games, engine changes that keep play
+NODE_PATH=<pw dir> node app/tests/<name>.js
+```
+Full list: `docs/notes/commands.md`. Live page: https://claude.ai/artifact/J6CziDiPFPTsrCNhhy39qa — nightly + milestone builds only. Read the live version first (another thread publishes too), merge anything missing, then publish `dist/gorilla-position.html`; note the version in the report.
 
-## 7. Decisions (Ryan)
-| date | topic | chosen |
-|---|---|---|
-| 10-26 | D1 popularity | per region |
-| 10-26 | D2 relationship types | now, full UI (confirm vs Bill's feature pause) |
-| 10-26 | D3 schema lib | zod |
-| 10-26 | D4 engine build | esbuild |
-| 10-26 | D5 Steam default world | public domain, parody opt-in (confirm with Bill, lawyer read) |
-| 10-26 | D6 morale vs backstage | two modules |
-| 10-26 | D7 health | four pools |
-| 10-26 | booking screen | Clock Wall (8.6) |
-| 10-27 | wrestler look final | G · Paper doll, from `tools/concepts/current/ryan-ref-paper-doll.jpg` (critic 9.3) |
-| 10-27 | layout | 22/56/22 game-wide |
-| 10-27 | gimmicks | drive only acting, dialogue, relationships — never looks or match ratings |
+## 7. The queue (top first; detail and boxes in `TASKS.md`)
 
-## 8. Systems status
-| system | status | next |
-|---|---|---|
-| toolchain | installing | retry Blender, Pixelorama, LibreSprite, OpenToonz, Tiled, MuseScore |
-| decision flow | ready | — |
-| efficiency cycle | ready | first at impl 5 |
-| TS architecture | draft v0.2 | D2, D5 need Bill's OK |
-| ES5→TS port | not started | step 1 scaffold |
-| Booking Clock Wall | blueprint approved (14/14 answered) | build first on TS engine |
-| Wrestler look | blueprint gate 2 answered | build after TS switch, EWE first |
-| Gimmicks | 20 types + 20 look presets drafted | confirm draft columns; decide fate of `GFX` match effects (gate 9d) |
+| # | item | state | gate |
+|---|---|---|---|
+| 1 | **Default world switch** (D5: original/public-domain leads, parody opt-in) | decided, unbuilt | Bill + lawyer confirm |
+| 2 | **0ao move 2: the promise ledger** (one visible ledger of promised wins, title shots, open threads, ripe feuds, each with a payoff window) | idea | 9d blueprint `docs/plans/promise-ledger.md` |
+| 3 | **0ao move 3: three clocks with ceremonies** (week stamp, monthly magazine 0af, era verdict) | idea | 9d `docs/plans/three-clocks.md` |
+| 4 | **0ao move 4: preview before consequence** (pencil marks in words on every choice) | idea | 9d or Ryan rules it polish |
+| 5 | **0aq booking demands** (forced finishes/matches from writers, wrestlers, business) | approved, after Director | build |
+| 6 | **Booking Clock Wall** (22/56/22 card builder; summary in `docs/archive/MASTER-2026-10-28.md` §9) | approved (critic 8.6, clears 8.5) | build |
+| 7 | **0ap loops**: feud ending window, slights come due, cold city → home market, renewal countdown, feed/starve a reporter | listed | short 9d each |
+| 8 | **0at** backstage decisions on the desk list | approved | build |
+| 9 | **0au** animation weight (twos, hit-stop, TV camera, crowd density, choreography, UI motion) | polish | each motion picked by Ryan (3 concepts) |
+| 10 | **Wrestler style C** (in progress, critic rounds 1–11) and paper 3D wrestlers / movesets blueprints | in progress | critic ≥ 8.5 per round |
+| 11 | **Ship path**: Windows installer + icon, Steam achievements on app 480, cloud save, Workshop worlds | not started | Ryan go-ahead (spends/publishes) |
+| 12 | Strict TS module by module; wraps → hook lists | ongoing | `engine-next` |
+| 13 | D1 regional popularity, D2 relationship types, D7 four health pools | decided, unbuilt | 9d blueprints |
+| Later | 0ar scouting anomalies, 0as industry wear, magazine, traits/perks, word travels, hallway, politics, corkboard, careers, owner mode (post-launch) | parked | — |
 
-## 9. Plans
-### Booking Clock Wall (`docs/plans/booking-clock-wall.md`)
-- Left 22%: roster cards (bust, overall, side, belt, feud dots, Body/Mood bars), chips All/Men/Women/Faces/Heels/Free/Teams.
-- Centre 56%: ruler 0:00–2:00 (3:00 squeezed to fit), pieces height = minutes, "N MIN OPEN", red 2:00 line, feud gutter, loose-thread strip (3 + "+N").
-- Right 22%: picked segment, option tiles → pop-ups, Who fits / agent facts, knock-on lines, tab buttons (Notes, Order, Clock, Promo, Stories, Targets).
-- States: Empty → Building → Ready → Over; SPACE label follows.
-- Win chances in words only; Finish BP costs stay numbers. Suggest fills gaps, then "Suggest all". Drop on full = swap. Hurt = red, player decides. Battle royal = one piece with name grid. Corkboard texture on ruler/open block. Render gate fail → one still per piece.
-- New queries: `fitsFor(S, slot)`, `cardKnock(S, card)`, `looseThreads(S, card)` in `engine/systems/show/` + `story/`.
-- Build: queries + test → layout → wall → right pane → feud gutter → storyboards → browser tests at 1080p/1440p/4K.
+Scope guard (Bill's review, 21 Oct): finish and polish before adding. A new idea goes to `TASKS.md` "Later" unless it closes a gap in the core loop.
 
-### Wrestler look (`docs/plans/wrestler-look-scrapbook.md`)
-- Paper doll: 6.8 heads pushed by type, felt-grain card, cream die-cut border (`hu × 0.19`), soft shadow on navy, solid gear, brass joint pins, glossy knee + elbow pads on everyone (none over jeans).
-- Signature layer: 2–4 of 8 slots (silhouette, hair, face marks, gear, layers, outerwear, accessories, pose). Unique across the whole world.
-- Layer editor like old SmackDown games: image/shape/text layers with opacity on skin and all gear, in the part's own frame. Local files + Steam Workshop.
-- Every part morphs to the body; Create a Player is modular (each piece picked separately); finishes glitter/foil/leather/denim.
-- Three poses (entrance, win, taunt); signature pose on cards/posters; promo camera waist-up 2×.
-- Turn = palette + poses; age = greyer, heavier (from age, no `rnd(S)`).
-- Perf: doll < 1 ms, 30 at 60 fps.
+## 8. Counters
 
-### Gimmicks + looks (`docs/plans/gimmick-signatures.md`)
-- 20 gimmicks: Bruiser, Hotshot, Funny Man, Chill, Loose Cannon, Straight Shooter, Custom, Rat, Nut, Good Guy, Underdog, Daredevil, Technician, Monster, Old hand, Rebel, Showman, Mystic, Workhorse, Outlaw. Each has Risk, Difficulty, Subtlety, skill floors/ceilings.
-- 20 look presets (Street brawler … Jailbird, blank). Generated wrestler: ~70% pieces from one preset, 30% any, picked by hash of name.
-
-## 10. BATMAN repo optimization queue
-Order: O1 → O3 → O4/O5 → O6 → O7/O8 → O9 → O2 → rest. One PR each.
-| # | action |
+| key | value |
 |---|---|
-| O1 | untrack `dist/`, `engine.js`; CI builds them (−85 MB) |
-| O2 | Git LFS for ogg/png/woff2/pdf |
-| O3 | split 86 KB `CLAUDE.md` → ≤ 8 KB + `docs/systems/<area>.md` (−25k tokens/session) |
-| O4 | archive done items from TASKS/NEXT/TWEAKS/WISHLIST |
-| O5 | one task source `TASKS.md` |
-| O6 | tests → `tests/engine/`, parallel `tests/run-all.js` |
-| O7 | park `docs/mockups/` |
-| O8 | remove `legacy/`, `test8.js`, `test9.js` if unreferenced |
-| O9 | sfx-bank base64 → real audio files |
-| O10 | explicit build order list instead of numeric prefixes |
-| O11 | `universes/parody.json` as build output |
-| O12 | split `puppet.ts`, `scene.ts`, `diorama3d.ts` |
-| O13 | ImageMagick/oxipng PNGs, FFmpeg loudnorm, Blender headless stills |
+| impl_count | 0 (reset 30 Oct with this file) · next `efficiency-review` at 5 |
+| critic bar | 8.5 |
+| last game review | 30 Oct 2026: **68 / 100** (see `docs/reviews/2026-10-30-game-review.md`) |
 
-## 11. Tools (free/OSS)
-- Installed: Godot, Krita, GIMP, Inkscape, Blockbench, Synfig, Audacity, LMMS, Kdenlive, OBS, FFmpeg, ImageMagick, Git LFS, GitHub CLI, Material Maker.
-- Failed/manual: Blender, Pixelorama, LibreSprite, OpenToonz, Tiled, MuseScore.
-- Engine stack: TypeScript, esbuild, zod, Vitest, Playwright, ESLint + dependency-cruiser, Preact, Electron + steamworks.js, Piper TTS.
-- Assets CC0 first: Kenney, Poly Haven, ambientCG, Quaternius; check per asset on OpenGameArt/Freesound.
-- License: commercial-safe = CC0/MIT/BSD/Apache/zlib; GPL tools OK; non-commercial weights (e.g. MusicGen) → flag before use.
+## 9. Keeping this file true (every session, last step)
 
-## 12. Roadmap after the switch
-1 Balance · 2 First hour · 3 Screens (Clock Wall first) · 4 Live show core (Director, 40 new calls) · 5 People/world (perception, morale ledger, regional popularity, relationship types, health pools) · 5b Wrestler look · 6a Public-domain default world · 6 Sound + ship (Steam) · 7 Post-launch (politics, scandals, narratives, eras, alliances, career/owner modes).
+- Changed a rule, system, decision, queue item or command? Edit the one line here in the same commit.
+- Finished a queue item → delete its row (history lives in git and `TASKS.md`).
+- This file stays under ~16 KB. If it grows, move detail to `docs/notes/` and leave a one-line pointer.
+- MASTER and a note disagree? MASTER wins; fix the note in the same commit.
+- Decisions: Ryan's words + date into `TASKS.md` "Ryan's decisions"; only rule-level ones get a line in §1/§3.
 
-<!-- 29 October: the decision sets and concept pages from the other workspace are saved beside this file:
-     tools/decisions/2026-10-26-{architecture,booker,characters,screens}.js (and architecture.json), and the concept pages
-     docs/concepts/booker-r4.html (the booking screen finalists: Clock Wall 8.6, Production Truck 8.3, ...) and
-     docs/concepts/characters-r15.html. Images they point to (concepts/review/*.jpg) were not uploaded. -->
+## 10. Token economy (log every saving)
+
+Standing habits: grep before read; read with offset/limit; `| tail`/`| head` long outputs; one Explore agent for wide sweeps; critic agents get paths, not pasted diffs; never re-read a file already in context; tests run by section, full suites before push only.
+
+| date | saving |
+|---|---|
+| 30 Oct | `CLAUDE.md` 95 KB → ~1.5 KB core that imports this file; code map, rules, commands moved verbatim to `docs/notes/` and read on demand (≈ 22k tokens less per session). Old master archived. |
+| next | Archive done items in `TASKS.md` (233 open boxes, 1,090 lines) to `docs/archive/`; untrack `dist/` + `engine.js` (−85 MB, CI builds); parallel headless runner. |
+
+## 11. Where things live
+
+| file | holds |
+|---|---|
+| `docs/MASTER.md` | this: boot, golden rules, pipeline, queue, counters |
+| `docs/notes/rules.md` · `code-map.md` · `commands.md` | full rules · per-area code notes + things that bite · every command |
+| `TASKS.md` | Ryan's decisions (do not reopen) and task boxes |
+| `NEXT.md`, `docs/roadmap.md` | old unattended queues, mostly done; superseded by §7 |
+| `docs/plans/*.md` | blueprints (rule 9d) |
+| `docs/research/` | Bill's reviews (`plans/*.md` text copies), TEW IX research, genre lessons, UI study |
+| `docs/design.md`, `docs/feature-list.md` | design target and feature wording (older; pillars still hold) |
+| `docs/reviews/` | dated game reviews with scores |
+| `docs/archive/` | retired docs |
+| `.claude/skills/` | project skills (§5) |
