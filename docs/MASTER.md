@@ -119,7 +119,7 @@ No new system starts until rows 1–3 meet their gates. Every gate is a number a
 
 | # | epic | tier | measurable gate |
 |---|---|---|---|
-| L1 | **Structured causal log**, two steps, each `test-golden.js` identical. **L1a funnel:** every write to the five meters goes through `meterAdd(S, meter, delta, cause)` — cash `P.cash` (22 files by `grep -rl "P.cash *[-+]=" engine`; exact counts vary with the pattern, so recount with the command), popularity `P.image` (the company's popularity; `grep -rl "P.image *[-+]=" engine`), owner trust `S.trust`, crowd score `rep.cs` (one write, `engine/30-show.ts:158`), morale the roster mean of `w.morale` (writes in about 36 to 39 files depending on the pattern, many as `clamp(w.morale+…)`; recount with grep). **L1b attribute:** each call names `{cause, decision}` in `engine/99-postmortem.ts`, replacing the `note`/`news` wrap; a test checks ≥ 95% of each meter's weekly change is explained by causes other than `other`, median of 3 seeds | L (tool: short blueprint, no vault) | both golden-identical; 95% test green |
+| L1 | ✅ **Done 30 Oct: the cause log** (`engine/99-zzcause.ts`, `docs/plans/cause-log.md`, `test-cause.js`): frames instead of a write funnel; `E.causeInfo(S)` gives each meter's change by cause and which causes are decisions | L | met: golden identical, other ≤ 0.1%, untracked 0% |
 | L2 | **Two bots, one model, nightly** (`tools/bots/`: Suggest-only and thoughtful, from `test-balance.js`'s bookers), writing a JSON report; then **record the baseline** into this row | M | report in CI; **trace share** = Σ\|delta\| of entries caused by a player decision (today: matter answers, booking, action points, people actions; after row 1: ledger lines) ÷ Σ\|delta\| of all entries (including `other`), per meter per season, median of 3 seeds, computed by `tools/bots/report.js`; baseline written: trace share __, week 1–3 grade __, week-1 desk words __ |
 | L3 | **Grow the lab**: greedy, story-first, chaos and an **exploit bot** that searches one-action loops; report fails if one repeated action causes > 25% of the season's grade, popularity or cash gain, or a meter never changes an outcome in 2 seasons; every bot gate is the median of 3 seeds | M | nightly report green or names the exploit |
 | 1 | **The spine** (its blueprint and question vault start now, beside L1–L3, so Ryan's answers are ready when the lab is): one blueprint merging the promise ledger, preview before consequence and three clocks (0ao moves 2–4); Director (built) is its gate | L | `docs/plans/spine.md` (approved 30 Oct: "Go, after L1"); ledger-line trace share ≥ 0.80 for the thoughtful bot, defined in `docs/plans/spine.md` §7 (Σ\|delta\| with `decision` = a line id ÷ Σ\|delta\| of all `meterAdd` entries, per meter, per season, median of 3 seeds; the bar is absolute since lines do not exist before row 1) and total decision share ≥ L2 baseline + 10 points; Book the show and After the show carry a `data-t="ledger"` line in every browser run: the most urgent open promise, or "No promises open: make one" with a button (a browser assertion) |
@@ -146,7 +146,7 @@ No new system starts until rows 1–3 meet their gates. Every gate is a number a
 
 | key | value |
 |---|---|
-| impl_count | 0 (reset 30 Oct with this file) · next `efficiency-review` at 5 |
+| impl_count | 1 (cause log) · next `efficiency-review` at 5 |
 | critic bar | 8.5 |
 | last game review | 30 Oct 2026: **68 / 100** (see `docs/reviews/2026-10-30-game-review.md`) |
 

@@ -4,7 +4,7 @@ require('./engine.js');
 const fs = require('fs'), crypto = require('crypto'), E = globalThis.GP, fails = [];
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 const PD = JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')); E.useUniverse(PD);
-const md5 = o => crypto.createHash('md5').update(JSON.stringify(o, (k, v) => k === 'dir' ? undefined : v)).digest('hex');
+const md5 = o => crypto.createHash('md5').update(JSON.stringify(o, (k, v) => k === 'dir' || k === 'cz' ? undefined : v)).digest('hex');   // the cause log (S.cz) only reads the game
 const REF = JSON.parse(fs.readFileSync('tests/scenario-reference.json', 'utf8')), CHK = JSON.parse(fs.readFileSync('tests/scenario-checks.json', 'utf8'));
 const play = (S, weeks) => { for (let w = 0; w < weeks && !S.over; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 1)); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' }); while (S.qi < S.queue.length && !S.over) { const c = E.suggest(S); if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); } if (!S.over) E.endWeek(S); } };
 const FORCE = { rescue: S => { S.promos[S.player].cash = 2e6; }, champion: S => { const P = S.promos[S.player], w = S.w[S.scn.target]; const top = P.titles.filter(t => !t.tag && t.g === w.g).sort((a, b) => b.lvl - a.lvl)[0]; top.holders = [w.id]; }, war: S => { S.scn.me = [2, 3]; S.scn.rv = [0]; } };

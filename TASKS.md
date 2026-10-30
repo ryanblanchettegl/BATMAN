@@ -142,7 +142,7 @@ Two more lists sit beside this one, both finished:
 
 ### Q. The queue in MASTER §7 (30 October; rows and gates there)
 
-- [ ] L1: structured causal log for five meters (`meterAdd`), at least 95% explained by named causes, golden games identical.
+- [x] L1: the cause log (30 October, frames instead of `meterAdd`; `docs/plans/cause-log.md`): other ≤ 0.1%, untracked 0%, golden games identical; critic 8.6.
 - [ ] L2: two bots on one model nightly, `tools/bots/report.js`, baseline recorded in MASTER §7.
 - [ ] L3: five bots plus the exploit bot, failing gates on 3-seed medians.
 - [ ] 1: the spine, rule 9d (`docs/plans/spine.md`): gate 1 written, gate 2 answered 30 October (13 questions); gate 3: Ryan's go-ahead, 30 October: "Go, after L1".

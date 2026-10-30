@@ -55,7 +55,7 @@ const DICE = /\b(roll|rolls|rolled|dice|die roll|d20|saving throw)\b/i;
         E.liveBegin(S, S.card);
         for (let g = 0; g < 400; g++) { if (how === 'saved') S = clone(S); const r = E.liveNext(S); if (r.event) { if (how === 'saved') S = clone(S); E.liveDecide(S, r.event.safe || 0); } else if (r.done) break; } }
       week(S); }
-    return JSON.stringify(S); };
+    return JSON.stringify(S, (k, v) => k === 'cz' ? undefined : v); };   // the cause log books a step-by-step answer as a decision, so it is left out
   const a = run('whole'), b = run('steps'), c = run('saved');
   ok('same1', 'a show run in one go is the same show as one answered step by step with the safe answers', a === b);
   ok('same2', 'saving and loading at every stop of the night changes nothing', b === c);
