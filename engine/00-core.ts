@@ -210,7 +210,7 @@ export function buildPromo(S,d,byName){
 }
 E.newGame=function(playerId,seed,opts){
   opts=opts||{};
-  var S: any={v:4,rs:(seed|0)||7,seed:seed,week:1,player:playerId,diff:$L.DIFF[opts.diff]?opts.diff:'normal',iron:!!opts.iron,dpart:opts.dpart&&typeof opts.dpart==='object'?{money:clamp(+opts.dpart.money|0,0,2),inj:clamp(+opts.dpart.inj|0,0,2),ego:clamp(+opts.dpart.ego|0,0,2),rival:clamp(+opts.dpart.rival|0,0,2)}:null,mode:'booker',w:[],promos:{},order:[],teams:[],feuds:[],mystery:null,news:[],inbox:[],quests:[],ach:{},toasts:[],
+  var S: any={v:4,rs:(seed|0)||7,seed:seed,week:1,player:playerId,diff:$L.DIFF[opts.diff]?opts.diff:'normal',iron:!!opts.iron,dst:opts.dir||undefined,dpart:opts.dpart&&typeof opts.dpart==='object'?{money:clamp(+opts.dpart.money|0,0,2),inj:clamp(+opts.dpart.inj|0,0,2),ego:clamp(+opts.dpart.ego|0,0,2),rival:clamp(+opts.dpart.rival|0,0,2)}:null,mode:'booker',w:[],promos:{},order:[],teams:[],feuds:[],mystery:null,news:[],inbox:[],quests:[],ach:{},toasts:[],
     stats:{shows:0,matches:0,run:0,feudsDone:0,bestMatch:0,bestShow:0},said:[],h2h:{},trust:60,ledger:[],sponsors:[],spOffers:[],slotAsk:-99,hype:0,rateMod:0,reports:[],queue:[],qi:0,card:[],over:null,nid:1,recent:{},fin:null};
   var cur={promo:'FA',brand:null},byName={};
   $L.CAL0={y:$L.DB.startYear,m:$L.DB.startMonth};
@@ -336,7 +336,7 @@ export function turn(S,w,why){
     else note=' It came out of nowhere. The crowd is not sure what to make of it.';
   }
   w.align=w.align==='F'?'H':'F';w.tw=S.week;w.gs=S.week;$L.mile(S,w,'turn','Turned '+(w.align==='F'?'face':'heel')+(why?': '+why:'')+(tired?' (too soon after the last turn)':(built?' (well built)':'')));
-  $L.news(S,'story',w.name+' turns '+(w.align==='F'?'face':'heel')+(why?' — '+why:'')+'.'+note);if(w.promo===S.player)award(S,'ACH_TURN');}
+  $L.news(S,'story',w.name+' turns '+(w.align==='F'?'face':'heel')+(why?': '+why:'')+'.'+note);if(w.promo===S.player)award(S,'ACH_TURN');}
 /* Who may fight for a title: its own division, or anybody at an intergender company (P.ig, Ryan 22 October: WPW). */
 export function divOk(P,t,w){return !!(P&&P.ig)||!t.g||t.g===w.g;}
 export function holdLvl(P,id){var l=0;P.titles.forEach(function(t){if(t.holders.indexOf(id)>=0&&t.lvl>l)l=t.lvl;});return l;}

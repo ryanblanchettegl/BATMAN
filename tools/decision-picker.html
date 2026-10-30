@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Decision Picker</title>
+<style>
+:root{--bg:#121216;--card:#1c1c22;--fg:#eee;--mut:#9a9aa6;--acc:#e8b931;--ok:#3fbf6f;--bad:#e06666}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,sans-serif;padding:24px 16px;max-width:1200px;margin:auto}
+h1{margin:0 0 4px;font-size:22px}.q{font-size:20px;margin:16px 0;color:var(--acc)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--card);border:2px solid transparent;border-radius:12px;padding:16px;cursor:pointer}
+.card:hover{border-color:#444}.card.sel{border-color:var(--ok)}
+.vis{min-height:120px;display:flex;align-items:center;justify-content:center;background:#0004;border-radius:8px;margin-bottom:10px;overflow:hidden}
+.vis img,.vis svg{max-width:100%;max-height:220px}
+ul{margin:4px 0 8px;padding-left:18px}.pro{color:var(--ok)}.con{color:var(--bad)}small{color:var(--mut)}
+textarea{width:100%;min-height:70px;background:var(--card);color:var(--fg);border:1px solid #333;border-radius:8px;padding:8px}
+button{background:var(--acc);border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer;margin:6px 6px 0 0}
+button.ghost{background:#2a2a32;color:var(--fg)}
+.nav{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.dot{background:#2a2a32;color:var(--fg);padding:4px 10px;border-radius:999px;margin:0;font-weight:500}
+.dot.on{outline:2px solid var(--acc)}.dot.done{background:var(--ok);color:#000}
+details{margin:10px 0}summary{cursor:pointer;color:var(--mut)}
+#out{margin-top:16px}
+</style></head><body>
+<h1>WrestleCraft · Decision Picker</h1>
+<small id="sub">Pick one option per question, add notes, then copy all results back to Claude.</small>
+<div class="nav" id="nav"></div>
+<div class="q" id="q"></div><div class="grid" id="grid"></div>
+<textarea id="note" placeholder="Notes / tweaks for this question (optional)"></textarea>
+<div><button class="ghost" id="prev">← Previous</button><button class="ghost" id="next">Next →</button>
+<button id="copy">Copy all results</button><span id="msg"></span></div>
+<details><summary>Load another decision file</summary>
+<input type="file" id="f" accept=".json"> or paste JSON (one decision or {"decisions":[...]}):
+<textarea id="paste"></textarea><button id="load">Load</button></details>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let set,i=0,picks=[],notes=[];
+const KEY=()=>'wc-picker:'+(set.title||'set');
+function save(){try{localStorage.setItem(KEY(),JSON.stringify({picks,notes}))}catch(e){}}
+function restore(){try{const r=JSON.parse(localStorage.getItem(KEY())||'null');if(r){picks=r.picks||[];notes=r.notes||[]}}catch(e){}}
+function loadSet(d){set=d.decisions?d:{title:d.question,decisions:[d]};i=0;picks=[];notes=[];restore();
+  $('sub').textContent=(set.title||'')+' — pick one option per question, then Copy all results.';draw();}
+function draw(){const d=set.decisions[i];
+  $('nav').innerHTML=set.decisions.map((_,k)=>`<button class="dot ${k===i?'on':''} ${picks[k]!=null?'done':''}" data-k="${k}">${k+1}</button>`).join('');
+  $('q').textContent=d.question;$('note').value=notes[i]||'';$('grid').innerHTML='';
+  d.options.forEach((o,j)=>{const c=document.createElement('div');c.className='card'+(picks[i]===j?' sel':'');
+    const v=o.visual?(o.visual.trim().startsWith('<svg')?o.visual:`<img src="${esc(o.visual)}">`):'';
+    c.innerHTML=(v?`<div class="vis">${v}</div>`:'')+`<b>${j+1}. ${esc(o.title)}</b><div>${esc(o.pitch)}</div>`+
+      `<ul>${(o.pros||[]).map(p=>`<li class="pro">${esc(p)}</li>`).join('')}${(o.cons||[]).map(p=>`<li class="con">${esc(p)}</li>`).join('')}</ul>`+
+      (o.link?`<a href="${esc(o.link)}" target="_blank" style="color:var(--acc)" onclick="event.stopPropagation()">Open full mockup ↗</a>`:'');
+    c.onclick=()=>{picks[i]=j;save();draw()};$('grid').appendChild(c)});
+  $('prev').disabled=i===0;$('next').disabled=i===set.decisions.length-1;}
+$('nav').onclick=e=>{const k=e.target.dataset.k;if(k!=null){i=+k;draw()}};
+$('prev').onclick=()=>{if(i>0){i--;draw()}};$('next').onclick=()=>{if(i<set.decisions.length-1){i++;draw()}};
+$('note').oninput=()=>{notes[i]=$('note').value;save()};
+$('f').onchange=e=>e.target.files[0].text().then(t=>loadSet(JSON.parse(t)));
+$('load').onclick=()=>{try{loadSet(JSON.parse($('paste').value))}catch(e){alert('Bad JSON: '+e.message)}};
+$('copy').onclick=()=>{const r='DECISIONS: '+(set.title||'')+'\n'+set.decisions.map((d,k)=>
+  `${d.question}\n  CHOSEN: ${picks[k]!=null?(picks[k]+1)+'. '+d.options[picks[k]].title:'(not picked)'}\n  NOTES: ${notes[k]||'-'}`).join('\n');
+  navigator.clipboard.writeText(r).then(()=>$('msg').textContent=' Copied — paste to Claude.',()=>prompt('Copy:',r))};
+// ?set=<file in decisions/ without .js>; default = newest set
+const SET=new URLSearchParams(location.search).get('set')||'2026-10-26-characters';
+const tag=document.createElement('script');tag.src='decisions/'+SET.replace(/[^\w.-]/g,'')+'.js';
+tag.onload=()=>loadSet(window.DECISIONS);
+tag.onerror=()=>loadSet({question:'No decision set "'+SET+'" found in tools/decisions/',options:[]});
+document.head.appendChild(tag);
+</script></body></html>

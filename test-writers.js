@@ -16,7 +16,7 @@ ok('run', '60 weeks with errs 0 and NaN 0', errs < 3 && nan.length === 0);
 const W = E.writers(S);
 ok('room', 'three writers, one the head writer, each with a style said in words', W.length === 3 && W.filter(w => w.head).length === 1 && W.every(w => w.style && w.likes && !/\d/.test(w.strong)), W.map(w => w.name + ' (' + w.style + ')').join(', '));
 ok('room', 'the head writer is the company’s own', W[0].head && W[0].name === S.promos.pdw.staff.writer, W[0].name + ' / ' + S.promos.pdw.staff.writer);
-ok('pitch', 'two writers pitch about every other week, and they argue', pitches >= 20 && texts.some(t => /calls it/.test(t) && /sides with/.test(t)), pitches + ' rooms');
+ok('pitch', 'two writers pitch at least one week in four (the Director caps the desk), and they argue', pitches >= 15 && texts.some(t => /calls it/.test(t) && /sides with/.test(t)), pitches + ' rooms');
 ok('pitch', 'a storyline pitch run starts the story', feuds >= 1, feuds + ' stories started from the room');
 { const m = JSON.stringify(W.map(w => S.rmY[w.id] || {})); ok('mem', 'the writers remember whose pitch ran and whose did not', /pitchyes/.test(m) && /pitchno/.test(m), W.map(w => w.you).join(',')); }
 ok('words', 'the style shows in the words of the writers’ segments', S.reports.some(r => r.segs.some(s => s.wr && Object.values({ a: 'crowd laughs', b: 'crying', c: 'really happened', d: 'Pyro', e: 'silly', f: 'last scene', g: 'rough', h: 'bigger than', i: 'opening video', j: 'uncomfortable', k: 'quiet, then loud', l: 'announcers lose it' }).some(x => (s.text || '').toLowerCase().indexOf(x.toLowerCase()) >= 0))));

@@ -1,0 +1,77 @@
+@media only screen and (max-height: 800px) {
+
+	div.card-open div.header:not(.played):not(.sticky)
+	{
+		min-height:182px !important; grid-template-columns:140px auto 200px !important;
+	}
+
+		div.card-open div.header:not(.played):not(.sticky) img.header
+		{
+			width:140px !important; height: 182px !important;
+		}
+
+}
+
+@media only screen and (max-width: 1400px) {
+	div#tabButtons
+	{
+		margin-left: 4px !important;
+	}
+}
+
+@media only screen and (max-width: 1030px) {
+	body
+	{
+		grid-template-rows: 32px 60px 1fr;
+	}
+
+	div#header div.tabs-block
+	{
+		clear: both !important
+	}
+
+	div.tabs-block div.separator:last-child
+	{
+		display: none !important;
+	}
+
+	div#header
+	{
+		height: 56px !important;
+	}
+}
+
+@media only screen and (max-width: 1120px) {
+	div#charHand
+	{
+		margin-left: 20px !important;
+		grid-row: 2/3 !important;
+		grid-column: 1/3 !important;
+		clear: both !important;
+	}
+
+	div#tabGame
+	{
+		grid-template-rows: minmax(182px, min-content) min-content min-content !important;
+	}
+
+	div#pinnedCards
+	{
+		grid-row: 3/4 !important;
+		clear: both !important;
+	}
+}
+
+@media only screen and (max-width: 1300px) {
+
+	div.card-open div.header:not(.sticky):not(.sticky)
+	{
+	    grid-template-columns: 180px auto 200px !important;
+	}
+
+	div.card-open div.header:not(.sticky):not(.sticky) div.header-right
+	{
+		width: 200px !important; padding-left: 0px !important;
+	}
+
+}

@@ -72,6 +72,8 @@ export function PlotWindow(p: { m: Modal }) {
       {kind.two ? <Field label="Against whom"><Sel t="plot-b" label="Against whom" value={st.b} disabled={!st.a} options={[['', 'Pick a wrestler'], ...W2.map((x): [string, string] => [String(x), S.w[x].name])]} onChange={v => view(() => { st.b = v; })} /></Field> : null}
       <Field label={'Where on ' + I.show}><Sel t="plot-at" label="Where on the show" value={st.at} options={I.pos.map((x: any): [string, string] => [x.id, x.n])} onChange={v => view(() => { st.at = v; })} /></Field>
       <Btn kind="go" t="plot-do" d={{ v: 'tape' }} disabled={!st.a || (kind.two && !st.b) || !A.can} onClick={() => run({ k: kind.id, who: kind.two ? [st.a, st.b] : [st.a], at: st.at })}>Buy it</Btn></div>);
+  if (id === 'sweeten') body = A.show ? <div class="row mt2"><p>Next deal up: <b>{A.show}</b>.</p>
+    <Btn kind="go" t="plot-do" d={{ v: 'sweeten' }} disabled={!A.can} onClick={() => run({})}>Sweeten it</Btn></div> : <p class="muted mt1">Every network deal is already sweetened.</p>;
   return <Window title={A.n} wide ok="Not now">
     <p>{A.d}</p>
     <p class={A.can ? 'gold' : 'bad'}>Costs {A.cost} booking power. You have {I.bp}.</p>

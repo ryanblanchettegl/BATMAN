@@ -82,8 +82,9 @@ for (let w = 0; w < 50 && !S.over; w++) {
   const S = E.newGame('pdw', 1, { name: 'R' }); let sc = null;
   for (let w = 0; w < 5 && !sc; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
     while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
-    sc = S.inbox.find(e => e.type === 'scrum' && !e.done); if (!sc) E.endWeek(S); }
+    sc = S.inbox.find(e => e.type === 'scrum' && !e.done) || ((S.dir && S.dir.held) || []).find(e => e.type === 'scrum'); if (!sc) E.endWeek(S); }   // the Director may hold it
   ok(sc && sc.choices.length === 3 && !sc.choices[1].includes(S.reports[0].name), 'no scrum after a big night, or it sells the night just gone: ' + JSON.stringify(sc && sc.choices));
+  if (sc && !S.inbox.includes(sc)) { S.ap = Math.max(S.ap || 0, 1); E.dirPull(S, sc.id); }   // held: bring it to the desk first, as a player would
   if (sc) { const h0 = S.hype || 0; E.resolveEvent(S, sc.id, 1); ok((S.hype || 0) > h0, 'selling the next big night did not build hype'); }
 }
 // a dark month: no big night that month, the next big night is the one after, and its crowd is hungrier

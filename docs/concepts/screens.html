@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desk and Booker Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&family=Gochi+Hand&display=swap" rel="stylesheet">
+<style>
+/* Concept mockups only. Workbench look (CLAUDE.md 2a) + cyberpunkdreams structure (three zones, played cards stay, slide-out hover, settle motion, 0.3s/0.5s). */
+:root{
+  --board:#141414; --paper:#f3ecd9; --paper2:#e9dfc4; --ink:#1d1d1f; --mut:#6b6457;
+  --navy:#1f2a55; --marker:#ffd43b; --green:#3c9a4e; --red:#c8402c; --blue:#2f6fb5; --yellow:#f2c230; --sticky:#fff27a; --index:#fbfbf5; --line:#c9d7ef;
+  --t-state:.3s; --t-move:.5s;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--board);color:var(--ink);font:clamp(13px,0.95vw,20px)/1.45 'Patrick Hand',system-ui,sans-serif;overflow:hidden;
+  background-image:radial-gradient(#ffffff08 1px,transparent 1px);background-size:5px 5px}
+.marker{font-family:'Permanent Marker',cursive;letter-spacing:.02em}
+.note{font-family:'Gochi Hand',cursive}
+/* app frame: menu bar top, notification bar, one bottom line (rule 5a) */
+.app{display:grid;grid-template-rows:auto auto 1fr auto;height:100vh}
+.menubar{display:flex;align-items:center;gap:1.2em;padding:.35em 1em;background:#0b0b0b;border-bottom:2px solid #000}
+.menubar .tab{font-family:'Permanent Marker';color:#bbb;padding:.15em .6em}
+.menubar .tab.on{color:var(--marker);background:var(--navy);transform:rotate(-.6deg)}
+.menubar .right{margin-left:auto;color:#ddd}
+.notebar{padding:.25em 1em;background:#1b1b1b;color:#e8e2cf;font-size:.9em;border-bottom:1px solid #000}
+.notebar b{color:var(--sticky)}
+.bottom{display:flex;align-items:center;gap:1.4em;padding:.4em 1em;background:#0b0b0b;color:#e8e2cf;border-top:2px solid #000;white-space:nowrap}
+.bottom .up{color:#6fd27f}.bottom .dn{color:#ff7d6b}
+.bottom .keys{margin-left:auto;display:flex;gap:.5em}
+.key{background:#2a2a2a;color:#ddd;padding:.1em .6em;border-radius:3px;font-size:.85em}
+.space{background:var(--yellow);color:#111;font-family:'Permanent Marker';padding:.35em 1.1em;transform:rotate(-1deg);box-shadow:3px 3px 0 #000;border:0;cursor:pointer}
+.space.go{background:var(--green);color:#fff}
+.space small{display:block;font-family:'Patrick Hand';font-size:.7em;opacity:.8;margin-top:-.2em}
+/* three zones */
+.desk{display:grid;grid-template-columns:minmax(220px,17%) minmax(0,1fr) minmax(260px,21%);gap:1.1em;padding:1em 1.2em;min-height:0}
+.col{min-height:0;display:flex;flex-direction:column;gap:.7em}
+.centre{overflow:auto;padding-right:.3em}
+/* pieces */
+.strip{background:var(--navy);color:var(--marker);font-family:'Permanent Marker';padding:.25em .7em;display:inline-block;transform:rotate(-.8deg);box-shadow:2px 2px 0 #000;font-size:1.05em}
+.win{background:var(--paper);padding:.8em .95em;position:relative;box-shadow:0 3px 0 #000,0 8px 18px #0008;
+  clip-path:polygon(0 1%,4% 0,12% 1.2%,25% .2%,40% 1%,55% 0,70% 1.3%,85% .1%,100% 1%,99.4% 30%,100% 60%,99.2% 100%,80% 99%,60% 100%,40% 98.8%,20% 100%,0 99%,.6% 70%,0 40%)}
+.win h3{margin:-.2em 0 .5em;font-family:'Permanent Marker';font-weight:400;font-size:1.15em}
+.slip{background:var(--paper);padding:.45em .7em;box-shadow:2px 3px 0 #000;display:flex;justify-content:space-between;align-items:baseline;gap:.6em}
+.slip:nth-child(odd){transform:rotate(-.5deg)}.slip:nth-child(even){transform:rotate(.4deg)}
+.slip b{font-family:'Permanent Marker';font-weight:400;font-size:.85em;color:var(--mut)}
+.slip span{font-size:1.1em}
+.slip.warn{background:#ffe3d6}.slip.good{background:#e2f3df}
+.index{background:var(--index);background-image:linear-gradient(transparent 1.6em,var(--line) 1.6em,var(--line) calc(1.6em + 1px),transparent calc(1.6em + 1px)),repeating-linear-gradient(transparent 0 calc(1.45em - 1px),#dfe7f5 calc(1.45em - 1px) 1.45em);
+  padding:.45em .7em .6em;box-shadow:2px 3px 0 #000;position:relative}
+.index .hd{font-family:'Permanent Marker';font-size:.95em;color:var(--red);height:1.6em}
+.sticky{background:var(--sticky);padding:.5em .7em;box-shadow:2px 4px 6px #0007;transform:rotate(1.2deg);font-family:'Gochi Hand';font-size:1.05em}
+.btn{font-family:'Permanent Marker';border:0;padding:.35em .9em;cursor:pointer;color:#fff;background:var(--blue);box-shadow:2px 2px 0 #000;transform:rotate(-.8deg);transition:transform var(--t-state),box-shadow var(--t-state)}
+.btn:nth-of-type(2n){transform:rotate(.7deg)}
+.btn.g{background:var(--green)}.btn.r{background:var(--red)}.btn.y{background:var(--yellow);color:#111}.btn.n{background:var(--navy);color:var(--marker)}
+.btn:hover,.btn:focus-visible{transform:translateY(-2px) rotate(0);box-shadow:3px 5px 0 #000;outline:none}
+.btn:focus-visible{box-shadow:0 0 0 3px var(--marker),3px 5px 0 #000}
+/* cyberpunkdreams transfers */
+.pull{transition:transform var(--t-state),box-shadow var(--t-state),opacity var(--t-state);cursor:pointer}
+.pull:hover,.pull:focus-visible{transform:translateX(6px) rotate(-.4deg);box-shadow:4px 5px 0 #000;outline:none}
+.played{opacity:.62;filter:saturate(.55);transform:rotate(-1.2deg) translateX(-4px)}
+.played::after{content:attr(data-done);position:absolute;right:.5em;top:.35em;font-family:'Permanent Marker';color:var(--green);font-size:.85em;transform:rotate(-6deg)}
+@keyframes settle{from{opacity:0;transform:translateY(-10px) rotate(-1.2deg)}to{opacity:1;transform:none}}
+.settle{animation:settle var(--t-move) ease-out both}
+@keyframes grow{from{max-height:0;opacity:0;margin-bottom:-.7em}to{max-height:20em;opacity:1;margin-bottom:0}}
+.grows{animation:grow var(--t-move) ease-out both;overflow:hidden}
+.tag{display:inline-block;font-size:.8em;padding:0 .45em;margin:.1em .2em 0 0;background:#e8e0c8;border:1px solid #0002}
+.tag.r{background:#ffd9cf}.tag.g{background:#d8f0d4}.tag.b{background:#d8e6fb}
+.row{display:flex;gap:.6em;align-items:center;flex-wrap:wrap}
+.mut{color:var(--mut)}
+.pip{display:inline-grid;place-items:center;width:2.1em;height:2.1em;border-radius:50%;background:var(--navy);color:var(--marker);font-family:'Permanent Marker';font-size:.8em;flex:none}
+.bar{height:.45em;background:#0002;margin-top:.2em}.bar i{display:block;height:100%;background:var(--green)}
+/* concept switcher (not part of the game) */
+.switch{position:fixed;right:.8em;bottom:3.6em;z-index:9;background:#000c;padding:.4em;display:flex;gap:.3em;flex-wrap:wrap;max-width:46em}
+.switch a{color:#ddd;text-decoration:none;font:600 12px system-ui;padding:.3em .6em;background:#333}
+.switch a.on{background:var(--marker);color:#000}
+.label{position:fixed;left:50%;transform:translateX(-50%);top:4.6em;z-index:9;background:#000c;color:var(--marker);font:600 12px system-ui;padding:.25em .8em;pointer-events:none}
+/* map card */
+.map{background:#2f5f8f;aspect-ratio:2/1;position:relative;box-shadow:2px 3px 0 #000;overflow:hidden}
+.map svg{position:absolute;inset:0;width:100%;height:100%}
+.poster{background:#111;color:#fff;padding:.6em;box-shadow:3px 4px 0 #000;transform:rotate(1deg);text-align:center;border:.35em solid #fff}
+.poster .t{font-family:'Permanent Marker';color:var(--marker);font-size:1.4em;line-height:1.1}
+.vs{display:flex;justify-content:space-around;align-items:end;margin:.4em 0}
+.fig{width:3.2em;height:5.5em;background:linear-gradient(var(--c,#c8402c) 0 35%,#f0c9a0 35% 50%,var(--c,#c8402c) 50%);clip-path:polygon(35% 0,65% 0,70% 20%,100% 30%,90% 60%,75% 55%,72% 100%,28% 100%,25% 55%,10% 60%,0 30%,30% 20%)}
+/* booker */
+.clock{display:flex;height:2.2em;box-shadow:2px 3px 0 #000;background:#000}
+.clock div{display:grid;place-items:center;font-family:'Permanent Marker';font-size:.8em;color:#111;border-right:2px solid #000;overflow:hidden;white-space:nowrap}
+.seg{display:grid;grid-template-columns:3.2em 1fr auto;gap:.7em;align-items:center}
+.seg .min{font-family:'Permanent Marker';font-size:1.3em;text-align:center;color:var(--navy)}
+.slot{border:2px dashed #0004;padding:.3em .6em;min-width:9em;color:var(--mut)}
+.slot.filled{border-style:solid;border-color:#0002;background:#fff;color:var(--ink)}
+.read{border-left:4px solid var(--blue);padding-left:.5em}
+.cardgrid{display:grid;grid-template-columns:1fr 1fr;gap:.9em}
+.tl{position:relative;height:9em;background:#0d0d0d;box-shadow:inset 0 0 0 2px #000}
+.tl .blk{position:absolute;top:1.6em;height:5.6em;padding:.3em .4em;font-size:.8em;line-height:1.2;box-shadow:2px 2px 0 #000;overflow:hidden}
+.tl .hour{position:absolute;top:0;height:100%;border-left:2px dashed #ffffff40;color:#fff8;font-size:.75em;padding-left:.2em}
+.roster .w{display:flex;gap:.5em;align-items:center;background:var(--paper);padding:.3em .5em;box-shadow:2px 2px 0 #000;margin-bottom:.4em}
+.roster .w.used{opacity:.45}
+.roster .w small{display:block;color:var(--mut);line-height:1}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:.5em}
+.day{background:#0006;padding:.3em;min-height:9em}
+.day h4{margin:0 0 .3em;color:#e8e2cf;font-family:'Permanent Marker';font-weight:400;font-size:.85em}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div id="root"></div>
+<script>
+const V = new URLSearchParams(location.search).get('v') || 'desk-a';
+const LABELS = {
+ 'desk-a':'Desk A · The Road Desk (map + poster centre)',
+ 'desk-b':'Desk B · The Fire First (one big matter centre)',
+ 'desk-c':'Desk C · The Week Board (seven days centre)',
+ 'book-a':'Booker A · The Run Sheet (vertical segment cards)',
+ 'book-b':'Booker B · The Card Table (index cards + drag roster)',
+ 'book-c':'Booker C · The TV Clock (timeline by minutes)'
+};
+const shell = (tab, centre, left, right, space, note) => `
+<div class="app">
+ <div class="menubar"><span class="tab ${tab==='Office'?'on':''}">Office</span><span class="tab ${tab==='Booking'?'on':''}">Booking</span><span class="tab">Roster</span><span class="tab">Web</span><span class="tab">Manage</span><span class="tab">Company</span>
+  <span class="right"><span class="marker" style="color:var(--marker)">EWE</span> · Week 12, March · Year 1</span></div>
+ <div class="notebar">${note}</div>
+ <div class="desk"><aside class="col left">${left}</aside><main class="col centre">${centre}</main><aside class="col right">${right}</aside></div>
+ <div class="bottom"><span>Cash <b>$41.2M</b> <span class="dn">▼ $0.9M</span></span><span>Popularity <b>Hot</b> <span class="up">▲</span></span><span>Owner's trust <b>Steady</b></span>
+  <span class="keys"><span class="key">F1 Help</span><span class="key">F2 Options</span><span class="key">F3 Music</span></span>
+  <button class="space ${space[1]||''}" data-t="advance">SPACE · ${space[0]}<small>${space[2]||''}</small></button></div>
+</div>`;
+
+const statusSlips = `
+ <div class="strip">Your company</div>
+ <div class="slip"><b>Cash</b><span>$41.2M</span></div>
+ <div class="slip warn"><b>This week</b><span>−$0.9M</span></div>
+ <div class="slip"><b>Crowd</b><span>Hot</span></div>
+ <div class="slip good"><b>Locker room</b><span>Happy</span></div>
+ <div class="slip warn"><b>Hurt</b><span>2 out · 1 worn</span></div>
+ <div class="slip"><b>Owner</b><span>Steady</span></div>
+ <div class="slip"><b>Booking power</b><span>4</span></div>
+ <div class="sticky">Yearly goal: a new world champion by Grand Slam. 9 weeks.</div>`;
+
+const mapCard = `<div class="map"><svg viewBox="0 0 200 100"><path d="M20 30 L70 18 L120 22 L165 35 L178 60 L150 80 L95 85 L45 76 L18 58Z" fill="#4c9a54" stroke="#0005" stroke-width="1.5"/><circle cx="118" cy="48" r="4" fill="#c8402c" stroke="#fff"/><circle cx="72" cy="40" r="2.5" fill="#fff"/><circle cx="150" cy="62" r="2.5" fill="#fff"/><text x="124" y="46" font-family="Permanent Marker" font-size="9" fill="#fff">Columbus</text></svg></div>`;
+
+function deskA(){
+ const centre = `
+  <div class="win settle"><h3>The road: Columbus, Ohio</h3>
+   <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:1em;align-items:start">
+    <div>${mapCard}<div class="row" style="margin-top:.5em"><span class="tag">Nationwide Arena · 18,500</span><span class="tag g">Market: warm</span><span class="tag">71% sold</span><span class="tag b">Hometown: Rook Bishop</span></div>
+     <p class="mut" style="margin:.4em 0 0">Behind: Detroit (B+) · Ahead: Pittsburgh, Cleveland</p></div>
+    <div class="poster"><div class="mut" style="color:#bbb">Friday · 3 days</div><div class="t">Friday Night Riot</div>
+     <div class="vs"><div class="fig" style="--c:#2f6fb5"></div><span class="marker" style="color:var(--marker)">vs</span><div class="fig"></div></div>
+     <div>Kade Draven vs Vex Graves</div><div class="row" style="justify-content:center;margin-top:.5em"><button class="btn y">Book the show</button><button class="btn n">Backstage</button></div></div>
+   </div></div>
+  <div class="win settle" style="animation-delay:.08s"><h3>This week's tasks</h3>
+   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.7em">
+    <div class="index pull played" data-done="done"><div class="hd">Commentary</div>Seated: Moss & Pike</div>
+    <div class="index pull"><div class="hd">Title</div>Women's title vacant. Name the match.</div>
+    <div class="index pull"><div class="hd">Contract</div>Sable Sixx: 3 weeks left.</div>
+    <div class="index pull"><div class="hd">Promise</div>Junie Tate was promised a win.</div>
+   </div></div>`;
+ const right = `
+  <div class="strip">On your desk</div>
+  <div class="win grows pull"><h3 style="color:var(--red)">Real heat in catering</h3>Mira Vane and Sable Sixx had to be pulled apart. Both are on Friday's card.<div class="row" style="margin-top:.4em"><button class="btn r">Answer</button></div></div>
+  <div class="win pull played" data-done="answered" style="position:relative"><h3>The network called</h3>You promised a title change on TV. They liked it.</div>
+  <div class="index pull"><div class="hd">Word in the hallway</div>"Draven says Graves can't carry a main event."</div>
+  <div class="sticky">Your assistant: Rook Bishop is home in Columbus. Put him on the card.</div>`;
+ return shell('Office', centre, statusSlips, right, ['Book the show','','3 days to Friday Night Riot'], '<b>New:</b> Mira Vane and Sable Sixx came to blows in catering · Ticket sales up in Columbus');
+}
+
+function deskB(){
+ const centre = `
+  <div class="win settle" style="padding:1.2em 1.4em">
+   <div class="row" style="justify-content:space-between"><span class="strip" style="background:var(--red);color:#fff">The fire this week</span><span class="mut">1 of 3 · answer by Friday</span></div>
+   <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:1.2em;margin-top:.8em">
+    <div style="background:#222;aspect-ratio:4/3;box-shadow:3px 4px 0 #000;position:relative;display:flex;align-items:end;justify-content:center;gap:2em;padding-bottom:1em">
+      <div class="fig" style="--c:#991ca7;transform:rotate(-8deg)"></div><div class="fig" style="--c:#1ca74a;transform:rotate(8deg) scaleX(-1)"></div>
+      <span class="note" style="position:absolute;left:.6em;top:.4em;color:#fff">Catering, Tuesday</span></div>
+    <div><h3 style="font-family:'Permanent Marker';font-weight:400;font-size:1.6em;margin:0">Real heat in catering</h3>
+     <p>Mira Vane and Sable Sixx had to be pulled apart. Both are on Friday's card, in different matches. The room is picking sides.</p>
+     <div style="display:grid;gap:.5em">
+      <button class="btn g pull" style="text-align:left">Put them in the ring together <small style="display:block;font-family:'Patrick Hand'">Feud starts hot. Risk: one gets hurt. 64% it stays clean.</small></button>
+      <button class="btn pull" style="text-align:left">Sit them both down <small style="display:block;font-family:'Patrick Hand'">1 action point. The room calms. Both remember.</small></button>
+      <button class="btn r pull" style="text-align:left">Send Sixx home this week <small style="display:block;font-family:'Patrick Hand'">Friday loses her. Vane thinks you took her side.</small></button>
+     </div></div></div></div>
+  <div class="row" style="gap:1em">
+   <div class="win pull played" data-done="answered" style="flex:1"><h3>The network called</h3>Answered Monday.</div>
+   <div class="win pull" style="flex:1"><h3>Contract: Sable Sixx</h3>3 weeks left. Next.</div>
+  </div>`;
+ const right = `
+  <div class="strip">This week</div>
+  <div class="index pull played" data-done="done"><div class="hd">Mon · Commentary</div>Seated: Moss & Pike</div>
+  <div class="index pull"><div class="hd">Tue · Title</div>Women's title vacant</div>
+  <div class="index pull"><div class="hd">Wed · Promise</div>Junie Tate's win is due</div>
+  <div class="win"><h3>Next show</h3><b>Friday Night Riot</b><br>Columbus · 18,500 · 71% sold<div class="row" style="margin-top:.4em"><button class="btn y">Book</button><button class="btn n">Backstage</button></div></div>
+  <div class="sticky">The hallway: "Draven says Graves can't carry a main event."</div>`;
+ return shell('Office', centre, statusSlips, right, ['Answer','go','1 matter needs you before Friday'], '<b>Fire:</b> real heat in catering · 2 more matters this week');
+}
+
+function deskC(){
+ const day = (d, items) => `<div class="day"><h4>${d}</h4>${items}</div>`;
+ const centre = `
+  <div class="win settle"><h3>The week · Columbus → Pittsburgh</h3>
+   <div class="days">
+    ${day('Mon','<div class="index pull played" data-done="done"><div class="hd">Desk</div>Commentary seated</div>')}
+    ${day('Tue','<div class="win pull" style="padding:.5em;background:#ffe3d6"><b class="marker" style="font-size:.85em;color:var(--red)">Heat!</b><br>Vane vs Sixx in catering</div>')}
+    ${day('Wed','<div class="index pull"><div class="hd">TV</div>Midweek Mayhem · Detroit</div>')}
+    ${day('Thu','<div class="sticky" style="font-size:.9em">Network exec visits</div>')}
+    ${day('Fri','<div class="poster" style="font-size:.75em"><div class="t">Riot</div>Columbus<br>Draven vs Graves</div>')}
+    ${day('Sat','<div class="index pull"><div class="hd">House</div>Cleveland</div>')}
+    ${day('Sun','<div class="index pull"><div class="hd">Week ends</div>Pay day</div>')}
+   </div></div>
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:1em">
+   <div class="win">${mapCard}</div>
+   <div class="win"><h3>Tasks</h3><div class="index pull" style="margin-bottom:.4em"><div class="hd">Title</div>Women's title vacant</div><div class="index pull"><div class="hd">Contract</div>Sable Sixx: 3 weeks</div></div>
+  </div>`;
+ const right = `
+  <div class="strip">Word travels</div>
+  <div class="index pull grows"><div class="hd">Catering</div>"Sixx swung first." — Junie Tate</div>
+  <div class="index pull"><div class="hd">Locker room</div>The room is split on Vane and Sixx.</div>
+  <div class="index pull"><div class="hd">Press</div>Ringside Wire: "Trouble at EWE?"</div>
+  <div class="index pull played" data-done="read"><div class="hd">Feed</div>Draven posted a gym photo.</div>
+  <div class="sticky">Tip: the exec visits Thursday. A clean Wednesday helps.</div>`;
+ return shell('Office', centre, statusSlips, right, ['Go to Tuesday','','Next thing: the catering fight'], '<b>Week 12:</b> 2 shows, 1 house show · the network visits Thursday');
+}
+
+const roster = `
+ <div class="strip">Pick a wrestler</div>
+ <div class="roster" style="overflow:auto;min-height:0">
+  ${[['KD','Kade Draven','Powerhouse · Main event',1],['VG','Vex Graves','Technician · Main event',1],['MV','Mira Vane','Technician · Upper',1],['SS','Sable Sixx','All-rounder · Upper',0],['JT','Junie Tate','High flyer · Mid',1],['RB','Rook Bishop','Brawler · Home tonight',0],['DC','Dee Cruz','High flyer · Upper',0],['LP','Lena Pike','Striker · Mid',0],['OK','Otis Kane','Entertainer · Mid',0]]
+   .map(([p,n,d,u])=>`<button class="w pull ${u?'used':''}" style="width:100%;border:0;text-align:left;font:inherit"><span class="pip">${p}</span><span>${n}<small>${d}</small></span></button>`).join('')}
+ </div>`;
+const consequences = (extra='') => `
+ <div class="strip">What it does</div>
+ <div class="win grows"><h3>The crowd tonight</h3>Expects: <b>hot</b>. Your card so far reads <b>strong</b>.<div class="bar"><i style="width:68%"></i></div></div>
+ <div class="win grows" style="animation-delay:.1s"><h3>Road agent's read</h3><div class="read">Draven and Graves have worked before. It clicked.</div><div class="read" style="border-color:var(--red);margin-top:.3em">Junie Tate looked tired on Wednesday.</div></div>
+ <div class="win grows" style="animation-delay:.2s"><h3>People</h3><span class="tag g">Tate: promise kept</span><span class="tag r">Sixx: left off, unhappy</span><span class="tag">Bishop: home, not booked</span></div>
+ ${extra}`;
+
+function bookA(){
+ const segs = [
+  ['5','Opening promo','Kade Draven','—','Calls out Graves',1],
+  ['12','Tag match','Tate & Pike','Cruz & Kane','Tate promised a win',1],
+  ['8','Angle','Mira Vane','Sable Sixx','Catering heat',0],
+  ['15','Singles','Rook Bishop','drop a name','Home crowd',0],
+  ['25','Main event','Kade Draven','Vex Graves','Title match',0]];
+ const centre = `
+  <div class="row" style="justify-content:space-between"><span class="strip">Friday Night Riot · run sheet</span><span style="color:#e8e2cf">65 of 120 minutes · 55 to fill</span></div>
+  <div class="clock"><div style="flex:5;background:#ffd43b">Promo</div><div style="flex:12;background:#3c9a4e;color:#fff">Tag</div><div style="flex:8;background:#f3ecd9">Angle</div><div style="flex:15;background:#c9d7ef">Singles</div><div style="flex:25;background:#c8402c;color:#fff">Main event</div><div style="flex:55;background:#222;color:#888">empty</div></div>
+  ${segs.map(([m,k,a,b,why,done],i)=>`
+   <div class="win seg pull settle ${done?'played':''}" data-done="booked" style="animation-delay:${i*.06}s">
+    <div class="min">${m}<div class="mut" style="font-size:.5em;font-family:'Patrick Hand'">min</div></div>
+    <div><div class="marker" style="font-size:.9em">${k}</div><div class="row"><span class="slot filled">${a}</span>${b!=='—'?`<span class="marker">vs</span><span class="slot ${b==='drop a name'?'':'filled'}">${b}</span>`:''}</div><div class="mut note">${why}</div></div>
+    <div class="row" style="flex-direction:column;align-items:end"><button class="btn n" style="font-size:.8em">Finish</button><span class="tag ${i==4?'r':'b'}">${i==4?'Title on the line':'Chemistry'}</span></div>
+   </div>`).join('')}
+  <div class="row"><button class="btn">+ Add a segment</button><button class="btn y">Suggest the rest</button></div>`;
+ return shell('Booking', centre, roster, consequences(), ['Run sheet','','55 minutes still empty'], '<b>Booking:</b> Friday Night Riot · Columbus · 3 days');
+}
+
+function bookB(){
+ const card = (k,a,b,m,tags,done,i) => `<div class="index pull settle ${done?'played':''}" data-done="booked" style="min-height:8.5em;animation-delay:${i*.06}s;transform:rotate(${(i%2?.6:-.5)}deg)">
+   <div class="hd">${k} · ${m} min</div>
+   <div class="row" style="justify-content:space-between;margin-top:.2em"><span class="slot ${a?'filled':''}">${a||'drop a name'}</span><span class="marker">vs</span><span class="slot ${b?'filled':''}">${b||'drop a name'}</span></div>
+   <div style="margin-top:.4em">${tags}</div></div>`;
+ const centre = `
+  <div class="row" style="justify-content:space-between"><span class="strip">Friday Night Riot · the card</span><span style="color:#e8e2cf">Drag a name from the left onto a card</span></div>
+  <div class="cardgrid">
+   ${card('Opener','Junie Tate','Lena Pike',10,'<span class="tag g">Promise kept</span><span class="tag b">Fresh pairing</span>',1,0)}
+   ${card('Angle','Mira Vane','Sable Sixx',8,'<span class="tag r">Real heat</span>',1,1)}
+   ${card('Tag match','Dee Cruz','',12,'<span class="tag">Needs a partner</span>',0,2)}
+   ${card('Singles','Rook Bishop','',15,'<span class="tag g">Home crowd</span>',0,3)}
+  </div>
+  <div class="win settle" style="background:#fff3c4;margin-top:.3em"><div class="row" style="justify-content:space-between"><span class="marker" style="font-size:1.2em;color:var(--red)">Main event · 25 min</span><span class="tag r">Title on the line</span></div>
+   <div class="row" style="justify-content:center;gap:2em;margin:.5em 0"><div style="text-align:center"><div class="fig" style="--c:#2f6fb5;margin:auto"></div>Kade Draven</div><span class="marker" style="font-size:1.6em">vs</span><div style="text-align:center"><div class="fig" style="margin:auto"></div>Vex Graves</div></div>
+   <div class="row" style="justify-content:center"><button class="btn n">Pick the winner</button><button class="btn">Finish</button><button class="btn y">Extras (booking power)</button></div></div>`;
+ return shell('Booking', centre, roster, consequences('<div class="sticky">Show clock: 70 of 120 min</div>'), ['Fill the card','','2 cards need names'], '<b>Booking:</b> Friday Night Riot · Columbus · 3 days');
+}
+
+function bookC(){
+ const blocks = [[0,5,'#ffd43b','Draven promo'],[5,12,'#3c9a4e','Tate & Pike vs Cruz & Kane'],[17,8,'#f3ecd9','Vane / Sixx angle'],[25,15,'#c9d7ef','Bishop vs ?'],[40,10,'#555','ad break'],[95,25,'#c8402c','Draven vs Graves']];
+ const pct = v => (v/120*100)+'%';
+ const centre = `
+  <div class="row" style="justify-content:space-between"><span class="strip">Friday Night Riot · the TV clock</span><span style="color:#e8e2cf">2 hours of television · 70 booked</span></div>
+  <div class="tl">${[0,30,60,90].map(h=>`<div class="hour" style="left:${pct(h)}">${h===0?'8:00':h===60?'9:00':h===30?'8:30':'9:30'}</div>`).join('')}
+   ${blocks.map(([s,l,c,t],i)=>`<div class="blk pull" style="left:${pct(s)};width:calc(${pct(l)} - 3px);background:${c};color:${['#3c9a4e','#555','#c8402c'].includes(c)?'#fff':'#111'};transform:rotate(${i%2?.5:-.5}deg)">${t}<br><b>${l}m</b></div>`).join('')}
+   <div class="blk" style="left:${pct(50)};width:${pct(45)};background:transparent;border:2px dashed #ffffff55;color:#fff8;box-shadow:none">drop segments here · 45 min empty</div></div>
+  <div class="note" style="color:#e8e2cf">Top of the hour at 9:00: whatever is on then is judged against what the crowd expects.</div>
+  <div class="win settle"><div class="row" style="justify-content:space-between"><h3>Picked: Bishop vs ? · 15 min</h3><span class="tag g">Home crowd in Columbus</span></div>
+   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8em">
+    <div class="index pull"><div class="hd">Opponent</div>Lena Pike<br><span class="mut">fresh pairing</span></div>
+    <div class="index pull"><div class="hd">Rules</div>Normal match</div>
+    <div class="index pull"><div class="hd">Finish</div>Bishop wins clean</div>
+   </div>
+   <div class="row" style="margin-top:.6em"><button class="btn g">Book it</button><button class="btn">Shorter</button><button class="btn">Longer</button><button class="btn y">Suggest</button></div></div>`;
+ return shell('Booking', centre, roster, consequences(), ['Fill the clock','','45 minutes empty'], '<b>Booking:</b> Friday Night Riot · Columbus · 3 days');
+}
+
+const R = {'desk-a':deskA,'desk-b':deskB,'desk-c':deskC,'book-a':bookA,'book-b':bookB,'book-c':bookC};
+document.getElementById('root').innerHTML = (R[V]||deskA)() +
+ `<div class="label">${LABELS[V]||''} · concept mockup, sample data</div>` +
+ `<nav class="switch">${Object.keys(R).map(k=>`<a href="?v=${k}" class="${k===V?'on':''}">${k}</a>`).join('')}</nav>`;
+</script></body></html>

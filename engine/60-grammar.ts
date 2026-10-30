@@ -217,8 +217,8 @@ export var GR_SHAPE={
   s_war:['They spill out to the floor and fight into the crowd.','{a} sends {b} into the steel steps.','The referee is losing control of this one.'],
   late:[
     {t:'{w} has been on the defensive all match, but here comes the comeback!',if:function(c){return c.k==='comeback';}},
-    {t:'{a} hits the {fa}... and {b} kicks out! Nobody kicks out of that!',if:function(c){return !!c.fa&&c.hot;}},
-    {t:'{b} goes for the {fb}, but {a} slips out of it!',if:function(c){return !!c.fb;}},
+    {t:'{a} hits {fa}, but {b} rolls to the floor before the cover!',if:function(c){return !!c.fa&&c.hot;}},   // no cover: near falls only come from a finisher the engine saw kicked out of
+    {t:'{b} goes for {fb}, but {a} slips out of it!',if:function(c){return !!c.fb;}},
     {t:'Both of them are down, {p}. The referee starts to count.',if:function(c){return c.hot;}}
   ]
 };
@@ -235,7 +235,7 @@ export function matchShape(x,o,hk){
   var pk=function(L,s){return L[Math.floor(h01(hk+s)*L.length)%L.length];};
   var srt=[A,B].sort(function(p,q){return q.ovr-p.ovr;});
   var c={k:k,p:o.p,a:A.name,b:B.name,w:o.w||A.name,big:srt[0].name,small:srt[1].name,am:pk($L.MOVES[A.style]||$L.MOVES.A,'am'),bm:pk($L.MOVES[B.style]||$L.MOVES.A,'bm'),
-    fa:A.fin||null,fb:B.fin||null,hot:x.MQ>=72&&x.mins>=12};
+    fa:A.fin?(/^the /i.test(A.fin)?A.fin:'the '+A.fin):null,fb:B.fin?(/^the /i.test(B.fin)?B.fin:'the '+B.fin):null,hot:x.MQ>=72&&x.mins>=12};   // a move named 'The ...' keeps its own article
   return {k:k,intro:gram($L.GR_SHAPE,'intro',c,hk+'i'),spot:x.mins>8&&k!=='squash'?gram($L.GR_SHAPE,'spot',c,hk+'s'):null,late:x.mins>=12&&k!=='squash'?gram($L.GR_SHAPE,'late',c,hk+'l'):null};
 }
 

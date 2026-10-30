@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>cyberpunkdreams</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/fonts.css">
+	<link rel="stylesheet" href="css/base.css">
+	<link rel="stylesheet" href="css/elements.css">
+	<link rel="stylesheet" href="css/media.css">
+	<link rel="stylesheet" href="css/keyframes.css">
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' https://*; ; font-src 'self'; child-src 'none'; worker-src 'self';">
+</head>
+<body>
+
+	<div id='windowBar'></div>
+
+	<div id='header'>
+		<div id='tabButtons'></div>
+
+		<button id='mainMenu' value='mainMenu'>menu</button>
+		
+		<div id='submenu-mainMenu' class='submenu'>
+			<button value='tabShowWelcome'>welcome</button>
+			<button value='tabAccount'>account</button>
+			<button value='tabOptions'>options</button>
+			<button value='tabHistory'>history</button>
+			<button value='switch'>switch character</button>
+			<button value='logout'>logout</button>
+			<button value='tabShortcuts'>shortcuts</button>
+			<button value='support'>support</button>
+			<button value='quit'>close</button>
+		</div>
+	</div>
+
+	<div id='container'>
+		<div id='left' class='unit'>
+			<div id='characterArea' class='column-block'></div>
+
+			<div id='leftInner'>
+				<div id='areaBanner' class='column-block'></div>
+				<div id='lhOutfits' class='column-block'></div>
+				
+				<div id='quickInventory'></div>
+				
+				<div id='scene' class='column-block'></div>
+				<div id='objectives' class='column-block'></div>
+				
+				<div id='slotMarker' style='display:none'></div>
+
+				<div id='health' class='column-block'></div>
+				
+				<div id='weapon' class='column-block'></div>
+
+				<div id='menaces' class='column-block'></div>
+				<div id='city' class='column-block'></div>
+				<div id='style' class='column-block'></div>
+			</div>
+		</div>
+
+		<div id='centre' class='unit'></div>
+		
+		<div id='right' class='unit'>
+			<div id='laterals' class='right-block'></div>
+			<div id='effects' class='right-block'></div>
+		</div>
+	</div>
+
+	<div id='messages'></div>
+
+	<div id='followerTip'></div>
+
+	<script src="libs/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="libs/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="libs/underscore-min.js" type="text/javascript"></script>
+	<script src="libs/backbone-min.js" type="text/javascript"></script>
+	<script src="libs/naturalSort.js" type="text/javascript"></script>
+	
+
+	<!-- DEVBLOCK START
+	<script src="js/libs/backbone.model.extend.js" type="text/javascript"></script>
+	<script src="js/libs/backbone.view.extend.js" type="text/javascript"></script>
+
+	<script src="js/core/cpd.data.js" type="text/javascript"></script>
+
+	<script src="js/utils/cpd.utils.combineDeltas.js" type="text/javascript"></script>
+	<script src="js/utils/cpd.utils.combineObjs.js" type="text/javascript"></script>
+	<script src='js/utils/cpd.utils.console.js' type='text/javascript'></script>
+	<script src='js/utils/cpd.utils.processCapsAndCounters.js' type='text/javascript'></script>
+	<script src='js/utils/cpd.utils.processDeferredChanges.js' type='text/javascript'></script>
+	<script src="js/utils/cpd.utils.rightNow.js" type="text/javascript"></script>
+	<script src="js/utils/cpd.utils.uuid.js" type="text/javascript"></script>
+
+	<script src="js/core/cpd.startup.js" type="text/javascript"></script>
+	<script src="js/core/cpd.localstorage.js" type="text/javascript"></script>
+	<script src="js/core/cpd.server.js" type="text/javascript"></script>
+	<script src="js/core/cpd.templates.ui.js" type="text/javascript"></script>
+	<script src="js/core/cpd.templates.elements.js" type="text/javascript"></script>
+
+	<script src="js/models/cpd.models.accessCode.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.achievement.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.action.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.actionEffect.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.actionReq.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.activeAccessCode.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.activeTrigger.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.card.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.cardBranch.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.cardReq.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.character.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.charQuality.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.deck.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.equippedItem.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.gameState.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.internalNotification.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.onceOnly.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.player.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.quality.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.socialAct.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.trigger.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.triggerReq.js" type="text/javascript"></script>
+	<script src="js/models/cpd.models.userOptions.js" type="text/javascript"></script>
+	<script src="js/models/cpd_models.js" type="text/javascript"></script> 
+	
+	<script src="js/collections/cpd.collections.achievements.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.actionResults.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.activeAccessCodes.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.activeTriggers.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.allAccessCodes.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.allAchievements.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.allCards.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.allObjectives.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.allQualities.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.allSocialActs.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.allTriggers.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.charQualities.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.equippedItems.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.internalNotifications.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.onceOnly.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.outfits.js" type="text/javascript"></script>
+	<script src="js/collections/cpd.collections.quickAccessInventory.js" type="text/javascript"></script>
+	<script src="js/collections/cpd_collections.js" type="text/javascript"></script>
+
+	<script src="js/views/dialogs/cpd.views.accountDialog.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.actionExplainerDialog.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.boxDialog.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.bundleDialog.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.changeNameDialog.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.characterDeath.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.characterDialog.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.forgottenPasswordForm.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.gameCredits.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.historyDialog.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.optionsDialog.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.serverErrorDialog.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.shortcutsDialog.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.subscriptionDialog.js" type="text/javascript"></script>
+	<script src="js/views/dialogs/cpd.views.supplyPacketDialog.js" type="text/javascript"></script>
+
+	<script src="js/views/cpd.views.action.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.areaBanner.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.bigMessage.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.branchPlayed.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.bundleItem.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.categoryItem.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.deck.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.cardBranch.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.cardFront.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.cardOpen.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.cardPlayed.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.cardResult.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.changeEmailForm.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.changePasswordForm.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.charActions.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.charActionsTimer.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.charArea.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.charDecks.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.charHand.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.createAccount.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.createCharacterForm.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.equippedChange.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.filterArea.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.gameController.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.gameTab.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.internalNotification.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.internalNotifications.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.inventoryCategory.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.inventoryItem.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.inventoryTab.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.itemPreview.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.killCharacterForm.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.leftHandOutfits.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.leftHandSlots.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.login.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.musicPlayer.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.pinnedCards.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.pickCharacter.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.pickCharacterLink.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.objectivesBlock.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.objective.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.outfits.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.outfitDetail.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.qualitiesBlock.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.qualitiesTab.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.quality.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.qualityCategory.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.qualityChange.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.qualityReq.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.quickAccessItem.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.quickAccessInventory.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.quickMessage.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.slot.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.slotsTab.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.soundPlayer.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.supplyPacket.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.supplyPacketItem.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.testResult.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.welcome.js" type="text/javascript"></script>
+	<script src="js/views/cpd.views.windowBar.js" type="text/javascript"></script>
+
+	<script src="js/ui/cpd.ui.conditionalImage.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.formatDate.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.formatNumber.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.handleKeyPress.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.parseIfStatement.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.parseMathsStatements.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.parseInlineImages.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.parseInstructions.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.parseRichFormula.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.processText.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.toggleSubMenu.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.typewriter.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.unParseRichFormula.js" type="text/javascript"></script>
+	<script src="js/ui/cpd.ui.wideImage.js" type="text/javascript"></script>
+
+	<script src="js/core/cpd.fcmReceiver.js" type="text/javascript"></script>
+
+	DEVBLOCK END -->
+
+
+
+	<!-- PRODBLOCK START -->
+	<script src="prod/prod.js" type="text/javascript"></script>
+	<!-- PRODBLOCK END -->
+
+	<script type="text/javascript">
+
+		cl('starting with '+cpdCore.env+' environment');
+		
+		cpdCore.UI.initLoading=true;
+
+		cpdCore.UI.userOptions=new cpdCore.models.UserOptions();											//we need user options before anything else
+
+		var w=new cpdCore.views.WindowBar();
+
+		if(navigator.onLine)
+		{
+			var intro=new cpdCore.views.Welcome();
+		}
+		else
+		{
+			var b=new cpdCore.views.BigMessage({message: '[ currently offline | waiting for connection ]', diagWidth:600});
+
+			$(window).on('online',function(e){
+				var b=new cpdCore.views.BigMessage({message: '[ connection established ]', diagWidth:600});
+
+				setTimeout(function(){b.hideDialog()},cpdCore.data.dialogTimeout);
+				setTimeout(function(){location.reload()},cpdCore.data.dialogTimeout+1000);
+			});
+		}
+
+		$(window).on('offline',function(e){
+			
+			cpdCore.server.cancelOpenXHR();
+
+			var b=new cpdCore.views.BigMessage({message: '[ internet connection lost ]', diagWidth:600});
+			
+			var tO=setTimeout(function(){
+				var b=new cpdCore.views.BigMessage({message: '[ waiting to reconnect ]', diagWidth:600});
+			},1500);
+
+			$(window).on('online',function(e){
+				
+				clearTimeout(tO);
+
+				cpdCore.server.resync('[ connection established | resyncing local game state with server ]');
+				
+				$(window).off('online');
+			});
+		});
+
+		$(window).on('mousemove', function (e) {
+
+			if(!cpdCore.UI.followerTipLocked)
+			{
+				var x=e.clientX,
+					y=e.clientY,
+					h=parseInt(cpdCore.UI.followerTip.css('height'),10),
+					w=parseInt(cpdCore.UI.followerTip.css('width'),10),
+					wW=window.innerWidth,
+					wH=window.innerHeight;
+
+				var totalOffsetX=x+30;
+				var totalOffsetY=y-(h/2);
+
+				if((totalOffsetX+w)>(wW-20))
+					totalOffsetX=x-(40+w);
+
+				if((y+(h/2))>(wH-30))
+					totalOffsetY-=(y+(h/2)-(wH-30));
+
+				if((y-(h/2))<70)
+					totalOffsetY+=(70-(y-(h/2)));
+	
+				cpdCore.UI.followerTip.css({top: totalOffsetY+'px', left: totalOffsetX+'px'});
+			}
+
+			cpdCore.UI.followTipValid=true;																	//only enable if the mouse has moved at least once
+		});
+
+		$(window).
+			keydown(
+				function(e){
+					
+					if(e.which==13 && cpdCore.UI.gameState!=false && cpdCore.UI.gameState.get('openCard')!=false)		//block holding down enter
+						e.preventDefault();
+
+					cpdCore.UI.keyPressed=e.which;}
+			).
+			keyup(
+				function(e){cpdCore.UI.handleKeyPress(e);}
+			);
+
+	</script>
+
+</body>
+</html>

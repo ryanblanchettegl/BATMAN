@@ -11,7 +11,7 @@ export function weekShows(S,P,w?){
   if(c.wom===4&&$L.evList(S,P)[c.month].t!=='dark')out.push({id:'big',big:true,flag:c.month===P.flagship,brand:null,name:P.name+' '+$L.evName(S,P,c.month),rule:$L.evRule(S,P,c.month),ty:$L.evList(S,P)[c.month].t});
   return out;
 }
-export function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];$L.grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});genEvents(S);}
+export function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];$L.grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});$L.dirRead(S);$L.dirOpen(S);genEvents(S);$L.dirClose(S);}
 export function leaveCompany(S,w,why,quiet?){
   var P=S.promos[w.promo];if(!P)return;
   vacateFor(S,P,w,why,quiet);var tm=teamOf(S,w);if(tm)dissolveTeam(S,tm);$L.leaveStable(S,w);w.mgr=null;S.w.forEach(function(x){if(x.mgr===w.id)x.mgr=null;});
@@ -94,7 +94,7 @@ E.endWeek=function(S){
 /* ---------- the office: events with choices ---------- */
 export function hasQuest(S,id){return S.quests.some(function(q){return q.w===id||q.a===id||q.b===id;})||S.inbox.some(function(e){return !e.done&&e.w===id;});}
 export function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
-export function pushEv(S,ev){if(!ev.checks)$L.addChecks(S,ev);ev.id=S.nid++;ev.done=!ev.choices;ev.result=null;S.inbox.push(ev);return ev;}
+export function pushEv(S,ev){if(!ev.checks)$L.addChecks(S,ev);ev.id=S.nid++;ev.done=!ev.choices;ev.result=null;if($L.dirGate(S,ev))return ev;S.inbox.push(ev);return ev;}   // the Director may hold it (99-director.ts)
 export var EV={
   shot:function(S,P,R){
     var c=R.filter(function(w){return w.mom>=2&&holdLvl(P,w.id)===0&&!hasQuest(S,w.id);}).sort(function(a,b){return b.mom-a.mom;});

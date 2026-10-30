@@ -59,6 +59,8 @@ export interface Cam3 { p: [number, number, number]; t: [number, number, number]
 export interface Caption { t: string; s?: 'sub' | 'third' | 'title' | 'quote'; who?: string }
 export const CAP_STYLES: [string, string][] = [['sub', 'Subtitle at the bottom'], ['third', 'Lower third: a name and a line'], ['title', 'Title card in the middle'], ['quote', 'A line somebody says']];
 export interface Key { t: number; figs: Record<string, Fig>; props: Prop[]; cam?: Cam; cam3?: Cam3; cap?: Caption;
+  /** pin: this key is a cover (a pin attempt); rc: the referee kneels to count. A move played as a signature drops both (Ryan, 29 October: pins only after finishers). */
+  pin?: 1; rc?: 1;
   /** How the camera reaches this keyframe (Ryan, 19 October: "lock them in per key and camera can float to the next
       angle or reset"): left out it glides from the last shot to this one; 'cut' jumps to it; and for a keyframe with no
       shot of its own, 'home' goes back to the set's camera, otherwise the last shot is held. */
@@ -536,6 +538,23 @@ export function flourish(sc: Scene): Scene {
   return { ...sc, keys: [a, wind, ...mid, over, settle] };
 }
 
+/** A move played as a signature never ends in a pin (Ryan, 29 October: "Pins on finishers, but never on signatures").
+    A cover key goes, and a referee kneeling to count stays on his feet where he last stood. Keys are found by their
+    marks (`pin`, `rc`, set on the stock moves) or, for a move made in Create a Move, by the poses in them. */
+const near = (f: Fig, k: string) => { const d = P_(k); let n = 0, m = 0; for (const j in d.p) { n++; if (Math.abs((f.p[j] || 0) - d.p[j]) <= 12) m++; } return n > 0 && m / n >= 0.8; };
+export const isCoverKey = (k: Key) => !!k.pin || Object.keys(k.figs).some(id => id !== 'R' && near(k.figs[id], 'cover'));
+export const isCountKey = (k: Key) => !!k.rc || (!!k.figs.R && near(k.figs.R, 'kneel'));
+export function sigOnly(sc: Scene): Scene {
+  const keys = sc.keys.filter(k => !isCoverKey(k)); if (keys.length < 2) return sc;
+  let ref: Fig | null = null;
+  const out = keys.map(k => {
+    const R = k.figs.R; if (!R) return k;
+    if (!isCountKey(k)) { ref = R; return k; }
+    const o: Key = { ...k, figs: { ...k.figs, R: ref || POSED('point', R.x, R.z, R.f) } }; delete o.rc; return o;
+  });
+  return { ...sc, keys: out };
+}
+
 /** The stock scenes, each with its flourishes. */
 function flourishAll(list: Scene[]): Scene[] { return list.map(flourish); }
 
@@ -703,37 +722,37 @@ const CLASSIC: Record<string, () => Scene> = {
     { t: 0, figs: { A: POSED('charge', -6, 0, 1), B: POSED('stand', 2, 0, -1), R: POSED('point', -3, -5, 1) }, props: [], cam3: C3([0, 4.5, 22], [-1, 3, 0], 32) },
     { t: 0.6, ease: 'even', figs: { A: { ...POSED('stand', 0.8, 0, 1, 0, 'roar'), p: { torso: 10, sh_n: 90, el_n: 0, sh_f: -30, el_f: -20, hip_n: 30, kn_n: -20, hip_f: -25 } }, B: POSED('stagger', 2.2, 0, -1), R: POSED('point', -3, -5, 1) }, props: [], cam3: C3([4, 3.4, 15], [1.5, 3.6, 0], 30) },
     { t: 0.95, figs: { A: { ...POSED('stand', 1.8, 0, 1, 0, 'roar'), p: { torso: 16, sh_n: 100, el_n: 0, sh_f: -40, hip_n: 34, kn_n: -24, hip_f: -28 } }, B: { ...POSED('back', 2.6, 0, -1, 0, 'pain'), y: WAIST + 0.3, r: 150 }, R: POSED('point', -3, -5, 1) }, props: [burst('b1', 'WHAM!', 4.4, 3)], cam3: C3([6, 1.6, 12], [2.4, 3.2, 0], 34) },
-    { t: 1.6, ease: 'in', figs: { A: POSED('onearm', 1.4, 0, 1), B: POSED('back', 3.2, 0, -1, 0, 'pain'), R: POSED('kneel', 0, -4, 1) }, props: [], cam3: C3([-5, 8, 17], [2, 1.5, 0], 32) }]),
+    { rc: 1, t: 1.6, ease: 'in', figs: { A: POSED('onearm', 1.4, 0, 1), B: POSED('back', 3.2, 0, -1, 0, 'pain'), R: POSED('kneel', 0, -4, 1) }, props: [], cam3: C3([-5, 8, 17], [2, 1.5, 0], 32) }]),
   spear: () => move('A spear', [
     { t: 0, figs: { A: POSED('charge', -6.5, 0, 1), B: POSED('stand', 2, 0, -1), R: POSED('point', -3, -5, 1) }, props: [], cam3: C3([-2, 3, 20], [-1, 2.6, 0], 34) },
     { t: 0.6, ease: 'even', figs: { A: { ...POSED('dive', 0.6, 0, 1), y: WAIST - 0.8, r: -70 }, B: POSED('doubled', 2.1, 0, -1), R: POSED('point', -3, -5, 1) }, props: [], cam3: C3([3, 1.4, 13], [1.2, 2, 0], 32) },
-    { t: 1.0, ease: 'in', figs: { A: POSED('cover', 2.0, 0, 1), B: POSED('back', 2.8, 0, -1, 0, 'pain'), R: POSED('point', -3, -5, 1) }, props: [burst('b1', 'SPEAR!', 4.6, 2.6)], cam3: C3([6, 2, 11], [2.4, 0.6, 0], 34) },
-    { t: 1.7, figs: { A: { ...POSED('kneel', 1.2, 0, 1, 0, 'roar'), p: { ...KN, sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 8 } }, B: POSED('back', 2.8, 0, -1, 0, 'pain'), R: POSED('kneel', 0, -4, 1) }, props: [], cam3: C3([0, 5, 17], [1.6, 2, 0], 30) }]),
+    { pin: 1, t: 1.0, ease: 'in', figs: { A: POSED('cover', 2.0, 0, 1), B: POSED('back', 2.8, 0, -1, 0, 'pain'), R: POSED('point', -3, -5, 1) }, props: [burst('b1', 'SPEAR!', 4.6, 2.6)], cam3: C3([6, 2, 11], [2.4, 0.6, 0], 34) },
+    { rc: 1, t: 1.7, figs: { A: { ...POSED('kneel', 1.2, 0, 1, 0, 'roar'), p: { ...KN, sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 8 } }, B: POSED('back', 2.8, 0, -1, 0, 'pain'), R: POSED('kneel', 0, -4, 1) }, props: [], cam3: C3([0, 5, 17], [1.6, 2, 0], 30) }]),
   suplex: () => move('A vertical suplex', [
     { t: 0, figs: { A: POSED('carry', -0.6, 0, 1), B: POSED('doubled', 0.7, 0, -1), R: POSED('point', -4, -4, 1) }, props: [], cam3: C3([0, 4, 19], [0, 3.2, 0], 30) },
     { t: 0.8, figs: { A: POSED('lift', -0.6, 0, 1), B: { x: 0, y: 0.7, r: 180, f: -1, z: 0.6, p: { sh_n: 175, sh_f: -175, hip_n: -6, hip_f: 6 }, e: 'shout', on: 'A:hands' }, R: POSED('point', -4, -4, 1) }, props: [], cam3: C3([5, 2, 14], [0, 5, 0], 34) },
     { t: 1.3, figs: { A: { ...POSED('lift', -1.0, 0, 1), r: 40 }, B: { ...POSED('splash', -1.8, 0, -1), y: WAIST + 1.4, r: 230 }, R: POSED('point', -4, -4, 1) }, props: [], cam3: C3([6, 3, 15], [-1, 3.6, 0], 34) },
-    { t: 1.8, ease: 'in', figs: { A: POSED('back', -1.2, 0, 1), B: POSED('back', -3.2, 0, -1, 0, 'pain'), R: POSED('kneel', -4, -4, 1) }, props: [burst('b1', 'SLAM!', -5, 2.4)], cam3: C3([-6, 7, 16], [-2, 0.8, 0], 32) }]),
+    { rc: 1, t: 1.8, ease: 'in', figs: { A: POSED('back', -1.2, 0, 1), B: POSED('back', -3.2, 0, -1, 0, 'pain'), R: POSED('kneel', -4, -4, 1) }, props: [burst('b1', 'SLAM!', -5, 2.4)], cam3: C3([-6, 7, 16], [-2, 0.8, 0], 32) }]),
   powerbomb: () => move('A powerbomb', [
     { t: 0, figs: { A: POSED('carry', -0.4, 0, 1), B: POSED('doubled', 0.6, 0, -1), R: POSED('point', 4, -4, -1) }, props: [], cam3: C3([0, 4, 19], [0, 3.2, 0], 30) },
     { t: 0.8, figs: { A: POSED('carry', -0.4, 0, 1, 0, 'roar'), B: { x: 0, y: 0.3, r: 0, f: -1, z: 0.6, p: { hip_n: 90, kn_n: -20, an_n: -20, hip_f: 85, kn_f: -30, sh_n: 60, el_n: 40, sh_f: 50, el_f: 40 }, e: 'hurt', on: 'A:shoulders' }, R: POSED('point', 4, -4, -1) }, props: [], cam3: C3([-5, 3, 15], [0, 5, 0], 32) },
     { t: 1.5, figs: { A: POSED('lift', -0.4, 0, 1), B: { x: 0, y: 0.6, r: -15, f: -1, z: 0.6, p: { hip_n: 90, kn_n: -20, an_n: -20, hip_f: 85, kn_f: -30, sh_n: 120, el_n: 20, sh_f: 110, el_f: 20 }, e: 'shout', on: 'A:hands' }, R: POSED('point', 4, -4, -1) }, props: [], cam3: C3([-6, 1.4, 13], [0, 6, 0], 38) },
     { t: 2.0, ease: 'in', figs: { A: POSED('kneel', -0.2, 0, 1, 0, 'roar'), B: POSED('back', 1.4, 0, -1, 0, 'pain'), R: POSED('point', 4, -4, -1) }, props: [burst('b1', 'BOOM!', 3.4, 2.8, PAL.red)], cam3: C3([5, 2, 12], [0.8, 1, 0], 34) },
-    { t: 2.7, figs: { A: POSED('cover', 0.5, 0, 1), B: POSED('back', 1.4, 0, -1, 0, 'pain'), R: POSED('kneel', 3.6, -2, -1) }, props: [], cam3: C3([0, 8, 15], [1, 0.5, 0], 30) }]),
+    { pin: 1, t: 2.7, figs: { A: POSED('cover', 0.5, 0, 1), B: POSED('back', 1.4, 0, -1, 0, 'pain'), R: POSED('kneel', 3.6, -2, -1) }, props: [], cam3: C3([0, 8, 15], [1, 0.5, 0], 30) }]),
   ddt: () => move('A DDT', [
     { t: 0, figs: { A: POSED('carry', -0.5, 0, 1), B: POSED('doubled', 0.6, 0, -1), R: POSED('point', -4, -4, 1) }, props: [], cam3: C3([0, 4, 18], [0, 3, 0], 30) },
     { t: 0.6, figs: { A: { ...POSED('stand', -0.6, 0, 1, 0, 'roar'), r: 30, p: { sh_n: 60, el_n: 100, sh_f: 40, el_f: 90, hip_n: -10 } }, B: { ...POSED('dive', 0.2, 0, -1), y: WAIST - 0.4, r: -110 }, R: POSED('point', -4, -4, 1) }, props: [], cam3: C3([5, 2.4, 13], [0, 2.6, 0], 32) },
     { t: 1.0, ease: 'in', figs: { A: POSED('back', -1.6, 0, 1), B: { ...POSED('dive', 0.1, 0, -1, 0, 'pain'), y: -1.2, r: -170 }, R: POSED('point', -4, -4, 1) }, props: [burst('b1', 'SPIKED!', 2.6, 2.4)], cam3: C3([4, 1, 10], [0, 0.8, 0], 36) },
-    { t: 1.6, figs: { A: POSED('sit', -1.8, 0, 1), B: POSED('front', 0.8, 0, -1, 0, 'pain'), R: POSED('kneel', -3, -3, 1) }, props: [], cam3: C3([-4, 6, 15], [-0.4, 0.8, 0], 32) }]),
+    { rc: 1, t: 1.6, figs: { A: POSED('sit', -1.8, 0, 1), B: POSED('front', 0.8, 0, -1, 0, 'pain'), R: POSED('kneel', -3, -3, 1) }, props: [], cam3: C3([-4, 6, 15], [-0.4, 0.8, 0], 32) }]),
   topdive: () => move('A splash off the top', [
     { t: 0, figs: { A: POSED('crouch', 9.5, 10.6, -1, 4.9), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([17, 2.5, 19], [9, 6, 9.5], 28) },
     { t: 1.0, figs: { A: POSED('leap', 9.3, 10.4, -1, 4.9), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([15, 4, 18], [8, 7, 9], 32) },
     { t: 1.8, ease: 'even', figs: { A: POSED('splash', 6.2, 8.2, -1, 5.2), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([12, 6, 18], [5.5, 4.5, 7], 34) },
-    { t: 2.5, ease: 'in', figs: { A: POSED('splash', 3.4, 5.9, -1, 0.75), B: POSED('back', 3.2, 5.6, 1, 0, 'pain'), R: POSED('kneel', -1, 3, 1) }, props: [], cam3: C3([7, 4.5, 16], [3.2, 0.8, 5], 30) }]),
+    { rc: 1, t: 2.5, ease: 'in', figs: { A: POSED('splash', 3.4, 5.9, -1, 0.75), B: POSED('back', 3.2, 5.6, 1, 0, 'pain'), R: POSED('kneel', -1, 3, 1) }, props: [], cam3: C3([7, 4.5, 16], [3.2, 0.8, 5], 30) }]),
   moonsault: () => move('A moonsault off the top', [
     { t: 0, figs: { A: { ...POSED('stand', 9.5, -10.6, 1, 4.9), b: true }, B: POSED('back', 4, -6, 1), R: POSED('point', -2, -2, 1) }, props: [], cam3: C3([3, 3, 4], [9, 7, -10], 32) },
     { t: 1.1, figs: { A: { ...POSED('moonsault', 7.5, -9.2, 1, 6.5), b: true }, B: POSED('back', 4, -6, 1), R: POSED('point', -2, -2, 1) }, props: [], cam3: C3([0, 5, 6], [7, 7, -9], 36) },
-    { t: 2.0, ease: 'in', figs: { A: POSED('splash', 4.2, -6.3, -1, 0.75), B: POSED('back', 4, -6, 1, 0, 'pain'), R: POSED('kneel', -2, -2, 1) }, props: [], cam3: C3([-2, 4, 4], [4, 0.8, -6], 30) }]),
+    { rc: 1, t: 2.0, ease: 'in', figs: { A: POSED('splash', 4.2, -6.3, -1, 0.75), B: POSED('back', 4, -6, 1, 0, 'pain'), R: POSED('kneel', -2, -2, 1) }, props: [], cam3: C3([-2, 4, 4], [4, 0.8, -6], 30) }]),
   tope: () => move('A dive to the outside', [
     { t: 0, figs: { A: POSED('charge', 3, 0, 1), B: POSED('stagger', 12.6, 0.4, -1, -3), R: POSED('point', -4, 3, 1) }, props: [], cam3: C3([18, 3, 16], [8, 2, 0], 38) },
     { t: 0.8, ease: 'even', figs: { A: POSED('dive', 10.4, 0.2, 1, 2.6), B: POSED('stagger', 12.6, 0.4, -1, -3), R: POSED('point', -4, 3, 1) }, props: [], cam3: C3([17, 2, 14], [11, 2, 0], 34) },
@@ -746,7 +765,7 @@ const CLASSIC: Record<string, () => Scene> = {
   superplex: () => move('A superplex off the top', [
     { t: 0, figs: { A: POSED('lift', 8.7, -9.5, 1, 3.2), B: { ...POSED('sit', 9.4, -10.3, -1, 4.9), e: 'pain' }, R: POSED('point', 2, -3, 1) }, props: [], cam3: C3([0, 3, 2], [8.5, 6.5, -9.5], 32) },
     { t: 1.0, figs: { A: { ...POSED('lift', 8.3, -9.1, 1, 4.6), r: 25 }, B: { ...POSED('back', 8.6, -9.4, -1, 7.5), r: 160 }, R: POSED('point', 2, -3, 1) }, props: [], cam3: C3([-1, 5, 4], [8, 8, -9], 36) },
-    { t: 1.9, ease: 'in', figs: { A: POSED('back', 5.6, -6.6, 1), B: POSED('back', 4.4, -5.8, -1, 0, 'pain'), R: POSED('kneel', 2, -3, 1) }, props: [], cam3: C3([-2, 6, 6], [5, 0.5, -6], 34) }]),
+    { rc: 1, t: 1.9, ease: 'in', figs: { A: POSED('back', 5.6, -6.6, 1), B: POSED('back', 4.4, -5.8, -1, 0, 'pain'), R: POSED('kneel', 2, -3, 1) }, props: [], cam3: C3([-2, 6, 6], [5, 0.5, -6], 34) }]),
 };
 /** The moves as scenes of their own, kind 'move', so a wrestler can take one as a finisher or a signature (Create a Wrestler, Moves). */
 export const MOVES: Scene[] = Object.keys(CLASSIC).map(k => flourish({ ...CLASSIC[k](), id: 'move_' + k, when: 'move' }));

@@ -2,7 +2,7 @@
 
 The hand-over from the build thread, written 2 October 2026 at version 0.11. Work top to bottom unless Ryan says otherwise. Read `CLAUDE.md` first for how the project works, and `docs/feature-list.md` for the full wording of each feature.
 
-**`NEXT.md` is the work queue.** It turns the tasks below into ordered steps for an unattended run. Start there.
+**`docs/MASTER.md` §7 is the work queue** (30 October). `NEXT.md` and `docs/roadmap.md` are retired to `docs/archive/`.
 
 **`IDEAS.md` is shelved.** Ryan scrapped the "next 100 ideas" direction on 3 October. None of them were built. The work is now fine-tuning the engine, the game loop, its logic and its rewards, one step at a time.
 
@@ -20,8 +20,24 @@ Two more lists sit beside this one, both finished:
 
 ## Ryan's decisions (do not reopen these)
 
+### From the master document (Ryan's other workspace, decided 26 and 27 October; saved as `docs/archive/MASTER-2026-10-28.md`, merged 29 October)
+
+- D1, popularity: per region (the road's areas). Not built yet.
+- D2, relationship types: now, with full screens (family, personal, romantic on top of the matrix); to confirm with Bill against the feature pause. Not built yet.
+- D3, schema library for content: zod. Not used yet.
+- D4, engine build: esbuild. Done (the engine is bundled by esbuild).
+- D5, the Steam default world: public domain, the parody world opt-in; to confirm with Bill and the lawyer. Today the parody world is the default (16 October); this reverses it when confirmed.
+- D6, morale and backstage: two modules.
+- D7, health: four pools (head, body, arms, legs); any at zero ends a career. Not built yet.
+- The booking screen: the Clock Wall (critic 8.6; `docs/plans/booking-clock-wall.md` in the other workspace, summarised in `docs/archive/MASTER-2026-10-28.md` section 9). Not built yet.
+- The wrestler look: G, the paper doll, after Ryan's reference picture (critic 9.3; plan summarised in `docs/archive/MASTER-2026-10-28.md` section 9). Not built yet.
+- Layout, game-wide: every main page is three windows, 22 / 56 / 22 (list, centre wall, picked pane). See rule 5f.
+- Gimmicks drive acting, dialogue and relationships only, never looks or match ratings (27 October). Today `GFX` in `engine/99-gimmicks.ts` changes match crowd reactions; its fate needs a rule 9d decision.
+
 | Topic | Decision |
 | --- | --- |
+| The spine, 30 Oct | All 13 vault questions answered (`docs/plans/spine.md` §8); go-ahead "Go, after L1": the cause log first, then the spine. Non-default picks: early pay also costs a little crowd reaction; a year with no promises costs owner trust. |
+| Golden rules, 30 Oct | Three golden rules in `docs/MASTER.md` §1, read first every session: great not good, every addition critic-scored and only 8.5 or higher passes (replaces 9j's over 8); art direction is always three concepts that each passed a critic run; every session spends fewer tokens and logs the saving. CLAUDE.md is now a short core that imports the master (0av). |
 | The match screen, 22 Oct | Fewer kick-outs. When there is no match picture for the moment, the picture cuts to the commentators. The animation never loops while the commentary catches up; it flows. Build: an instant replay of the finish, a big referee count on near falls, paper-flip cuts between pictures, a finisher close-up with the move's name, cinema mode (the picture fills the screen), the winner celebrating after the bell, big moments for each match rule (ladder, cage, tables), run-ins drawn as their own pictures. The night's highlights go on After the show. The feed is livelier and each poster has a personality of their own; the company's sign-off post comes once, after the main event, not after every match. |
 | Blueprint, questions, approval, 23 Oct | A core rule for any new game mode, system or major feature: first a complete blueprint (states, data, screens, money and balance), then a list of probing questions for Ryan, and no code until he has read both, answered and said go ahead (CLAUDE.md rule 9d). |
 | Sound effects, 23 Oct | "It sounds terrible." All sound effects are off; the game is quiet except the soundtrack. The redo does not need to match the papercraft look: it should sit well with the classical music and feel good. It goes through rule 9d, and every sound is approved by ear. The office sounds are piano, not harp ("harp is wrong piano is right"). The blueprint and every pick so far are in `docs/plans/sound.md`. The broadcast sounds are in the game (step 2); the office piano is next; boos and the tweener reaction wait on a source. |
@@ -124,6 +140,19 @@ Two more lists sit beside this one, both finished:
 
 ## Tasks
 
+### Q. The queue in MASTER §7 (30 October; rows and gates there)
+
+- [ ] L1: structured causal log for five meters (`meterAdd`), at least 95% explained by named causes, golden games identical.
+- [ ] L2: two bots on one model nightly, `tools/bots/report.js`, baseline recorded in MASTER §7.
+- [ ] L3: five bots plus the exploit bot, failing gates on 3-seed medians.
+- [ ] 1: the spine, rule 9d (`docs/plans/spine.md`): gate 1 written, gate 2 answered 30 October (13 questions); gate 3: Ryan's go-ahead, 30 October: "Go, after L1".
+- [ ] 2: first hour (0ac).
+- [ ] 3: art bible and look freeze.
+- [ ] 4: broadcast weight (0au).
+- [ ] 5: merges.
+- [ ] 6: ship.
+- [ ] 7: outside proof.
+
 ### 0an2. The engine in TypeScript modules (Ryan, 23 October: "do it")
 
 Phase A, Foundation: rebuild the simulation from one shared ES5 closure into TypeScript modules with a typed state and one command layer, kept identical in play by golden masters and every test. Blueprint: `docs/plans/typescript-engine.md`.
@@ -220,10 +249,20 @@ The diorama renderer (`app/src/kit/paper.ts`, `puppet.ts`, `scene.ts`, `diorama3
 
 ### 0av. A short CLAUDE.md core (rule 9i)
 
-- [ ] Split `CLAUDE.md` into a short core (rules, commands, where things are) and linked area notes in `docs/notes/`.
+- [x] Split `CLAUDE.md` into a short core (rules, commands, where things are) and linked area notes in `docs/notes/` (30 October: `docs/MASTER.md` first, then `docs/notes/rules.md`, `code-map.md`, `commands.md`).
 - [ ] Recurring procedures as skills in `.claude/skills/`: `/blueprint`, `/vault`, `/audition`, `/publish-live`, `/balance`.
 
-### 0aw. A lighter repository (Ryan, 28 October, D-027: moved here from the retired `Research/docs/MASTER.md`)
+### 0aw. You as the booker: levels and a skill tree (Ryan, 28 October: "We need to build a level up system that works with the booker points you use throughout the game. We also have to build the skill tree without breaking the game.")
+
+Levels with no cap, a four-branch tree (Creative, Office, Locker room, Eye) of bonuses, new actions and trade-offs, a signature move every fifth level, and rival bookers who level up with you. Plan: `docs/plans/booker-progression.md`.
+
+- [x] Gate 1: the blueprint (28 October).
+- [x] Gate 2: the questions, answered 28 October (section 8): both kinds of points kept separate; 6, 4, then 3 levels a year with no cap; the whole tree can be filled in a long career; rival bookers level up too, named with a style; perks are signature moves; respec any time at a cost; experience the same whatever the company; old saves are not a concern (Ryan, 29 October: "I don't care about old saves"), so nothing is built for them.
+- [x] Gate 3: Ryan's go-ahead, 28 October: "you pick" (on the order: the Director's last steps first, then this).
+- [x] Step 1 (29 October): levels come at about 6 the first year, 4 the second, then 3 a year (`xpNeed` 100 + 60 a level), with no cap; booking power no longer grows with level. Balance passes; recordings redone.
+- [x] Steps 2 and 3 (29 October): the tree as data (`engine/65-youtree.ts`, `TREE`): four branches, four tiers each, 43 points in all (a node costs 1, the top tier 2), a tier opens at about three fifths of the branch's lower tiers; bonus nodes add to the old five numbers capped where they were, so every system that reads them is unchanged; actions and trade-offs are owned flags (`treeHas`) whose effects come in step 4. Career has a Skill tree button that opens the tree in a pop-up. `test-tree.js`.
+
+### 0ax. A lighter repository (Ryan, 28 October, D-027: moved here from the retired `Research/docs/MASTER.md`)
 
 Tools and housekeeping, no change in play. Each one is its own commit, with every headless test passing. The old ranking was O1, then 0av, then archiving, then the rest.
 
@@ -241,11 +280,15 @@ Tools and housekeeping, no change in play. Each one is its own commit, with ever
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
 
-- [ ] Step 1: the tension reading and its eight-week history, headless only (`test-director.js`). Nothing in play changes.
-- [ ] Step 2: `genEvents()` asks the Director how many events this week; compare 60 weeks before and after.
-- [ ] Step 3: tag every event maker as a problem, a chance or colour, and let tension pick between them.
-- [ ] Step 4: the three styles, chosen at the start of a game and shown on Career; old saves get The Promoter.
-- [ ] Step 5: event sizes and the rhythm around big nights.
+- [x] Gate 1: the blueprint, widened 28 October to one gate for desk matters, calls on the air and knocks at the door, with today's numbers (about 5 matters a week, up to 14, never a quiet week; 2.6 calls a show).
+- [x] Gate 2: the questions, answered 28 October (written into the blueprint, section 12): quiet then a fire; the bigger matter first and waiting costs; a word on the desk; held matters listed with Pull forward for one action point; clean after an A; about one chance in three; one headline and two threads, two calls a weekly show and three on a big night; a taste changeable at a cost; all three styles at once; old saves get The Promoter, one Director per booker.
+- [x] Gate 3: Ryan's go-ahead, 28 October: "sure".
+
+- [x] Step 1: the tension reading and its eight-week history, headless only (`engine/99-director.ts`, `test-director.js`; 28 October). Nothing in play changes: the golden games leave `S.dir` out.
+- [x] Step 2: the gate for the desk (28 October). Every matter that needs an answer goes through `dirGate()` in `pushEv()`: one headline and two threads a week plus anything forced, the rest held ("Also this week", Pull forward for one action point), a show at A or better may end clean. Calm weeks bring problems first; a lapsed problem costs the person's mood and the owner's trust, a lapsed chance a little of both. Before and after (48 weeks, three games): about 4.5 matters a week and up to 12, now about 3.5 and up to 7. The golden games and scenario references were re-recorded; `test-balance.js` b2 now averages three seeds (one seed swings by several points on main too), `test-writers.js` expects a pitch one week in four, `test-archive.js` allows 3.5 KB a week by year four.
+- [x] Step 3: the cap on the air (28 October): two calls on a weekly show, three on a big night, the last kept for the main event; calls after the bell count; trouble on the air stays free. 2.6 calls a show became 2.1. (Tagging every matter was done in step 2, `DIR_TAG`.)
+- [x] Step 4: the three styles (28 October): The Promoter, The Carny, The Purist (`DIR_STYLES`), picked on the start screen beside the difficulty, changed on Career (free in week one, then a little of the owner's trust; locked in iron man); old saves get The Promoter.
+- [x] Step 5: the rhythm around big nights (28 October): the big event's week and the week before carry one more matter, the week after one fewer (`dirRhythm()`); a show's hook still comes. Event sizes are left for later: few makers have sizes yet.
 
 ### 0ad. Company arcs that start from what happens (Bill, 21 October: "This is a key feature, Company Arcs need to start from beats that happen from specific events happening")
 

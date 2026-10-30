@@ -12,7 +12,7 @@ export function repFor(sh: any): number { const S = G.S; for (let i = 0; i < S.r
 export function openReport(i: number) { go('booking'); const b = book(); b.report = i; b.live = null; redraw(); }
 
 const seed = () => (Date.now() % 2000000000) | 0;
-export function startGame(pid: string | null, opts: { name: string; diff: string; fed: any | null; dpart?: any; iron?: boolean }) {
+export function startGame(pid: string | null, opts: { name: string; diff: string; fed: any | null; dpart?: any; iron?: boolean; dir?: string }) {
   // a new game takes a few seconds to set up: a card on the board says so first, then the work runs once it is drawn
   const card = document.createElement('div');
   card.className = 'scrim starting'; card.setAttribute('role', 'status'); card.setAttribute('data-t', 'starting');
@@ -49,7 +49,7 @@ export function startScenario(id: string) {
 }
 /** Fired bookers take a job elsewhere and keep their level and skills. */
 export function takeJob(pid: string, terms?: string[]) {
-  const S = G.S, bk = S.booker; G.S = E.newGame(pid, seed(), { name: bk.name, booker: bk, diff: S.diff, iron: S.iron, dpart: S.dpart });
+  const S = G.S, bk = S.booker; G.S = E.newGame(pid, seed(), { name: bk.name, booker: bk, diff: S.diff, iron: S.iron, dpart: S.dpart, dir: S.dir && S.dir.st });
   const msg = terms && terms.length ? E.applyJobTerms(G.S, terms) : null;
   resetUi(); if (msg) say(msg, { err: /did not like/.test(msg) }); save(); redraw(); window.scrollTo(0, 0);
 }

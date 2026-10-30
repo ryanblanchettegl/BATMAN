@@ -22,7 +22,8 @@ $L.liveMatch = liveMatch; $L.liveLater = liveLater; $L.livePut = livePut; $L.liv
      pend  an answered call that the next segment should carry in its commentary
    A new kind of call is one entry in LIVEK: pre(S, L, step) or post(S, L, step, seg) returns the call or null,
    run(S, L, ev, choice) applies the answer and returns one line saying what happened. */
-export var LIVE_MAX_TV=3,LIVE_MAX_BIG=4,LIVE_HM_CD=8,LIVEK: any={},LIVE_ORDER=['chaos','titlecall','runin','hotmic'],LIVE_POST=['face','afterbell'];
+export var LIVE_MAX_TV=2,LIVE_MAX_BIG=3,   // the Director's cap (Ryan, 28 October): two calls on a weekly show, three on a big night; trouble on the air stays free
+  LIVE_HM_CD=8,LIVEK: any={},LIVE_ORDER=['chaos','titlecall','runin','hotmic'],LIVE_POST=['face','afterbell'];
 $L.LIVE_MAX_TV = LIVE_MAX_TV; $L.LIVE_MAX_BIG = LIVE_MAX_BIG; $L.LIVE_HM_CD = LIVE_HM_CD; $L.LIVEK = LIVEK; $L.LIVE_ORDER = LIVE_ORDER; $L.LIVE_POST = LIVE_POST;
 /* calls change a match through fields on it (m.call, m.ff, m.runin, m.nc) and through m.lx: [{cr, mq, x, note}] */
 CRX.push(function(ctx){var L=ctx.m.lx,d=0,x=null;if(!L)return null;L.forEach(function(e){if(e.cr){d+=e.cr;x=x||e.x;}});return d?{d:d,x:x}:null;});
@@ -222,12 +223,14 @@ LIVEK.afterbell={n:'After the bell',
 };
 
 /* ---------- the engine of the night ---------- */
-export function liveMax(S){var sh=S.queue[S.qi];return sh&&sh.big?$L.LIVE_MAX_BIG:$L.LIVE_MAX_TV;}
+export function liveMax(S){var sh=S.queue[S.qi];return $L.dirCalls?$L.dirCalls(S,!!(sh&&sh.big)):(sh&&sh.big?$L.LIVE_MAX_BIG:$L.LIVE_MAX_TV);}   // the Director's style sets it
 export function liveMake(S,L,kind,ev){ev.kind=kind;ev.title=$L.LIVEK[kind].n;ev.id=++L.n;ev.done=false;ev.pick=null;ev.result=null;if(!$L.LIVEK[kind].free)L.cnt++;L.had[kind]=(L.had[kind]||0)+1;return ev;}
+// the cap keeps its last call for the main event: before it, calls may use all but one (the Director, 28 October)
+export function liveRoom(S,L,idx){var st=L.st,last=L.card.length-1,ahead=false;for(var j=idx+1;j<st.steps.length;j++){var x=st.steps[j];if(x.t==='match'&&x.i===last){ahead=true;break;}}return liveMax(S)-(ahead?1:0);}
 export function livePre(S,L){
   var st=L.st,step=st.steps[st.k],ev=null,k;if(!step||L.pre===st.k)return null;L.pre=st.k;
   for(k=0;k<$L.LIVE_ORDER.length&&!ev;k++){
-    var kind=$L.LIVE_ORDER[k],K=$L.LIVEK[kind];if(!K.pre||(!K.free&&(L.cnt>=liveMax(S)||L.had[kind])))continue;
+    var kind=$L.LIVE_ORDER[k],K=$L.LIVEK[kind];if(!K.pre||(!K.free&&(L.cnt>=liveRoom(S,L,st.k)||L.had[kind])))continue;
     ev=K.pre(S,L,step);if(ev)liveMake(S,L,kind,ev);
   }
   if(ev&&ev.mi!=null&&ev.phase==='mid'){var sh=S.queue[S.qi],P=S.promos[S.player];ev.intro=liveIntro(S,P,sh,L.card[ev.mi],ev.mi,L.card.length);ev.label=sh&&L.card[ev.mi]?vsLabel($L.matchSetup(S,L.card[ev.mi]).sides):'';}
@@ -236,7 +239,7 @@ export function livePre(S,L){
 export function livePost(S,L){
   var st=L.st,i=st.k-1,step=st.steps[i];if(i<0||!step||L.post>=i)return null;L.post=i;
   var seg=L.last>=0?st.rep.segs[L.last]:null;if(!seg)return null;
-  if(L.cnt>=liveMax(S)+1)return null;
+  if(L.cnt>=liveRoom(S,L,i))return null;   // calls after the bell count toward the cap too
   for(var k=0;k<$L.LIVE_POST.length;k++){   // one call after a segment: the first kind that fits
     var kind=$L.LIVE_POST[k],K=$L.LIVEK[kind];if(!K||!K.post||L.had[kind])continue;
     var ev=K.post(S,L,step,seg);if(ev)return liveMake(S,L,kind,ev);

@@ -1,31 +1,27 @@
 /* Career: your own record, as a page of windows. Level and skills, the owner's trust, your word, your name, the
    assistant, the season saga, and your legacy, achievements and milestones behind buttons. */
 import { E } from '../../engine';
-import { G, me, act, plural, openModal } from '../../store';
+import { G, me, act, plural, openModal, say, cash } from '../../store';
 import { Btn, Tag, Meter, Desktop, Win, Line, Window } from '../../kit';
+import { useState } from 'preact/hooks';
 import { LegacyPanel } from './GameOver';
 
 const role = () => G.S.owner.me ? 'owner and booker' : 'booker';
 
 function You() {
-  const S = G.S, b = S.booker, o = S.owner, P = me(), need = E.xpNeed(b.lvl), style = E.STYLES[o.style], Y = E.ownerYear(S);
+  const S = G.S, b = S.booker, o = S.owner, P = me(), need = E.xpNeed(b.lvl), style = E.STYLES[o.style], Y = E.ownerYear(S), owned = (E as any).treeInfo(S).owned;
   return <Win title={b.name} area="you" t="career-you" right={'Level ' + b.lvl}>
     <p>{role().charAt(0).toUpperCase() + role().slice(1)} of {P.name}</p>
     <p class="muted">Difficulty: {(E.DIFF[S.diff] || E.DIFF.normal).n}{E.diffSummary(S) ? ' (' + E.diffSummary(S) + ')' : ''}</p>
     {S.iron ? <p class="gold">Iron man: one save, no going back.</p> : null}
+    <p data-t="career-dir">The Director: <b>{(E as any).dirDesk(S).style}</b> <Btn kind="sm" t="dir-style" onClick={() => openModal({ kind: 'dirstyle' })}>Change</Btn></p>
     <p>Level <b>{b.lvl}</b> <Meter v={b.xp / need * 100} kind="au" /> <span class="num muted">{b.xp}/{need} XP</span>{b.pts ? <> {'·'} <span class="mark">{b.pts} {plural(b.pts, 'skill point')}</span></> : null}</p>
     <p>Booking power <b class="gold">{S.bp}</b> <span class="muted">(+{S.bpGrant} a week, holds up to {S.bpGrant * 2})</span></p>
     {o.me ? <p class="good">The company is yours. House style: {style.n}.</p>
       : <p>{o.name}{'’'}s trust <Meter v={o.trust} kind={o.trust < 25 ? 'hot' : 'cool'} /> <span class="num">{Math.round(o.trust)}</span>{o.trust < 20 ? <> <span class="bad">Your job is in danger.</span></> : null}<br />
         <span class="muted">House style: {style.n}. {o.name} wants {style.likes}.</span></p>}
     {Y ? <p data-t="career-year">Goals for the year <b class={Y.met === 3 ? 'good' : (Y.met <= 1 ? 'bad' : undefined)}>{Y.met} of 3</b> <span class="muted">on course</span> <Btn kind="sm" t="career-goals" onClick={() => openModal({ kind: 'ownyear' })}>Goals</Btn></p> : null}
-    <ul class="list sklist">{Object.keys(E.SKILLS).map(k => {
-      const sk = E.SKILLS[k], lv = b.sk[k] || 0;
-      return <li>
-        <span title={sk.d}><b>{sk.n}</b> <span class="meter au skp" role="img" aria-label={lv + ' of ' + sk.max}>{Array.from({ length: lv }, (_, k) => <s key={k} />)}<i>{Array.from({ length: Math.max(0, sk.max - lv) }, (_, k) => <s key={k} />)}</i></span></span>
-        {b.pts > 0 && lv < sk.max && <Btn kind="sm" t="skill" d={{ k }} label={'Add a point to ' + sk.n} onClick={() => act(() => E.spendPoint(S, k))}>+1</Btn>}
-      </li>;
-    })}</ul>
+    <p data-t="career-tree">Skill tree: <b>{owned}</b> {plural(owned, 'skill')}, {need - b.xp} XP to level {b.lvl + 1}{b.pts ? <> {'·'} <span class="mark">{b.pts} {plural(b.pts, 'point')} to spend</span></> : null} <Btn kind={b.pts ? undefined : 'sm'} t="tree-open" onClick={() => openModal({ kind: 'tree' })}>Skill tree</Btn></p>
   </Win>;
 }
 
@@ -101,4 +97,44 @@ export function Career() {
   return <div class="onescreen"><div class="head sr"><h1>Career</h1><p>{S.booker.name}, {role()} of {P.name}</p></div>
     <Desktop cls="crpage" t="career"><You /><Reputation /><Saga /><YourWord /><Trophies /></Desktop>
   </div>;
+}
+
+/** The Director's style: how trouble reaches your desk (src: engine/99-director.ts). Free in the first week, then a small cost to the owner's trust; locked in iron man. */
+export function DirStyleWindow(p: { m: any }) {
+  const S = G.S, T = (E as any).DIR_STYLES, cur = (E as any).dirDesk(S).st, cost = S.week > 1 && !S.owner.me;
+  return <Window title="The Director" ok="Back">
+    <p class="muted">How trouble reaches your desk. It is a taste, not difficulty.{S.iron && S.week > 1 ? ' In iron man it is set for the whole game.' : cost ? ' Changing it now costs a little of the owner\u2019s trust.' : ''}</p>
+    <ul class="list">{Object.keys(T).map(id => <li key={id} data-t="dir-opt" data-v={id}><span><b>{T[id].n}</b><br /><span class="muted">{T[id].d}</span></span>
+      {id === cur ? <span class="good">Now</span> : <Btn kind="sm" t="dir-pick" d={{ v: id }} disabled={!!(S.iron && S.week > 1)} onClick={() => act(() => { (E as any).dirSetStyle(S, id); })}>Pick</Btn>}</li>)}</ul>
+  </Window>;
+}
+
+/** The booker's skill tree: four branches in tiers; a tier opens as you spend in its branch (engine/65-youtree.ts).
+    Each skill is a short card; the picked one is told in full at the foot with its Take button, so the tree fits one screen. */
+const KIND: Record<string, string> = { bonus: 'Bonus', action: 'New action', trade: 'Trade-off' };
+export function TreeWindow(p: { m: any }) {
+  const S = G.S, T = (E as any).treeInfo(S), all = T.branches.flatMap((b: any) => b.tiers.flatMap((t: any) => t.nodes.map((n: any) => Object.assign({ br: b, tier: t }, n))));
+  const [pick, setPick] = useState<string>(''), [sure, setSure] = useState(false), P = all.find((n: any) => n.id === pick) || null;
+  return <Window title="Skill tree" wide ok="Back">
+    <p class="muted one">{T.pts ? T.pts + ' ' + plural(T.pts, 'point') + ' to spend.' : 'No points to spend: you get one each level.'} Spend in a branch to open its next tier. {T.owned} {plural(T.owned, 'skill')} yours so far.</p>
+    <div class="treecols" data-t="tree">{T.branches.map((b: any, bi: number) => <div class="treecol" key={b.id} data-t="tree-branch" data-v={b.id}>
+      <h3 class="treehd" title={b.d}>{b.n}</h3>
+      {b.tiers.map((t: any) => <div class={'treetier' + (t.open ? '' : ' locked')} key={t.t}>
+        <p class="treetl" title={t.open ? '' : 'Spend ' + (t.need - b.spent) + ' more in ' + b.n + ' to open it.'}>Tier {t.t + 1}{t.open ? '' : ' · ' + (t.need - b.spent) + ' more to open'}</p>
+        {t.nodes.map((n: any, ni: number) => <button type="button" key={n.id} data-t="tree-node" data-v={n.id} aria-pressed={pick === n.id}
+          class={'treecard' + (n.has ? ' has' : '') + (n.soon ? ' soon' : '') + (n.can ? ' can' : '') + (pick === n.id ? ' on' : '')} style={{ transform: 'rotate(' + (((bi * 7 + ni * 3 + t.t) % 5) - 2) * 0.4 + 'deg)' }}
+          title={n.d} onClick={() => { setPick(n.id); setSure(false); }}>
+          <b>{n.n}</b><span class="tk">{n.has ? 'Yours' : n.soon ? 'Soon' : KIND[n.k]}{n.c > 1 ? ' · ' + n.c : ''}</span>
+        </button>)}
+      </div>)}
+    </div>)}</div>
+    <div class="treepick" data-t="tree-pick">{P ? <>
+      <span><b>{P.n}</b> <span class="muted">{KIND[P.k]}, {P.c} {plural(P.c, 'point')}, {P.br.n}</span><br />{P.d}{P.soon ? ' Coming in a later update.' : ''}{P.k === 'bonus' && T.stand[P.sk] ? <><br /><b class="mark">{T.stand[P.sk].n} {T.stand[P.sk].v}{P.has ? '' : ' \u2192 ' + Math.min(T.stand[P.sk].cap, T.stand[P.sk].v + 1)} of {T.stand[P.sk].cap}</b></> : null}</span>
+      {P.has ? <span class="good">Yours</span> : <Btn t="tree-buy" d={{ id: P.id }} disabled={!P.can} tip={P.soon ? 'Coming in a later update.' : !P.tier.open ? 'Spend ' + (P.tier.need - P.br.spent) + ' more in ' + P.br.n + ' to open this tier.' : T.pts < P.c ? 'You need ' + P.c + ' ' + plural(P.c, 'point') + '.' : 'Take it now.'}
+        onClick={() => act(() => { (E as any).treeSpend(S, P.id); })}>Take</Btn>}
+    </> : <span class="muted">Pick a skill to read it in full.</span>}
+      {(() => { const C = (E as any).treeRespecCost(S); if (!C.n) return null; const cost = C.own ? cash(C.cash) + ' in wages' : C.trust + ' of the owner\u2019s trust (' + C.t0 + ' to ' + C.t1 + ')';
+        return <Btn kind={sure ? 'danger' : 'sm'} t="tree-respec" disabled={!C.can} tip={C.can ? 'Take back every skill and spend the points again. It costs ' + cost + '.' : C.why}
+          onClick={() => { if (!sure) { setSure(true); return; } setSure(false); act(() => { const r = (E as any).treeRespec(S); say(r.msg, { err: !r.ok }); setPick(''); }); }}>{sure ? 'Sure? Costs ' + cost : 'Start again'}</Btn>; })()}</div>
+  </Window>;
 }

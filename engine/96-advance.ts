@@ -41,10 +41,14 @@ E.advance=function(S){
     var card=S.card||[];
     if(!card.length)return out({k:'book',tone:'go',short:'Book show',label:'Book '+sh.name,to:'booking',day:day});
     var v=E.validate(S,card);
-    if(v.errors.length)return out({k:'book',tone:'go',short:'Fix card',label:'Finish the card for '+sh.name,to:'booking',day:day,why:v.errors.slice(0,3)});
+    // the Clock Wall says what the card still needs: an empty spot first, then the time (Research/docs/plans/booking-clock-wall.md)
+    var ck=E.clock(S),hole=card.some(function(m){return m.sides.some(function(s){return s.some(function(id){return id==null;});});});
+    var fix=hole?'Finish card':(ck.over?'Cut '+(ck.total-ck.budget)+' min':(ck.short?'Fill '+(ck.budget-ck.total)+' min':'Fix card'));
+    if(v.errors.length)return out({k:'book',tone:'go',short:fix,label:'Finish the card for '+sh.name,to:'booking',day:day,why:v.errors.slice(0,3)});
     var onCard=strict?todo.filter(function(t){return t.gate==='show'&&t.card;}):[];
     if(onCard.length)return out({k:'task',tone:'stop',short:'Attention',id:onCard[0].id,label:onCard[0].short,to:'desk',day:day,why:onCard.map(function(t){return t.text;})});
-    return out({k:'run',tone:'air',short:'Run show',label:'Run '+sh.name,to:'booking',act:'run',day:day});
+    var loose=E.looseThreads?E.looseThreads(S,card).length:0;
+    return out({k:'run',tone:'air',short:'Ring bell',label:'Ring the bell for '+sh.name+(loose?' · '+loose+(loose===1?' feud':' feuds')+' left off':''),to:'booking',act:'run',day:day});
   }
   var open=S.inbox.some(function(e){return !e.done;});
   if(open){var ib=todo.filter(function(t){return t.id==='inbox';})[0];return out({k:'task',tone:'stop',short:'Attention',id:'inbox',label:ib?ib.short:'Answer the inbox',to:'desk',day:'The week is nearly over',why:[ib?ib.text:'The inbox needs an answer.']});}

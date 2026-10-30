@@ -84,7 +84,7 @@ export function segWhy(S,sg,slot){
   }
   return '';
 }
-export function segMean(S,w,bonus){return 0.62*micOf(S,w)+0.38*w.ovr+(bonus||0)+(S.booker&&w.promo===S.player?S.booker.sk.creative:0);}
+export function segMean(S,w,bonus){return 0.62*micOf(S,w)+0.38*w.ovr+(bonus||0)+(S.booker&&w.promo===S.player?S.booker.sk.creative+(($L.treeHas&&$L.treeHas(S,'cr_shock'))?1.5:0):0);}
 /** What the segment should score, before the night adds its luck: the middle of the range, and notes on what moves it. */
 export function segLook(S,sg,slot){
   var why=segWhy(S,sg,slot);if(why)return {ok:false,why:why};

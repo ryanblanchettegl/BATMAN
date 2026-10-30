@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Character Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&family=Gochi+Hand&display=swap" rel="stylesheet">
+<style>
+/* Wrestler character concepts, round 4 (after critic rounds 1-3). Same 9 EWE wrestlers.
+   ?v=marker   A · Marker on card   6 heads, features drawn in marker (passed round 3 at 8.1)
+   ?v=collage  B · Paper collage    5.2 heads, pushed bodies, every feature + surface a glued scrap
+   ?v=human    C · Human            6.8 heads, its own face set (iris eyes, lips, two-piece nose) and anatomy cuts
+   &show=figs | heads | women | broadcast   (default: lineup + heads + true 64px tiles) */
+:root{--paper:#f1ead6;--navy:#1f2a55;--marker:#ffd43b;--fs:clamp(12px,.84vw,26px)}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:#16181c;color:#1b1b1d;font:var(--fs)/1.3 'Patrick Hand',sans-serif;overflow:hidden;
+ background-image:radial-gradient(#ffffff09 1px,transparent 1px),radial-gradient(#00000030 1px,transparent 1px);background-size:5px 5px,7px 7px}
+.top{display:flex;align-items:center;gap:1em;padding:.45em 1.2em}
+.strip{background:var(--navy);color:var(--marker);font-family:'Permanent Marker';padding:.1em .8em;transform:rotate(-.6deg);font-size:1.4em;box-shadow:2px 2px 0 #000;white-space:nowrap}
+.note{color:#e8e2cf;font-size:1em;line-height:1.2}
+.nav{margin-left:auto;display:flex;gap:.3em;flex-wrap:wrap;justify-content:flex-end}.nav a{color:#ddd;text-decoration:none;background:#333;padding:.1em .6em;font-family:'Permanent Marker';white-space:nowrap;font-size:.9em}.nav a.on{background:var(--marker);color:#111}
+.stage{position:relative;height:56vh;margin:0 1.2em}
+.floor{position:absolute;left:0;right:0;bottom:2.3em;height:.5em;background:#e9e1c9;box-shadow:0 3px 0 #000}
+.tag{position:absolute;bottom:0;background:var(--paper);font-family:'Permanent Marker';font-size:.82em;padding:0 .5em;box-shadow:2px 2px 0 #000;white-space:nowrap;transform:translateX(-50%) rotate(-1deg);z-index:3}
+.tag small{display:block;font-family:'Patrick Hand';color:#6b6457;font-size:.85em;line-height:1}
+.heads{display:grid;grid-template-columns:repeat(9,1fr);gap:.55em;padding:.5em 1.2em 0;height:23vh}
+.hcard{background:#a51f1f;box-shadow:2px 3px 0 #000,inset 0 0 0 4px #fff;overflow:hidden;position:relative}
+.hcard:nth-child(odd){transform:rotate(-.8deg)}.hcard:nth-child(even){transform:rotate(.7deg)}
+.hcard svg{position:absolute;inset:0;width:100%;height:100%}
+.hlab{position:absolute;left:.35em;top:.15em;color:#fff;font-family:'Gochi Hand';font-size:.95em;text-shadow:0 1px 2px #000;z-index:2}
+.small{display:flex;gap:.5em;align-items:center;padding:.55em 1.2em}
+.small b{color:#e8e2cf;font-family:'Permanent Marker';font-size:.85em;margin-right:.4em}
+.small .px{width:64px;height:64px;background:#a51f1f;box-shadow:inset 0 0 0 2px #fff,1px 1px 0 #000;overflow:hidden;position:relative;flex:none}
+.small .px svg{position:absolute;inset:0;width:64px;height:64px}
+.bc{position:relative;height:88vh;margin:0 1.2em;background:#111;box-shadow:inset 0 0 0 .6em #f4f1e8,0 4px 0 #000}
+.chy{position:absolute;left:4%;bottom:7%;background:var(--navy);color:var(--marker);font-family:'Permanent Marker';font-size:1.6em;padding:.1em .8em;box-shadow:3px 3px 0 #000;transform:rotate(-1deg)}
+.rim *{vector-effect:non-scaling-stroke;stroke:#f4efe0;stroke-width:var(--rimw,5px)}
+.ul *{opacity:1!important}
+.dfloor{position:absolute;left:0;right:0;bottom:2.7em;height:2.3vh;background:#efe6cf;box-shadow:0 6px 12px #000a;z-index:1}
+.dtag{position:absolute;bottom:.2em;background:#f3ecd8;font-family:'Permanent Marker';font-size:1.2em;padding:.08em .8em;box-shadow:3px 4px 7px #0008;white-space:nowrap;z-index:3}
+.chy small{display:block;font-family:'Patrick Hand';color:#fff;font-size:.6em}
+</style></head><body>
+<div class="top"><span class="strip" id="title"></span><span class="note" id="sub"></span><span class="nav" id="nav"></span></div>
+<div id="main"></div>
+<script>
+const Q=new URLSearchParams(location.search),V=Q.get('v')||'marker',SHOW=Q.get('show')||'';
+const H0={ex:1.1,heads:6.8,hand:.92,feat:'human',fs:1.0,sway:2,big:1,headK:1.1};
+const STY={
+ marker:{n:'A · Marker on card',d:'6 heads tall. Flat card heads with features drawn big in marker: bean eyes with a heavy lid and a punched notch, brow slabs, one-stroke noses. Deliberate scissor cuts, shape language per type.',ex:1.55,heads:6.0,hand:1.0,feat:'marker',fs:1.0,sway:.3,big:1},
+ collage:{n:'B · Paper collage',d:'Chosen style, polished toward human: 6.6 heads, real proportions with character pushed a little. Glued card features at human size (eyes a fifth of the face, coloured iris, lid card, bridge-tip-nostril nose, two-piece lips), shaped limbs with biceps, forearms and fists, torn hair strips, patterned gear, cut-letter trunks.',ex:1.4,heads:6.6,hand:1.0,feat:'paper',fs:1.0,sway:.8,big:1.05},
+ human:{...H0,rim:1,n:'C · Human',d:'Polished: 6.8 heads, natural builds, cut out with a cream paper border. Real-proportion heads (narrower, with chins), eyes a fifth of the face, small ears, a neck on everyone. Shaped muscles: deltoid, biceps, forearm taper, quads, calves; fists with knuckles.'},
+ doll:{...H0,rim:1,grain:1,headK:1.23,bodyK:1.08,limbK:1.12,hand:1.2,n:'G · Paper doll',d:"Ryan's reference (current/ryan-ref-paper-doll.jpg): human builds cut from felt-grain card, a thick cream die-cut border round each figure, a soft shadow on navy board, solid colour gear (glitter only where a costume calls for it), brass pins at the joints, rounded knee and elbow pads."},
+ scrap:{...H0,n:'F · Human scrapbook',d:'The human faces and bodies, built from layered paper: each piece casts a tiny shadow, gear is patterned paper, hair is torn strips, trunks carry cut letters.',tex:1}};
+const S=STY[V]||STY.human,PAPER=S.feat==='paper',HUM=S.feat==='human',TEX=PAPER||!!S.tex,GRAIN=!!S.grain,NOSIG=GRAIN&&(SHOW==='figs'||SHOW==='');let CELD=0,CID=0;
+const A=[
+ {sig:{arms:[[160,10],[14,8]]},n:'Shinji Skyscraper',r:'Giant',H:1.22,sw:.175,cw:.16,ww:.15,hw:.14,bel:.035,au:.05,af:.044,th:.064,sh:.058,legs:.44,traps:1.2,skin:'#d9a07a',hc:'#1c1410',hair:'bald',beard:'goatee',gear:'#1f2a55',g2:'#ffd43b',boots:'#111',sash:1,abs:0,pat:'stripes',ini:'S',iris:'#4a3020',
+  hd:{cr:'bullet',crw:.42,jaw:'anvil',jw:.74,len:1.3,eye:'dot',ey:.06,et:0,brow:'shelf',nose:'broad',mouth:'grim',ear:1.2,jowl:1},st:{wide:.2,hunch:.12,lean:.12,arms:[12,8]},ready:{arms:[[35,-40],[35,-40]],wide:.24,hunch:.18,lean:.18}},
+ {tat:{st:'tribal',arm:[-1],chest:-1},sig:{arms:[[92,88],[92,88]],hipsBoth:0},n:'Dex Diesel',r:'Powerhouse',H:1.03,sw:.215,cw:.18,ww:.115,hw:.12,bel:0,au:.062,af:.05,th:.064,sh:.05,legs:.45,traps:1.3,skin:'#7a4a2e',hc:'#100c0a',hair:'buzz',beard:'none',gear:'#c23b2a',g2:'#111',boots:'#c23b2a',tape:1,abs:6,veins:1,pat:'dots',ini:'D',iris:'#2a1a10',
+  hd:{cr:'bullet',crw:.46,jaw:'block',jw:.6,len:1.05,eye:'slit',ey:-.02,et:-6,brow:'slab',nose:'flat',mouth:'grit',ear:.85,mw:.8},st:{wide:.18,arms:[26,12]},ready:{arms:[[50,-112],[50,-112]],wide:.22,hipsBoth:1}},
+ {tat:{st:'wire',arm:[-1,1]},sig:{arms:[[36,186],[40,182]],guard:1},n:'Barbwire Burke',r:'Brawler',H:1.0,sw:.18,cw:.17,ww:.18,hw:.155,bel:.085,au:.055,af:.048,th:.058,sh:.054,legs:.41,traps:.8,skin:'#e7b896',hc:'#6b3a1a',hair:'mullet',beard:'full',gear:'#2b2b2b',g2:'#c23b2a',boots:'#3a2a1a',jeans:1,tape:1,abs:0,chestHair:1,pat:'stripes',ini:'B',iris:'#3a6a8a',
+  hd:{cr:'round',crw:.52,jaw:'jowl',jw:.56,len:1.08,eye:'mixed',ey:0,et:4,brow:'thick',nose:'hook',mouth:'smirk',ear:1,bags:1,scar:1},st:{wide:.22,splay:1,arms:[20,6]},ready:{arms:[[36,186],[40,182]],wide:.26,splay:1,guard:1}},
+ {sig:{arms:[[168,4],[14,8]],open:0},n:'Zed Zenith',r:'Technician',H:.97,sw:.15,cw:.132,ww:.11,hw:.112,bel:0,au:.038,af:.033,th:.046,sh:.037,legs:.48,traps:.2,skin:'#f0c8a8',hc:'#2a1a10',hair:'peak',beard:'none',gear:'#2c62ad',g2:'#fff',boots:'#2c62ad',abs:4,pat:'stripes',ini:'Z',iris:'#3a7a4a',neck:.1,
+  hd:{cr:'long',crw:.43,jaw:'square',jw:.42,len:1.2,eye:'almond',ey:-.04,et:3,brow:'raised',nose:'long',mouth:'flat',ear:1,adam:1},st:{wide:.14,arms:[10,4],open:1},ready:{arms:[[30,95],[25,105]],wide:.18}},
+ {bootStar:1,sig:{arms:[[155,15],[155,15]],toes:1},n:'Kid Comet',r:'High flyer',H:.88,sw:.126,cw:.112,ww:.092,hw:.098,bel:0,au:.029,af:.026,th:.04,sh:.032,legs:.5,traps:0,skin:'#c98c64',hc:'#2a8fd8',hair:'spiky',beard:'none',gear:'#ffd43b',g2:'#2a8fd8',boots:'#ffd43b',abs:0,pat:'stars',ini:'K',iris:'#2a1a10',thin:.9,
+  hd:{cr:'egg',crw:.5,jaw:'v',jw:.3,len:1.0,eye:'white',ey:-.06,et:-4,brow:'thin',nose:'button',mouth:'grin',ear:1.1,es:1.3},st:{wide:.1,toes:1,arms:[18,14]},ready:{arms:[[48,-55],[48,-55]],wide:.2,toes:1,knees:1}},
+ {sig:{arms:[[82,40],[82,40]],wide:.24},n:'El Forajido',r:'Luchador',H:.92,sw:.142,cw:.126,ww:.104,hw:.106,bel:0,au:.035,af:.031,th:.046,sh:.037,legs:.47,traps:.4,skin:'#b47a52',hc:'#111',hair:'mask',beard:'none',gear:'#1a8f6a',g2:'#ffd43b',boots:'#1a8f6a',mask:['#1a8f6a','#ffd43b','#c23b2a'],cape:'#c23b2a',abs:4,pat:'scales',ini:'F',iris:'#2a1a10',
+  hd:{cr:'round',crw:.48,jaw:'round',jw:.44,len:1.04,eye:'mask',ey:-.03,et:-8,brow:'none',nose:'flat',mouth:'grin',ear:.9},st:{wide:.2,arms:[18,10]},ready:{arms:[[40,100],[40,100]],wide:.24}},
+ {n:'Hollywood Hazel',r:'Showwoman',H:.93,sw:.12,cw:.11,ww:.083,hw:.118,bel:0,au:.028,af:.024,th:.045,sh:.033,legs:.52,traps:0,skin:'#f3cfb3',hc:'#f2d26a',hair:'waves',beard:'none',gear:'#e04a8a',g2:'#fff',boots:'#fff',fem:1,top:'halter',abs:0,quad:1,pat:'dots',ini:'H',glit:1,iris:'#3a7aa8',
+  hd:{cr:'heart',crw:.46,jaw:'v',jw:.32,len:1.02,eye:'lash',ey:-.03,et:-6,brow:'arch',nose:'small',mouth:'smile',ear:.85,cheek:1,lip:'#b8285a',bu:.02},st:{wide:.1,hip:.04,contra:1,arms:[12,4],handHip:1},ready:{arms:[[12,4],[12,4]],hip:.04,contra:1,handHip:1}},
+ {tat:{st:'sleeve',arm:[1]},n:'Coco Capital',r:'Power woman',H:.87,sw:.158,cw:.135,ww:.11,hw:.14,bel:.012,au:.038,af:.032,th:.058,sh:.044,legs:.46,traps:.6,skin:'#6e4630',hc:'#120c0a',hair:'puff',beard:'none',gear:'#7a3fa0',g2:'#ffd43b',boots:'#111',fem:1,top:'singlet',abs:4,pat:'stripes',ini:'C',emb:'♛',iris:'#2a1a10',
+  hd:{cr:'round',crw:.5,jaw:'block',jw:.44,len:.98,eye:'lid',ey:0,et:2,brow:'flat',nose:'broad',mouth:'smirk',ear:.9,cheek:1,shadow:'#7a3fa0',lip:'#5a1a24'},st:{wide:.2,arms:[38,-118],hipsBoth:1},ready:{arms:[[38,-118],[38,-118]],wide:.24,hipsBoth:1}},
+ {n:'Clementine Casual',r:'Technician',H:.95,sw:.122,cw:.108,ww:.088,hw:.108,bel:0,au:.029,af:.025,th:.043,sh:.033,legs:.51,traps:.1,skin:'#e8c09a',hc:'#c45a2a',hair:'crop',beard:'none',gear:'#2f8f45',g2:'#f1ead6',boots:'#2f8f45',fem:1,top:'crop',abs:0,pat:'dots',ini:'C',emb:'★',iris:'#4a8a3a',thin:.9,
+  hd:{cr:'round',crw:.47,jaw:'round',jw:.42,len:1.0,eye:'round',ey:-.05,et:0,brow:'flat',nose:'button',mouth:'wide',ear:.95,freck:1,es:.7,lip:'#b84a4a'},st:{wide:.13,arms:[8,4]},ready:{arms:[[28,100],[22,110]],wide:.18}}];
+
+/* reference roster for the final pick only (concept art, never ships): real wrestlers so the styles can be judged on known faces */
+const B={tech:{H:1,sw:.15,cw:.132,ww:.11,hw:.112,bel:0,au:.038,af:.033,th:.046,sh:.037,legs:.48,traps:.2,abs:4},
+ pow:{H:1.06,sw:.205,cw:.175,ww:.12,hw:.122,bel:0,au:.058,af:.048,th:.062,sh:.048,legs:.45,traps:1.1,abs:6},
+ brawl:{H:1,sw:.18,cw:.165,ww:.14,hw:.13,bel:.02,au:.05,af:.044,th:.056,sh:.048,legs:.44,traps:.7,abs:0},
+ giant:{H:1.22,sw:.18,cw:.165,ww:.15,hw:.14,bel:.04,au:.052,af:.045,th:.064,sh:.056,legs:.44,traps:1.0,abs:0},
+ wom:{H:.93,sw:.122,cw:.108,ww:.088,hw:.108,bel:0,au:.029,af:.025,th:.043,sh:.033,legs:.51,traps:.1,abs:0,fem:1},
+ pwom:{H:.92,sw:.148,cw:.128,ww:.105,hw:.132,bel:0,au:.036,af:.03,th:.054,sh:.041,legs:.47,traps:.5,abs:2,fem:1}};
+const st0={st:{wide:.16,arms:[14,8]},ready:{arms:[[30,95],[25,105]],wide:.2}};
+const mkS=(b,g,o)=>({...B[b],...st0,iris:'#3a2a1a',pat:'stripes',boots:'#1b1b1d',beard:'none',grp:g,...o});
+const STARS=[
+ mkS('brawl','AEW',{tat:{st:'sleeve',arm:[1]},sig:{arms:[[62,25],[62,25]],wide:.22},n:'Jon Moxley',r:'AEW',skin:'#e2b08a',hc:'#b89060',hair:'crop',beard:'short',gear:'#1b1b1d',g2:'#c23b2a',jeans:1,pants:'#24242a',tape:1,ini:'M',iris:'#5a7a9a',hd:{cr:'round',crw:.47,jaw:'block',jw:.48,len:1.05,eye:'almond',ey:0,et:2,brow:'thick',nose:'hook',mouth:'smirk',ear:1,bags:1},st:{wide:.2,arms:[18,10]}}),
+ mkS('tech','AEW',{sig:{arms:[[40,70],[30,20]]},n:'Kenny Omega',r:'AEW',H:1.02,skin:'#f0c8a8',hc:'#d9b46a',hair:'waves',gear:'#1b1b1d',g2:'#e04a8a',pat:'stars',ini:'K',hd:{cr:'long',crw:.43,jaw:'v',jw:.34,len:1.1,eye:'almond',ey:-.03,et:-3,brow:'raised',nose:'long',mouth:'grin',ear:.95}}),
+ mkS('tech','AEW',{tat:{st:'sleeve',arm:[-1]},sig:{arms:[[150,25],[150,25]],toes:1},n:'Will Ospreay',r:'AEW',H:.97,abs:6,skin:'#eec4a2',hc:'#3a2618',hair:'buzz',beard:'short',gear:'#2c62ad',g2:'#ffd43b',boots:'#ffd43b',ini:'O',hd:{cr:'round',crw:.46,jaw:'square',jw:.42,len:1.02,eye:'almond',ey:-.03,et:2,brow:'flat',nose:'button',mouth:'grin',ear:1.1}}),
+ mkS('tech','AEW',{tat:{st:'tribal',arm:[1]},sig:{arms:[[30,100],[18,10]]},n:'Swerve Strickland',r:'AEW',H:1.02,skin:'#6a4430',hc:'#111',hair:'buzz',beard:'short',gear:'#7a3fa0',g2:'#ffd43b',pat:'dots',ini:'S',hd:{cr:'round',crw:.45,jaw:'square',jw:.43,len:1.05,eye:'lid',ey:0,et:2,brow:'raised',nose:'broad',mouth:'smirk',ear:.95}}),
+ mkS('wom','AEW',{n:'Mercedes Moné',r:'AEW',skin:'#7a4c32',hc:'#1a1010',hair:'waves',gear:'#ffd43b',g2:'#1b1b1d',boots:'#ffd43b',top:'halter',pat:'dots',ini:'M',emb:'\u2666',hd:{cr:'heart',crw:.46,jaw:'v',jw:.32,len:1.02,eye:'lash',ey:-.03,et:-6,brow:'arch',nose:'small',mouth:'smile',ear:.85,cheek:1,lip:'#8a2238'},st:{wide:.1,hip:.04,contra:1,arms:[12,4],handHip:1}}),
+ mkS('pow','WWE',{tat:{st:'tribal',arm:[1],chest:1},sig:{arms:[[165,0],[14,8]]},n:'Roman Reigns',r:'WWE',skin:'#a8724e',hc:'#120c0a',hair:'buzz',beard:'short',gear:'#1b1b1d',g2:'#c9a24a',pat:'scales',ini:'R',hd:{cr:'bullet',crw:.46,jaw:'block',jw:.56,len:1.08,eye:'lid',ey:0,et:-2,brow:'slab',nose:'broad',mouth:'grim',ear:.9},st:{wide:.18,arms:[24,10]}}),
+ mkS('tech','WWE',{sig:{arms:[[78,10],[78,10]],wide:.2},n:'Cody Rhodes',r:'WWE',H:1.04,sw:.165,cw:.15,au:.044,af:.038,skin:'#efc29c',hc:'#b58a52',hair:'crop',gear:'#c23b2a',g2:'#2c62ad',boots:'#c23b2a',pat:'stars',ini:'C',hd:{cr:'long',crw:.44,jaw:'square',jw:.46,len:1.1,eye:'almond',ey:-.02,et:0,brow:'flat',nose:'long',mouth:'smile',ear:1}}),
+ mkS('tech','WWE',{sig:{arms:[[150,20],[150,20]]},n:'Seth Rollins',r:'WWE',skin:'#ecc09a',hc:'#1a1410',hair:'mullet',beard:'short',gear:'#1b1b1d',g2:'#e04a8a',ini:'S',hd:{cr:'round',crw:.45,jaw:'v',jw:.38,len:1.06,eye:'almond',ey:-.02,et:3,brow:'raised',nose:'small',mouth:'grin',ear:1}}),
+ mkS('brawl','WWE',{tat:{st:'sleeve',arm:[-1,1]},sig:{arms:[[92,0],[14,8]]},n:'CM Punk',r:'WWE',sw:.165,cw:.15,bel:.015,skin:'#ecc8a8',hc:'#1a1410',hair:'crop',beard:'short',gear:'#1b1b1d',g2:'#ffd43b',tape:1,ini:'P',hd:{cr:'round',crw:.46,jaw:'square',jw:.44,len:1.04,eye:'almond',ey:0,et:2,brow:'thick',nose:'hook',mouth:'smirk',ear:1}}),
+ mkS('pwom','WWE',{tat:{st:'sleeve',arm:[-1]},n:'Rhea Ripley',r:'WWE',skin:'#f0d0b8',hc:'#151212',hair:'mullet',gear:'#1b1b1d',g2:'#c23b2a',top:'crop',pat:'scales',ini:'R',emb:'\u2620',iris:'#3a6a8a',hd:{cr:'round',crw:.47,jaw:'block',jw:.44,len:1.0,eye:'lid',ey:0,et:2,brow:'flat',nose:'small',mouth:'smirk',ear:.9,shadow:'#2a2228',lip:'#3a1a22'},st:{wide:.2,arms:[38,-118],hipsBoth:1}}),
+ mkS('pow','Legend',{sig:{arms:[[92,88],[92,88]],hipsBoth:0,wide:.24},n:'Hulk Hogan',r:'Legend',H:1.12,bel:.02,skin:'#d9955f',hc:'#f2d26a',hair:'bandana',band:'#c23b2a',beard:'horseshoe',gear:'#ffd43b',g2:'#c23b2a',boots:'#ffd43b',ini:'H',iris:'#3a6a8a',hd:{cr:'bullet',crw:.48,jaw:'block',jw:.55,len:1.1,eye:'almond',ey:0,et:0,brow:'thick',nose:'broad',mouth:'grim',ear:1},st:{wide:.2,arms:[26,12]}}),
+ mkS('brawl','Legend',{sig:{arms:[[165,10],[165,10]]},n:'Stone Cold Steve Austin',r:'Legend',sw:.19,cw:.17,au:.054,skin:'#e7b48c',hc:'#6b4a2a',hair:'bald',beard:'goatee',gear:'#1b1b1d',g2:'#f4f1e8',ini:'A',iris:'#3a5a7a',hd:{cr:'bullet',crw:.47,jaw:'block',jw:.52,len:1.05,eye:'slit',ey:0,et:-4,brow:'slab',nose:'flat',mouth:'grim',ear:1}}),
+ mkS('giant','Legend',{coat:'#161616',sleeve:'#161616',sig:{arms:[[18,8],[18,8]]},n:'The Undertaker',r:'Legend',H:1.2,sw:.17,cw:.155,ww:.13,hw:.125,bel:0,skin:'#e8d0c0',hc:'#111',hair:'waves',hat:1,gear:'#1b1b1d',g2:'#5a5a5a',top:'singlet',jeans:1,pants:'#151515',ini:'U',iris:'#6a7a8a',hd:{cr:'long',crw:.44,jaw:'square',jw:.46,len:1.12,eye:'lid',ey:0,et:0,brow:'flat',nose:'long',mouth:'grim',ear:1,shadow:'#3a3040'}}),
+ mkS('pow','Legend',{tat:{st:'tribal',arm:[-1],chest:-1},sig:{arms:[[150,-20],[14,8]],htilt:-6},n:'The Rock',r:'Legend',skin:'#a86a44',hc:'#111',hair:'buzz',gear:'#1b1b1d',g2:'#c9a24a',pat:'scales',ini:'R',hd:{cr:'bullet',crw:.47,jaw:'block',jw:.52,len:1.06,eye:'almond',ey:0,et:0,brow:'raised',nose:'broad',mouth:'smirk',ear:.95},st:{wide:.18,arms:[20,10]}}),
+ mkS('giant','Legend',{n:'Andre the Giant',r:'Legend',H:1.34,bel:.06,skin:'#c88a64',hc:'#2a1a10',hair:'puff',gear:'#1b1b1d',g2:'#2a1a10',top:'singlet',ini:'A',hd:{cr:'round',crw:.54,jaw:'jowl',jw:.62,len:1.2,eye:'dot',ey:0,et:0,brow:'thick',nose:'broad',mouth:'grim',ear:1.2,jowl:1},st:{wide:.2,hunch:.1,arms:[12,8]}})];
+/* likeness pass from ring-gear photos (Wikimedia Commons, tools/concepts/review/ref-gear.html), concept only */
+const LIKE={
+ 'Jon Moxley':{hc:'#a45a30',hair:'crop',beard:'full',chestHair:1,bel:.03,hd:{brow:'thick',mouth:'grit',nose:'broad',bags:1,scar:1}},
+ 'Kenny Omega':{hc:'#b8955a',beard:'short',hd:{cr:'long',jaw:'square',jw:.46,brow:'thick',mouth:'smirk',nose:'long'}},
+ 'Will Ospreay':{hc:'#8a6038',hair:'crop',beard:'short',gear:'#1b1b1d',g2:'#c9a24a',boots:'#1b1b1d',tat:{st:'sleeve',arm:[1]}},
+ 'Swerve Strickland':{hair:'mullet',hc:'#1a1410',beard:'short',gear:'#4a5a3a',g2:'#c9a24a',boots:'#2a2a2a',tat:{st:'tribal',arm:[-1]}},
+ 'Mercedes Moné':{hc:'#3a1a12',gear:'#2c62ad',g2:'#ffd43b',boots:'#2c62ad',top:'singlet'},
+ 'Roman Reigns':{hair:'waves',hc:'#121010',boots:'#1b1b1d'},
+ 'Cody Rhodes':{hc:'#e8dcc0',gear:'#7a1f2a',g2:'#1b1b1d',boots:'#7a1f2a'},
+ 'Seth Rollins':{beard:'full',gear:'#1b1b1d',g2:'#3a3a3a'},
+ 'CM Punk':{hair:'waves',hc:'#3a2418',gear:'#1b1b1d',g2:'#1b1b1d',btrim:'#f4f1e8',boots:'#2c62ad',bootStar:1},
+ 'Rhea Ripley':{hair:'waves',hc:'#121010',gear:'#1b1b1d',g2:'#7a3fa0'},
+ 'Stone Cold Steve Austin':{g2:'#2a2a2a',btrim:'#2a2a2a'},
+ 'The Rock':{hc:'#141010'},
+ 'Andre the Giant':{H:1.45,sw:.2,cw:.185,ww:.17,hw:.155,bel:.07,hd:{cr:'round',crw:.56,jaw:'jowl',jw:.66,len:1.24,nose:'broad'}}};
+STARS.forEach(a=>{const L=LIKE[a.n];if(L){const{hd,...rest}=L;Object.assign(a,rest);if(hd)a.hd={...a.hd,...hd}}});
+const ALL=A.concat(STARS);
+if(GRAIN){const warm=h=>{const n=parseInt(h.slice(1),16),c=[n>>16,n>>8&255,n&255],L=(c[0]+c[1]+c[2])/765;if(L<.5)return h;return'#'+[c[0]*1.03,c[1],c[2]*.93].map(v=>Math.min(255,Math.round(v)).toString(16).padStart(2,'0')).join('')};
+ ALL.forEach(a=>a.skin=warm(a.skin));
+ Object.assign(A[0],{gear:'#2a63c8'});Object.assign(A[4],{gear:'#2a63c8',g2:'#ffd43b',pad:'#2a8fd8'});Object.assign(A[2],{pants:'#4f78b0'})}
+const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
+const rngOf=s=>{let x=hash(s)||1;return()=>((x=Math.imul(x^(x>>>15),2246822507),x=Math.imul(x^(x>>>13),3266489909),(x^=x>>>16)>>>0)/4294967296)};
+const shade=(h,f)=>{let s=h.slice(1);if(s.length===3)s=s.split('').map(c=>c+c).join('');const n=parseInt(s,16),c=[n>>16,n>>8&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v*f))));return'#'+c.map(v=>v.toString(16).padStart(2,'0')).join('')};
+const MN={};['sw','cw','ww','hw','au','af','th','sh'].forEach(k=>MN[k]=A.reduce((a,x)=>a+x[k],0)/A.length);
+const bigType=a=>a.r==='Giant'||a.r==='Powerhouse'||a.r==='Brawler';
+const KM=k=>(['sw','cw','ww','hw'].includes(k)?S.bodyK||1:1)*(['au','af','th','sh'].includes(k)?S.limbK||1:1);
+const ex=(a,k)=>KM(k)*(MN[k]+(a[k]-MN[k])*S.ex)*(PAPER&&bigType(a)&&(k==='sw'||k==='au')?S.big:1)*(PAPER&&a.thin&&k!=='th'?a.thin:1);
+/* deliberate scissor cuts; the human style rounds corners into more cuts */
+function more(pts,k=.035){if(!HUM&&!PAPER)return pts;const cx=pts.reduce((a,p)=>a+p[0],0)/pts.length,cy=pts.reduce((a,p)=>a+p[1],0)/pts.length,o=[];
+ pts.forEach((p,i)=>{const q=pts[(i+1)%pts.length],m=[(p[0]+q[0])/2,(p[1]+q[1])/2];o.push(p,[m[0]+(m[0]-cx)*k,m[1]+(m[1]-cy)*k])});return o}
+let NONOTCH=false;   // face pieces never get a snip notch (it read as a wound)
+function cut(pts,r){const o=pts.map(([x,y])=>[x+(r()-.5)*.6,y+(r()-.5)*.6]);
+ if(r()<.34&&o.length>3&&!NONOTCH){let bi=0,bl=0;o.forEach((p,i)=>{const q=o[(i+1)%o.length],l=Math.hypot(q[0]-p[0],q[1]-p[1]);if(l>bl){bl=l;bi=i}});
+  if(bl>18){const p=o[bi],q=o[(bi+1)%o.length],t=.3+r()*.4,nx=-(q[1]-p[1])/bl,ny=(q[0]-p[0])/bl,d=2+r()*2,w=.03*bl;
+   o.splice(bi+1,0,[p[0]+(q[0]-p[0])*(t-w/bl),p[1]+(q[1]-p[1])*(t-w/bl)],[p[0]+(q[0]-p[0])*t+nx*d,p[1]+(q[1]-p[1])*t+ny*d],[p[0]+(q[0]-p[0])*(t+w/bl),p[1]+(q[1]-p[1])*(t+w/bl)])}}
+ return'M'+o.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L')+'Z'}
+const piece=(d,fill,r,edge)=>{const st=S.ink?(edge===1?`stroke="#1b1b1d" stroke-width="1.3" vector-effect="non-scaling-stroke"`:''):edge===1||(edge!==0&&r()<.4)?`stroke="${shade(fill.startsWith('#')?fill:'#888888',.8)}" stroke-width="1"`:'',
+ base=`<path d="${d}" fill="${fill}" ${st} stroke-linejoin="round"${S.tex&&!NONOTCH?' filter="url(#psh0)"':''}/>`;
+ // lit: the piece in its shadow colour, then the lit colour shifted toward the key light and clipped to the piece; the far edge stays in shadow
+ return base;const id='k'+(CID++);
+ return`<clipPath id="${id}"><path d="${d}"/></clipPath><path d="${d}" fill="${shade(fill,.78)}"/><g clip-path="url(#${id})"><path d="${d}" fill="${fill}" transform="translate(${(-CELD).toFixed(1)},${(-CELD*.12).toFixed(1)})"/></g>${st?`<path d="${d}" fill="none" ${st}/>`:''}`};
+const pin=(x,y,s)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${s}" fill="#c9a24a" stroke="#6b5420" stroke-width=".7"/><circle cx="${(x-s*.3).toFixed(1)}" cy="${(y-s*.3).toFixed(1)}" r="${(s*.3).toFixed(2)}" fill="#fff6d0" opacity=".8"/>`;
+const mk=(d,w=2.4,col='#1b1b1d')=>`<path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+/* a glued card: for collage, each one is turned and nudged by hand, its shadow set by how high it sits */
+const card=(r,cx,cy,inner,lift=1)=>PAPER?`<g transform="translate(${((r()-.5)*4).toFixed(1)},${((r()-.5)*4).toFixed(1)}) rotate(${((r()-.5)*12).toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)})" filter="url(#psh${lift})">${inner}</g>`:inner;
+function seg(a,b,wa,wb){const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L,ux=dx/L,uy=dy/L;
+ return[[a[0]+nx*wa-ux*wa*.3,a[1]+ny*wa-uy*wa*.3],[a[0]-nx*wa-ux*wa*.3,a[1]-ny*wa-uy*wa*.3],[b[0]-nx*wb,b[1]-ny*wb],[b[0]+ux*wb*.4,b[1]+uy*wb*.4],[b[0]+nx*wb,b[1]+ny*wb]]}
+/* shin with a calf bulge (+12% at 35% down) and a knee notch on the outside */
+function shin(k,f,w,sd){const dx=f[0]-k[0],dy=f[1]-k[1],L=Math.hypot(dx,dy)||1,nx=-dy/L*sd,ny=dx/L*sd,ux=dx/L,uy=dy/L,at=(t,s)=>[k[0]+dx*t+nx*w*s,k[1]+dy*t+ny*w*s];
+ return[at(-.04,-.95),at(.0,.95),[k[0]+dx*.06+nx*w*.75,k[1]+dy*.06+ny*w*.75],at(.12,1.0),at(.35,1.12),at(1,.7),at(1,-.7),at(.35,-1.05),at(.06,-.9)]}
+/* shaped limb for the human-proportioned styles: a width profile along the bone, [t, outer, inner] (deltoid-biceps, forearm taper, quads) */
+const SHAPED=HUM||PAPER,UA=[[0,1,1],[.28,1.1,1.04],[.5,1.14,1.0],[.78,.98,.93],[1,.86,.84]],FA=[[0,1,1],[.22,1.12,1.04],[.5,.97,.92],[.82,.78,.8],[1,.7,.72]],TH=[[0,1,1],[.2,1.12,1.0],[.4,1.07,1.02],[.62,.96,.97],[.9,.86,.88],[1,.82,.84]];
+function limb(a,b,w0,w1,f){const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L,ux=dx/L,uy=dy/L,W=t=>w0+(w1-w0)*t,P=(t,k)=>[a[0]+dx*t+nx*W(t)*k,a[1]+dy*t+ny*W(t)*k];
+ return[[a[0]-ux*w0*.3,a[1]-uy*w0*.3],...f.map(([t,k])=>P(t,k)),[b[0]+ux*w1*.35,b[1]+uy*w1*.35],...f.slice().reverse().map(([t,,k])=>P(t,-k))]}
+/* ink: every group drawn twice, a thick black underlay then the colour, so only the outer silhouette is inked (no seams). Width is in figure units, so small figures get thin lines */
+const INK=(g,hu,au)=>S.rim?`<g${GRAIN?' filter="url(#grain)"':''}><g ${GRAIN?'class="ul"':'class="rim"'} stroke="#f4efe0" stroke-width="${GRAIN?Math.min(hu*.19,(au||1e9)*.8).toFixed(1):5}" stroke-linejoin="round">${g}</g>${g}</g>`:S.ink?`<g stroke="#1b1b1d" stroke-width="${(hu*.12).toFixed(1)}" stroke-linejoin="round">${g}</g>${g}`:g;
+/* lit: one shadow crescent per body group (head, arms, the rest), cut after posing: the group minus itself shifted toward the key light */
+let LID=0;const LIT=(g,hu)=>{if(!S.cel)return g;const id='L'+(LID++),d=hu*.13;
+ return`${g}<mask id="${id}" maskUnits="userSpaceOnUse" x="-2000" y="-2000" width="4000" height="4000"><g filter="url(#wht)">${g}</g><g filter="url(#blk)" transform="translate(${(-d).toFixed(1)},${(-d*.35).toFixed(1)})">${g}</g></mask><rect x="-2000" y="-2000" width="4000" height="4000" fill="#0b0820" opacity=".32" mask="url(#${id})"/>`};
+/* a sports pad over a joint: rounded card along the limb, a darker lower cap and a stitched seam */
+const pad=(r,x,y,v,w,l,col)=>{const ang=Math.atan2(v[1],v[0])*180/Math.PI-90,rr=Math.min(w,l)*(GRAIN?.95:.6),
+ d=`M${-w} ${-l+rr} Q${-w} ${-l} ${-w+rr} ${-l} L${w-rr} ${-l} Q${w} ${-l} ${w} ${-l+rr} L${w} ${l-rr} Q${w} ${l} ${w-rr} ${l} L${-w+rr} ${l} Q${-w} ${l} ${-w} ${l-rr}Z`,
+ cap=`M${-w} ${l*.25} L${w} ${l*.25} L${w} ${l-rr} Q${w} ${l} ${w-rr} ${l} L${-w+rr} ${l} Q${-w} ${l} ${-w} ${l-rr}Z`;
+ return`<g transform="translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${ang.toFixed(1)})">${piece(d,col,r,1)}${GRAIN?`<path d="${cap}" fill="${shade(col,.62)}" opacity=".5"/><ellipse cx="0" cy="${(-l*.42).toFixed(1)}" rx="${(w*.62).toFixed(1)}" ry="${(l*.22).toFixed(1)}" fill="#fff" opacity=".32"/>`:`<path d="${cap}" fill="${shade(col,.78)}"/>`}${GRAIN?'':mk(`M${-w*.8} ${-l*.15} L${w*.8} ${-l*.15}`,1,shade(col,.6))}</g>`};
+/* SIGNATURE LAYER. tattoos are paper decals cut in ink-dark card, laid along the limb (local frame: y down the bone, x across) */
+const INKC=sk=>shade(sk,.4),SLV=['#2c62ad','#c23b2a','#2f8f45','#ffd43b','#7a3fa0'];
+function tattoo(st,a0,b0,w,sk,r){const dx=b0[0]-a0[0],dy=b0[1]-a0[1],L=Math.hypot(dx,dy)||1,ang=Math.atan2(dy,dx)*180/Math.PI-90,c=INKC(sk);let g='';
+ if(st==='tribal')for(const y of[L*.16,L*.4]){g+=`<path d="M${-w*.8} ${y} L0 ${y+w*.55} L${w*.8} ${y} L${w*.8} ${y+w*.32} L0 ${y+w*.92} L${-w*.8} ${y+w*.32}Z" fill="${c}"/>`;g+=`<path d="M${-w*.25} ${y+w*1.05} L0 ${y+w*1.4} L${w*.25} ${y+w*1.05}Z" fill="${c}"/>`}
+ if(st==='wire'){const y=L*.55,n=7;let d=`M${-w*.95} ${y}`;for(let k=1;k<=n;k++)d+=` L${(-w*.95+w*1.9*k/n).toFixed(1)} ${(y+(k%2?-1:1)*w*.18).toFixed(1)}`;g+=mk(d,1.6,c)+mk(d.replace(/ ([\d.-]+)(?= L| ?$)/g,(m,v)=>' '+(+v+w*.32).toFixed(1)),1.2,c);for(let k=0;k<4;k++){const x=-w*.7+k*w*.47;g+=mk(`M${x} ${y-w*.15} l${w*.12} ${w*.6}`,1.1,c)}}
+ if(st==='sleeve')for(let k=0;k<4;k++){const y=L*(.12+k*.2),col=SLV[(k+Math.floor(r()*5))%5];g+=`<path d="M${-w*.8} ${y} Q0 ${y-w*.25} ${w*.75} ${y+w*.05} L${w*.7} ${y+L*.15} Q0 ${y+L*.2} ${-w*.78} ${y+L*.14}Z" fill="${col}" opacity=".78" stroke="${c}" stroke-width=".9"/>`}
+ return`<g transform="translate(${a0[0].toFixed(1)},${a0[1].toFixed(1)}) rotate(${ang.toFixed(1)})">${g}</g>`}
+const dir=(deg,sd)=>{const t=deg*Math.PI/180;return[Math.sin(t)*sd,Math.cos(t)]};
+/* ---------- head ---------- */
+function head(a,hu,r,lod,look=0){const c=CELD;NONOTCH=true;if(lod)CELD=0;try{return headIn(a,hu,r,lod,look)}finally{NONOTCH=false;CELD=c}}
+function headIn(a,hu,r,lod,look=0){const h=a.hd,sk=a.skin,dk=shade(sk,.72),o=[],fs=S.fs,lw=lod?4:2.6;hu*=(S.headK||1);
+ // human heads are about three quarters as wide as tall
+ const nar=HUM?.86:1,len=h.len*hu*(HUM?1.04:1),jw=h.jw*hu*(PAPER&&h.jw>.5?1.12:1)*nar,crw=GRAIN?Math.max(h.crw*hu*nar,jw*.97):h.crw*hu*nar;
+ const top=-len*.55,bot=len*.45,face=Math.max(crw,jw);
+ // collage at human proportions: eye ≈ a fifth of the face wide, one eye-width apart, brows just above
+ const ey=h.ey*len,eg=PAPER&&!lod?face*.42:HUM&&!lod?face*.45:face*.48,es=PAPER&&!lod?face*.2*Math.pow(h.es||1,.35):HUM&&!lod?face*.165*Math.pow(h.es||1,.3):Math.max(hu*.12,face*.2)*fs*(h.eye==='dot'?.6:1)*(h.es||1)*(HUM?.85:1),
+  browY=PAPER&&!lod?ey-es*1.2-(h.bu||0)*hu:HUM&&!lod?ey-face*.33-(h.bu||0)*hu:ey-Math.max(hu*.12,face*.2)*fs*1.25-(h.bu||0)*hu,jt=browY+es*.2+(h.bu||0)*hu;
+ // hair behind
+ /* collage strips run along the flow: hair falls diagonally from the parting, beard strips hang and taper to the chin; they overlap ~30% */
+ const strips=(base,col,kind='hair')=>{if(!TEX)return'';let s='';const y0=base[0][1],y1=base[2][1],n=kind==='beard'?5:4,span=kind==='beard'?jw*1.7:crw*1.9;
+  for(let k=0;k<n;k++){const xc=-span/2+span*(k+.5)/n,wd=span/n*.65*(.55+r()*.9),tilt=(r()-.5)*16+(kind==='hair'?(xc<0?-14:14):0),yb=kind==='beard'?y1-Math.abs(xc)*.35:y1;
+   const pts=[[xc-wd,y0],[xc+wd,y0+(r()-.5)*hu*.05],[xc+wd*(kind==='beard'?.45:.8),yb],[xc,yb+hu*.06],[xc-wd*(kind==='beard'?.45:.8),yb-hu*.02]];
+   s+=`<g transform="rotate(${tilt.toFixed(1)} ${xc.toFixed(1)} ${y0.toFixed(1)})">${piece(cut(pts,r),k%2?shade(col,1.2):shade(col,.85),r,0)}</g>`}return s};
+ if(a.hair==='waves'){const b=GRAIN?[[-crw*1.45,-len*.05],[-crw*1.25,top-hu*.1],[0,top-hu*.22],[crw*1.3,top-hu*.08],[crw*1.5,0],[crw*1.58,bot+hu*.5],[-crw*1.6,bot+hu*.52]]:[[-crw*1.5,-len*.05],[-crw*1.25,top-hu*.1],[0,top-hu*.22],[crw*1.3,top-hu*.08],[crw*1.55,0],[crw*1.75,bot+hu*.55],[crw*1.35,bot+hu*.45],[crw*1.5,bot+hu*.8],[crw*.9,bot+hu*.55],[-crw*.9,bot+hu*.6],[-crw*1.55,bot+hu*.85],[-crw*1.4,bot+hu*.5],[-crw*1.75,bot+hu*.6]];o.push(piece(cut(b,r),a.hc,r,0))}
+ if(a.hair==='mullet'||a.hair==='bandana')o.push(piece(cut([[-crw*.95,0],[-crw*1.15,bot+hu*.5],[-crw*.4,bot+hu*.35],[crw*.2,bot+hu*.55],[crw*1.1,bot+hu*.45],[crw*.95,0]],r),a.hc,r,0));
+ if(a.hair==='puff'){const af0=[],cy0=top-hu*.25,n=17;for(let k=0;k<=n;k++){const t=Math.PI*(1.08-1.16*k/n),rr=(k%2?.9:1.05)+r()*.08;af0.push([Math.cos(t)*crw*1.42*rr,cy0-Math.sin(t)*hu*.66*rr])}const pk=af0.filter((_,k)=>k%2===0);let dA=`M${(-crw*1.05).toFixed(1)} ${(top+len*.15).toFixed(1)} L${pk[0][0].toFixed(1)} ${pk[0][1].toFixed(1)}`;for(let k=1;k<pk.length;k++){const a0=pk[k-1],a1=pk[k],mx=(a0[0]+a1[0])/2,my=(a0[1]+a1[1])/2,ox=mx-0,oy=my-cy0,ol=Math.hypot(ox,oy)||1,b=hu*.16;dA+=` Q${(mx+ox/ol*b).toFixed(1)} ${(my+oy/ol*b).toFixed(1)} ${a1[0].toFixed(1)} ${a1[1].toFixed(1)}`}dA+=` L${(crw*1.05).toFixed(1)} ${(top+len*.15).toFixed(1)}Z`;o.push(`<path d="${dA}" fill="${a.hc}"/>`);if(PAPER)for(let k=0;k<5;k++)o.push(`<circle cx="${((r()-.5)*crw*2).toFixed(1)}" cy="${(top-hu*(.2+r()*.55)).toFixed(1)}" r="${(hu*.12).toFixed(1)}" fill="${shade(a.hc,1.6)}"/>`)}
+ // ears
+ const ed=r()*.05*len,ek=h.ear*(HUM?(a.r==='Giant'?.95:.75):1);for(const sd of[-1,1]){const ex0=sd*face*(HUM?.93:.96),ey0=ey+(sd>0?ed:0);o.push(piece(cut([[ex0,ey0-len*.1],[ex0+sd*ek*hu*.15,ey0-len*.06],[ex0+sd*ek*hu*.13,ey0+len*.1],[ex0,ey0+len*.12]],r),shade(sk,.93),r,0));if(HUM&&!lod)o.push(mk(`M${ex0+sd*ek*hu*.05} ${ey0-len*.03} q${sd*hu*.04} ${len*.05} 0 ${len*.1}`,1.2,dk))}
+ // cranium + jaw (join under the brow, widths matched)
+ const CR={bullet:[[-crw*.75,top+len*.1],[-crw*.45,top],[crw*.45,top],[crw*.76,top+len*.1],[crw,jt],[-crw,jt]],round:[[-crw*.88,top+len*.18],[-crw*.55,top],[crw*.55,top],[crw*.9,top+len*.18],[crw,jt],[-crw,jt]],
+  long:[[-crw*.85,top+len*.06],[-crw*.6,top],[crw*.6,top],[crw*.86,top+len*.06],[crw,jt],[-crw,jt]],egg:[[-crw*.92,top+len*.22],[-crw*.55,top],[crw*.55,top],[crw*.93,top+len*.22],[crw,jt],[-crw,jt]],
+  heart:[[-crw*.92,top+len*.18],[-crw*.5,top],[0,top+len*.05],[crw*.5,top],[crw*.93,top+len*.18],[crw,jt],[-crw,jt]]}[h.cr];
+ const JW={anvil:[[-crw,jt],[crw,jt],[jw,jt+len*.22],[jw*.94,bot],[-jw*.94,bot],[-jw,jt+len*.22]],block:[[-crw,jt],[crw,jt],[jw*.98,jt+len*.28],[jw*.78,bot],[-jw*.78,bot],[-jw*.98,jt+len*.28]],
+  jowl:[[-crw,jt],[crw,jt],[jw*1.06,bot-len*.22],[jw*.82,bot+len*.04],[0,bot+len*.08],[-jw*.82,bot+len*.04],[-jw*1.06,bot-len*.22]],square:[[-crw,jt],[crw,jt],[jw,bot-len*.2],[jw*.62,bot],[-jw*.62,bot],[-jw,bot-len*.2]],
+  v:[[-crw,jt],[crw,jt],[Math.max(jw*1.1,crw*.95),jt+len*.18],[jw*.25,bot],[-jw*.25,bot],[-Math.max(jw*1.1,crw*.95),jt+len*.18]],round:[[-crw,jt],[crw,jt],[jw*1.06,bot-len*.24],[jw*.6,bot],[-jw*.6,bot],[-jw*1.06,bot-len*.24]]}[h.jaw];
+ if(HUM&&h.jaw!=='jowl'&&h.jaw!=='v'){const i=JW.findIndex(p=>p[1]===bot&&p[0]>0);if(i>=0)JW.splice(i+1,0,[0,bot+len*.04])}
+ const CRr=HUM?more(more(CR)):more(CR);
+ if(a.mask){o.push(piece(cut(more(JW),r),a.mask[0],r,0),piece(cut(CRr,r),a.mask[0],r,0),piece(cut([[0,top+len*.04],[crw*.55,ey-es*.4],[crw*.18,bot-len*.3],[0,ey+len*.1],[-crw*.18,bot-len*.3],[-crw*.55,ey-es*.4]],r),a.mask[1],r,0))}
+ else{o.push(piece(cut(more(JW),r),sk,r,0),piece(cut(CRr,r),sk,r,0));if(h.cheek&&!lod&&!a.fem)for(const sd of[-1,1])o.push(mk(`M${sd*face*.82} ${ey+es*1.4} l${-sd*hu*.07} ${len*.1}`,1.6,dk));
+  if(HUM&&h.jowl&&!lod)for(const sd of[-1,1])o.push(mk(`M${sd*jw*.85} ${bot-len*.2} q${-sd*hu*.05} ${len*.12} ${-sd*hu*.2} ${len*.16}`,1.5,dk))}
+ if(h.brow==='shelf'&&!GRAIN)o.push(piece(cut([[-crw*1.04,browY-es*.35],[crw*1.04,browY-es*.4],[crw*1.0,browY+es*.55],[-crw*1.0,browY+es*.5]],r),shade(sk,.86),r,1));
+ // eyes and brows
+ const bc=a.mask?a.mask[2]:(a.hair==='bald'?'#1b1b1d':shade(a.hc,.6)),notch=(x,y)=>`<path d="M${x+es*.25} ${y-es*.62} l${es*.35} ${es*.05} l${-es*.18} ${es*.32}Z" fill="${sk}"/>`;
+ for(const sd of[-1,1]){const x=sd*eg,y=ey+(sd>0?r()*hu*.012:0),R=`transform="rotate(${h.et*sd} ${x} ${y})"`;
+  const bw=PAPER&&!lod?Math.min(es*1.15*(h.brow==='shelf'?1.3:1),h.brow==='shelf'?1e9:eg-face*.08):Math.min(es*1.6,h.brow==='shelf'?1e9:eg-face*.07),
+   bt=hu*(.07+(h.brow==='slab'||h.brow==='thick'||h.brow==='shelf'?.04:0))*fs*(PAPER&&!lod?.6:HUM&&!lod?.7:1);
+  if(lod){if(h.eye==='white'&&!PAPER)o.push(`<ellipse cx="${x}" cy="${y}" rx="${es*1.1}" ry="${es*.9}" fill="#fffdf0" stroke="#1b1b1d" stroke-width="2"/><circle cx="${x}" cy="${y}" r="${es*.5}" fill="#1b1b1d"/>`);
+    else{const q=h.eye==='slit'||h.eye==='mixed'&&sd<0?.45:h.eye==='dot'?.8:.7;o.push(`<ellipse cx="${x}" cy="${y}" rx="${es*1.05}" ry="${es*q}" fill="#1b1b1d" ${R}/>`)}
+    if(h.brow!=='none')o.push(`<path d="M${x-bw*1.1} ${browY-bt*1.1} L${x+bw*1.1} ${browY-bt*1.1+(h.brow==='slab'||h.brow==='shelf'?sd*bt*.6:-bt*.2)} L${x+bw*1.1} ${browY+bt*.35} L${x-bw*1.1} ${browY+bt*.35}Z" fill="${bc}"/>`);
+    if(h.freck)for(let k=0;k<3;k++)o.push(`<circle cx="${x+(k-1)*es*.9}" cy="${y+es*2.1}" r="${hu*.035}" fill="#d0662a"/>`);
+    continue}
+  if(PAPER&&!a.mask){ // human-sized eye: cream eye card, coloured iris card, pupil, and a lid card over the top so it never stares
+   const narrow=h.eye==='slit'||(h.eye==='mixed'&&sd<0),w=es,hh=es*(narrow?.32:h.eye==='dot'?.4:.5),lk=(look||.15)*w*.3;
+   const eye=`M${x-w} ${y+hh*.1} Q${x-w*.3} ${y-hh*1.25} ${x+w} ${y-hh*.05} Q${x+w*.25} ${y+hh*1.05} ${x-w} ${y+hh*.1}Z`;
+   o.push(card(r,x,y,`<path d="${eye}" fill="#f6efdc" ${R}/>`,1)
+    +card(r,x,y,`<circle cx="${x+lk}" cy="${y}" r="${hh*.92}" fill="${a.iris}"/><circle cx="${x+lk}" cy="${y}" r="${hh*.42}" fill="#120c0a"/>`,0)
+    +card(r,x,y,`<path d="M${x-w*1.08} ${y-hh*.1} Q${x-w*.3} ${y-hh*1.55} ${x+w*1.08} ${y-hh*.3} L${x+w*1.05} ${y-hh*.7} Q${x-w*.3} ${y-hh*(narrow?1.5:1.25)+hh*(narrow?.9:.6)} ${x-w*1.05} ${y-hh*.05}Z" fill="${h.shadow||shade(sk,.84)}"/>`,1)
+    +mk(`M${x-w*1.02} ${y+hh*.05} Q${x-w*.3} ${y-hh*1.2} ${x+w*1.02} ${y-hh*.1}`,1.6));
+   if(h.eye==='lash')o.push(card(r,x,y,`<path d="M${x+sd*w*.85} ${y-hh*.5} L${x+sd*w*1.35} ${y-hh*1.15} L${x+sd*w*1.1} ${y-hh*.2}Z" fill="#1b1b1d"/>`,1))}
+  else if(HUM&&GRAIN&&!a.mask){const w=face*.17*Math.pow(h.es||1,.3),hh=w*(h.eye==='mixed'&&sd<0?.32:.55),ir=hh*.62;
+   o.push(`<path d="M${x-w} ${y} Q${x} ${y-hh*1.5} ${x+w} ${y} Q${x} ${y+hh*1.05} ${x-w} ${y}Z" fill="#fbf6e6" ${R}/><circle cx="${x}" cy="${y-hh*.05}" r="${ir}" fill="${a.iris}"/><circle cx="${x}" cy="${y-hh*.05}" r="${ir*.45}" fill="#120c0a"/>`+mk(`M${x-w*1.05} ${y+hh*.02} Q${x} ${y-hh*1.55} ${x+w*1.05} ${y-hh*.02}`,a.fem?1.6:1.2,'#2a1a14'));
+   if(h.eye==='lash')o.push(mk(`M${x+sd*w} ${y-hh*.2} l${sd*w*.35} ${-hh*.45}`,1.2,'#2a1a14'));
+   if(h.eye==='lid')o.push(`<path d="M${x-sd*w*.95} ${y-hh*.6} Q${x} ${y-hh*1.9} ${x+sd*w*1.25} ${y-hh*.5} Q${x} ${y-hh*1.25} ${x-sd*w*.95} ${y-hh*.6}Z" fill="${h.shadow||shade(sk,.82)}" opacity=".85"/>`);
+   if(h.brow!=='none'&&h.brow!=='shelf'){const bw2=w*1.15,by=y-hh*2.1-(h.bu||0)*hu,tl=h.brow==='slab'||h.brow==='thick'?hu*.045:hu*.028,lift=h.brow==='raised'||h.brow==='arch'?-hh*.5:h.brow==='slab'?hh*.2*sd:0;
+    o.push(mk(`M${x-bw2} ${by+(sd<0?lift:0)} Q${x} ${by-hh*.5} ${x+bw2} ${by+(sd>0?lift:0)}`,tl,bc))}
+   if(h.brow==='shelf')o.push(mk(`M${x-w*1.2} ${y-hh*2.2} L${x+w*1.2} ${y-hh*2.1+sd*hh*.4}`,hu*.075,bc));
+   if(h.bags)o.push(mk(`M${x-w*.8} ${y+hh*1.2} Q${x} ${y+hh*1.7} ${x+w*.8} ${y+hh*1.2}`,1,shade(sk,.72)));
+   continue}
+  else if(HUM&&!a.mask){ // cream almond, coloured iris, lid line (the giant's sit small under his brow shelf)
+   const w=es*1.3*(h.eye==='dot'?.95:1),hh=h.eye==='mixed'&&sd<0?es*.38:es*(h.eye==='slit'?.62:h.eye==='dot'?.66:.76),ir=h.eye==='mixed'&&sd<0?hh*.75:hh*.56;
+   o.push(`<path d="M${x-w} ${y} Q${x} ${y-hh*1.5} ${x+w} ${y} Q${x} ${y+hh} ${x-w} ${y}Z" fill="#fbf6e6" ${R}/><circle cx="${x+sd*w*.05}" cy="${y-hh*.08}" r="${ir}" fill="${a.iris}"/><circle cx="${x+sd*w*.05}" cy="${y-hh*.08}" r="${ir*.46}" fill="#120c0a"/><circle cx="${x+sd*w*.05-ir*.3}" cy="${y-hh*.08-ir*.3}" r="${ir*.18}" fill="#fff" opacity=".8"/>`+mk(`M${x-w*1.08} ${y+hh*.05} Q${x} ${y-hh*1.62} ${x+w*1.08} ${y-hh*.05}`,h.eye==='lash'?2.4:a.fem?1.2:1.8)+mk(`M${x-w*.85} ${y-hh*1.05} Q${x} ${y-hh*1.95} ${x+w*.95} ${y-hh*1.0}`,1.1,dk));
+   if(h.eye==='lash')o.push(`<path d="M${x+sd*w*.95} ${y-hh*.4} l${sd*es*.75} ${-es*.6} l${-sd*es*.05} ${es*.65}Z" fill="#1b1b1d"/>`);
+   if(h.eye==='lid')o.push(`<path d="M${x-sd*w*.95} ${y-hh*.55} Q${x} ${y-hh*2.05} ${x+sd*w*1.3} ${y-hh*.45} Q${x} ${y-hh*1.2} ${x-sd*w*.95} ${y-hh*.55}Z" fill="${h.shadow||shade(sk,.82)}" opacity=".85"/>`)}
+  else{ // marker: bean eyes at most 0.7 tall, heavier upper lid, one punched notch
+   const B=(w,hh)=>`M${x-w} ${y+hh*.15} Q${x-w*.2} ${y-hh*1.25} ${x+w} ${y-hh*.1} Q${x+w*.2} ${y+hh} ${x-w} ${y+hh*.15}Z`;
+   const E={dot:()=>`<circle cx="${x}" cy="${y}" r="${es}" fill="#1b1b1d"/>`,
+    slit:()=>`<path d="M${x-es*1.5} ${y} Q${x} ${y-es*.7} ${x+es*1.5} ${y} Q${x} ${y+es*.45} ${x-es*1.5} ${y}Z" fill="#1b1b1d" ${R}/>`,
+    almond:()=>`<path d="${B(es*1.2,es*.8)}" fill="#1b1b1d" ${R}/>`+notch(x,y)+mk(`M${x-es*1.35} ${y-es*.55} Q${x} ${y-es*1.35} ${x+es*1.35} ${y-es*.5}`,2.6),
+    round:()=>`<path d="${B(es*1.05,es*.72)}" fill="#1b1b1d" ${R}/>`+notch(x,y)+mk(`M${x-es*1.2} ${y-es*.5} Q${x} ${y-es*1.2} ${x+es*1.2} ${y-es*.45}`,2.4),
+    lash:()=>`<path d="${B(es*1.15,es*.78)}" fill="#1b1b1d" ${R}/>`+notch(x,y)+`<path d="M${x+sd*es*1.0} ${y-es*.45} L${x+sd*es*1.75} ${y-es*.95} L${x+sd*es*1.3} ${y-es*.05}Z" fill="#1b1b1d"/>`+mk(`M${x-es*1.3} ${y-es*.5} Q${x} ${y-es*1.3} ${x+es*1.3} ${y-es*.45}`,1.8),
+    lid:()=>`<path d="${B(es*1.25,es*.85)}" fill="#1b1b1d" transform="rotate(${-8*sd} ${x} ${y})"/>`+notch(x,y)+piece(cut([[x-es*1.35,y-es*.6],[x+es*1.35,y-es*.68],[x+es*1.2,y-es*1.05],[x-es*1.2,y-es*1.0]],r),shade(sk,.82),r,0),
+    white:()=>`<path d="M${x-es*1.15} ${y} Q${x} ${y-es*1.35} ${x+es*1.15} ${y} Q${x} ${y+es*1.05} ${x-es*1.15} ${y}Z" fill="#fffdf0" stroke="#1b1b1d" stroke-width="1.8" ${R}/><circle cx="${x+sd*es*.15}" cy="${y}" r="${es*.5}" fill="#1b1b1d"/>`,
+    mask:()=>`<path d="M${x-es*1.7} ${y-es*.7} L${x+es*1.4} ${y-es*1.0} L${x+es*1.6} ${y+es*.7} L${x-es*1.5} ${y+es*.8}Z" fill="${a.mask[2]}" ${R}/><path d="M${x-es*1.1} ${y} Q${x} ${y-es*.9} ${x+es*1.1} ${y} Q${x} ${y+es*.6} ${x-es*1.1} ${y}Z" fill="#1b1b1d" ${R}/>`,
+    mixed:()=>sd<0?mk(`M${x-es*1.3} ${y} Q${x} ${y-es*.9} ${x+es*1.3} ${y+es*.1}`,3):`<path d="${B(es*1.15,es*.75)}" fill="#1b1b1d"/>`+notch(x,y)};
+   o.push((E[h.eye]||E.almond)())}
+  if(h.bags)o.push(mk(`M${x-es} ${y+es*1.15} Q${x} ${y+es*1.8} ${x+es} ${y+es*1.15}`,1.4,dk));
+  const BR={shelf:[[-bw*1.1,-bt*.2],[bw*1.1,0],[bw,bt*.9],[-bw,bt*.8]],slab:[[-bw,-bt*.3],[bw,bt*.1],[bw,bt],[-bw,bt*.6]],thick:[[-bw,0],[bw,-bt*.3],[bw,bt*.7],[-bw,bt*.8]],
+   raised:[[-bw,bt*.4],[bw*.2,-bt*.6],[bw,-bt*.2],[bw,bt*.3],[bw*.2,0],[-bw,bt]],thin:[[-bw,bt*.3],[0,-bt*.4],[bw,bt*.1],[bw,bt*.6],[0,bt*.1],[-bw,bt*.8]],
+   arch:[[-bw,bt*.5],[-bw*.1,-bt*.5],[bw,bt*.2],[bw,bt*.6],[-bw*.1,0],[-bw,bt]],flat:[[-bw,0],[bw,0],[bw,bt*.8],[-bw,bt*.8]],none:null}[h.brow];
+  if(BR)o.push(card(r,x,browY,`<path d="${'M'+BR.map(([px,py])=>[(x+px).toFixed(1),(browY-bt+py).toFixed(1)].join(' ')).join(' L')+'Z'}" fill="${bc}" transform="rotate(${(h.brow==='slab'||h.brow==='shelf'?9:-2)*sd} ${x} ${browY})"/>`,2))}
+ // nose
+ const nz=hu*.12*fs,ny=ey+(bot-ey)*.42;
+ if(!lod){const N={broad:`M${-nz*.2} ${ny-nz*1.4} Q${nz*.9} ${ny-nz*.2} ${nz*.55} ${ny+nz*.25} Q0 ${ny+nz*.5} ${-nz*.6} ${ny+nz*.2}`,flat:`M${-nz*.75} ${ny+nz*.1} Q0 ${ny+nz*.45} ${nz*.75} ${ny+nz*.1}`,hook:`M${-nz*.3} ${ny-nz*1.7} Q${nz*1.5} ${ny-nz*.7} ${nz*.45} ${ny+nz*.35} L${-nz*.45} ${ny+nz*.2}`,
+  long:`M${nz*.05} ${ny-nz*1.9} L${nz*.5} ${ny+nz*.2} L${-nz*.35} ${ny+nz*.3}`,button:`M${-nz*.4} ${ny} Q0 ${ny+nz*.55} ${nz*.4} ${ny}`,small:`M${nz*.1} ${ny-nz*.8} L${nz*.32} ${ny+nz*.12} L${-nz*.18} ${ny+nz*.18}`};
+  if(PAPER)o.push(card(r,0,ny,`<path d="M${-nz*.6} ${ny+nz*.35} L${nz*.1} ${ny-nz*1.4} L${nz*.7} ${ny+nz*.35}Z" fill="${shade(sk,.8)}"/>`,0));
+  else if(HUM&&GRAIN)o.push(mk(`M${nz*.05} ${ny-nz*.8} L${nz*.28} ${ny+nz*.18} L${-nz*.12} ${ny+nz*.22}`,1.3,shade(sk,.74)));
+  else if(HUM)o.push(piece(cut([[-nz*.15,ny-nz*1.6],[nz*.2,ny-nz*1.6],[nz*.55,ny+nz*.1],[-nz*.35,ny+nz*.15]],r),shade(sk,.9),r,0)+`<ellipse cx="${-nz*.3}" cy="${ny+nz*.28}" rx="${nz*.18}" ry="${nz*.1}" fill="${shade(sk,.55)}"/><ellipse cx="${nz*.4}" cy="${ny+nz*.28}" rx="${nz*.18}" ry="${nz*.1}" fill="${shade(sk,.55)}"/>`);
+  else{o.push(mk(N[h.nose],2.4,a.mask?'#1b1b1d':shade(sk,.42)))}
+  if(h.scar)o.push(mk(`M${crw*.1} ${top+len*.22} l${hu*.14} ${hu*.17}`,2,'#a8304a'));
+  if(h.freck)for(let k=0;k<12;k++)o.push(`<circle cx="${((k%2?1:-1)*face*(.25+r()*.15)*2).toFixed(1)}" cy="${(ny-nz*.6+r()*nz*.8).toFixed(1)}" r="${(hu*.012+r()*hu*.008).toFixed(1)}" fill="${GRAIN?shade(sk,.8):HUM||PAPER?'#c86a3a':shade(sk,.8)}"/>`)}
+ // mouth
+ const my=ey+(bot-ey)*.68,mw=face*.5*(h.mouth==='grin'||h.mouth==='wide'?1.18:1)*(PAPER&&h.mw?h.mw/.5:1)*(HUM&&!lod?(GRAIN?.56:.78):1);
+ const MO={grim:`M${-mw} ${my+hu*.02} L${mw*.9} ${my+hu*.035}`,grit:`M${-mw} ${my-hu*.02} L${mw} ${my-hu*.02} L${mw*.9} ${my+hu*.07} L${-mw*.9} ${my+hu*.07}Z`,smirk:`M${-mw*.9} ${my+hu*.02} Q${mw*.2} ${my+hu*.05} ${mw} ${my-hu*.06}`,
+  flat:`M${-mw*.75} ${my} L${mw*.7} ${my+hu*.012}`,grin:`M${-mw} ${my-hu*.04} Q0 ${my+hu*.17} ${mw} ${my-hu*.04}Z`,smile:`M${-mw} ${my-hu*.02} Q0 ${my+hu*.1} ${mw} ${my-hu*.025}`,wide:`M${-mw} ${my-hu*.03} Q0 ${my+hu*.11} ${mw} ${my-hu*.03}`};
+ const filled=h.mouth==='grin'||h.mouth==='grit',lipc=h.lip||shade(sk,.62);
+ if(PAPER){if(filled)o.push(card(r,0,my,`<path d="${MO[h.mouth]}" fill="#8a2238"/><path d="M${-mw*.8} ${my-hu*.02} L${mw*.8} ${my-hu*.02} L${mw*.75} ${my+hu*.025} L${-mw*.75} ${my+hu*.025}Z" fill="#fffdf0"/>`,0));
+  else if(h.lip)o.push(card(r,0,my,`<path d="M${-mw} ${my} Q${-mw*.3} ${my-hu*.08} 0 ${my-hu*.03} Q${mw*.3} ${my-hu*.08} ${mw} ${my}Z" fill="${h.lip}"/>`,0)+card(r,0,my,`<path d="M${-mw*.9} ${my+hu*.01} Q0 ${my+hu*.12} ${mw*.9} ${my+hu*.01}Z" fill="${shade(h.lip,1.25)}"/>`,0));
+  else o.push(card(r,0,my,`<path d="${MO[h.mouth]} L${mw*.8} ${my+hu*.05} L${-mw*.8} ${my+hu*.06}Z" fill="#8a2238"/>`,0))}
+ else if(HUM){if(filled)o.push(`<path d="${MO[h.mouth]}" fill="#fffdf0" stroke="${shade(lipc,.8)}" stroke-width="2.4" stroke-linejoin="round"/>`);
+  else if(!a.fem)o.push(GRAIN?mk(MO[h.mouth],1.5,shade(sk,.42)):`<path d="M${-mw*.8} ${my+hu*.01} Q0 ${my+hu*.08} ${mw*.8} ${my+hu*.01}Z" fill="${shade(sk,.75)}"/>`+mk(MO[h.mouth],2.2,shade(sk,.4)));
+  else o.push(`<path d="M${-mw} ${my} Q${-mw*.4} ${my-hu*.07} 0 ${my-hu*.03} Q${mw*.4} ${my-hu*.07} ${mw} ${my} Q${mw*.4} ${my+hu*.03} ${-mw} ${my}Z" fill="${shade(lipc,.85)}"/><path d="M${-mw*.85} ${my+hu*.01} Q0 ${my+hu*.1} ${mw*.85} ${my+hu*.01}Z" fill="${lipc}"/>`+mk(`M${-mw} ${my} Q0 ${my+hu*.02} ${mw} ${my}`,1.4,shade(lipc,.5)))}
+ else o.push(filled?`<path d="${MO[h.mouth]}" fill="#fffdf0" stroke="#1b1b1d" stroke-width="${lw*.8}" stroke-linejoin="round"/>`:mk(MO[h.mouth],lw,a.fem?'#8a2238':'#1b1b1d'));
+ // beard
+ if(a.beard==='full')o.push(piece(cut([[-jw*1.06,jt+len*.12],[-jw,bot-len*.02],[-jw*.35,bot+len*.24],[jw*.4,bot+len*.2],[jw*1.02,bot-len*.04],[jw*1.06,jt+len*.12],[jw*.55,my+hu*.03],[0,my-hu*.07],[-jw*.55,my+hu*.03]],r),a.hc,r,0)+strips([[0,my+hu*.05],[0,0],[0,bot+len*.22]],a.hc,'beard'));
+ if(a.beard==='goatee')o.push(piece(cut([[-mw*.7*(lod?1.4:1),my+hu*.06],[-mw*.28*(lod?1.6:1),bot+len*.18],[mw*.32*(lod?1.6:1),bot+len*.17],[mw*.7*(lod?1.4:1),my+hu*.06],[0,my+hu*.1]],r),a.hc,r,0));
+ if(a.beard==='horseshoe')o.push(piece(cut([[-mw*1.15,my-hu*.075],[0,my-hu*.11],[mw*1.15,my-hu*.075],[mw*1.25,bot+len*.04],[mw*.92,bot+len*.03],[mw*.84,my+hu*.025],[-mw*.84,my+hu*.025],[-mw*.92,bot+len*.03],[-mw*1.25,bot+len*.04]],r),a.hc,r,0));
+ if(a.beard==='short')o.push(`<path d="M${-jw*1.02} ${jt+len*.2} L${-jw*.92} ${bot-len*.06} Q0 ${bot+len*.12} ${jw*.92} ${bot-len*.06} L${jw*1.02} ${jt+len*.2} L${jw*.75} ${my-hu*.04} Q0 ${my-hu*.13} ${-jw*.75} ${my-hu*.04}Z" fill="${a.hc}" opacity=".5"/>`);
+ // hair on top
+ const HT={bandana:[[-crw*1.04,jt-es*.1],[-crw*.85,top+len*.04],[-crw*.45,top-hu*.05],[crw*.45,top-hu*.05],[crw*.85,top+len*.04],[crw*1.04,jt-es*.1],[crw*.7,top+len*.2],[-crw*.7,top+len*.2]],buzz:[[-crw*.98,jt-es*.2],[-crw*.8,top+len*.06],[-crw*.45,top-hu*.03],[crw*.45,top-hu*.03],[crw*.8,top+len*.06],[crw*.98,jt-es*.2],[crw*.7,top+len*.15],[-crw*.7,top+len*.15]],
+  peak:[[-crw*1.0,jt-es*.6],[-crw*.9,top-hu*.03],[0,top-hu*.12],[crw*.92,top-hu*.03],[crw*1.0,jt-es*.6],[crw*.75,top+len*.17],[crw*.2,top+len*.14],[0,top+len*.28],[-crw*.2,top+len*.14],[-crw*.75,top+len*.17]],
+  mullet:[[-crw*1.05,jt-es*.5],[-crw*.95,top-hu*.05],[crw*.95,top-hu*.08],[crw*1.06,jt-es*.5],[crw*.55,top+len*.16],[-crw*.45,top+len*.22]],
+  crop:[[-crw*1.03,jt-es*.8],[-crw*.95,top-hu*.05],[crw*.9,top-hu*.09],[crw*1.04,jt-es*.4],[crw*.8,top+len*.14],[crw*.05,top+len*.2],[-crw*.3,top+len*.12],[-crw*.85,top+len*.16]],
+  puff:[[-crw*1.04,jt-es*.3],[-crw*.9,top-hu*.03],[crw*.9,top-hu*.03],[crw*1.04,jt-es*.3],[crw*.85,top+len*.2],[-crw*.85,top+len*.2]]};
+ if(HT[a.hair]){o.push(piece(cut(HT[a.hair],r),a.hair==='bandana'?a.band:a.hc,r,0));if(TEX&&a.hair!=='buzz'&&a.hair!=='puff'&&a.hair!=='bandana')o.push(strips([[0,top-hu*.1],[0,0],[0,a.hair==='crop'?browY-es*.9-hu*.07:jt-es*.1]],a.hc,'hair'))}
+ if(a.hair==='puff')o.push(piece(cut([[-crw*.75,top-hu*.02],[crw*.75,top-hu*.04],[crw*.7,top+hu*.07],[-crw*.72,top+hu*.08]],r),a.g2,r,0));
+ if(a.hair==='spiky'){const sp=[[-crw*1.0,jt-es*.3],[-crw*.95,top+len*.1]],L5=[.55,.85,.65,1.0,.7];L5.forEach((l,i)=>{const x0=-crw*.85+i*crw*.42;sp.push([x0+crw*.05,top+len*.05],[x0+crw*.3+l*hu*.25,top-l*hu*(GRAIN?.26:HUM?.36:.55)],[x0+crw*.38,top+len*.08])});sp.push([crw*1.0,top+len*.1],[crw*1.0,jt-es*.3],[0,top+len*.22]);o.push(piece(cut(sp,r),a.hc,r,0));if(TEX)o.push(piece(cut([[-crw*.6,top+len*.02],[crw*.2,top-hu*.35],[crw*.5,top+len*.02]],r),shade(a.hc,1.3),r,0))}
+ if(a.hair==='waves'){o.push(piece(cut([[-crw*1.15,jt],[-crw*1.1,top-hu*.07],[-crw*.15,top-hu*.2],[-crw*.05,top+len*.1],[-crw*.6,top+len*.3],[-crw*.95,jt+es]],r),a.hc,r,0),piece(cut([[crw*.05,top+len*.05],[crw*.2,top-hu*.19],[crw*1.12,top-hu*.06],[crw*1.2,jt],[crw*1.0,jt+es*1.5],[crw*.75,top+len*.25]],r),shade(a.hc,1.08),r,0));
+  // collage strips stay at the side of the face, never across the eyes or mouth
+  if((TEX||HUM)&&!GRAIN)for(const sd of[-1,1])for(let k=0;k<3;k++)o.push(piece(cut([[-crw*(1.6-k*.1),bot+hu*(.3+k*.15)],[-crw*(1.3-k*.05),jt+es*(1.4+k*.4)],[-crw*(1.12),jt+es*(1.8+k*.5)],[-crw*(1.4-k*.08),bot+hu*(.45+k*.15)]].map(([px,py])=>[px*sd,py+(sd>0?hu*.08:0)]),r),k%2?shade(a.hc,.85):shade(a.hc,1.1),r,0))}
+ if(a.hat)o.push(piece(cut([[-crw*1.8,top+len*.16],[crw*1.8,top+len*.12],[crw*1.62,top+len*.24],[-crw*1.62,top+len*.27]],r),'#141414',r,0),
+  piece(cut([[-crw*.98,top+len*.17],[-crw*.86,top-hu*.42],[0,top-hu*.36],[crw*.86,top-hu*.44],[crw*.98,top+len*.14]],r),'#1e1e1e',r,0),
+  piece(cut([[-crw*.95,top+len*.06],[crw*.95,top+len*.04],[crw*.97,top+len*.13],[-crw*.97,top+len*.15]],r),'#3c3c3c',r,0));
+ return o.join('')}
+/* ---------- body ---------- */
+function figure(a,ready=false,look=0,turn=0,pz={}){const r=rngOf(a.n+V),T=330*a.H,hu=T/S.heads,sk=a.skin,dk=shade(sk,.74),P={...(ready?{...a.st,...a.ready}:a.st),...pz},sway=S.sway,pinF=P.nopin?()=>'':pin;CELD=hu*.085;
+ const sw=ex(a,'sw')*T,cw=ex(a,'cw')*T,ww=ex(a,'ww')*T,hw=ex(a,'hw')*T,bel=a.bel*T*(S.ex>1.5?1.5:1),au=ex(a,'au')*T,af=ex(a,'af')*T,th=ex(a,'th')*T,shn=ex(a,'sh')*T;
+ const hunch=(P.hunch||0)*hu,lean=(P.lean||0)*hu,hip=((P.hip||0)+(r()-.5)*.012*sway)*T,dropSh=(r()-.5)*hu*.12*sway,crouch=P.knees?hu*.35:0;
+ const headTop=hunch+crouch,yN=headTop+hu*1.0+(HUM&&a.neck?a.neck*hu:0),ySh=yN+hu*.22,legL=T*a.legs,yC=T-legL+crouch,LK=a.legs<.45?.7:Math.min(1,a.legs/.47);
+ // short-legged, big-headed builds: keep the waist above the crotch so the trunks always have a front panel
+ let yCh=ySh+hu*.95,yW=yCh+hu*.65;if(yW>yC-hu*.62){yW=yC-hu*.62;yCh=Math.min(yCh,yW-hu*.5)}
+ const o=[];
+ // patterned gear for collage
+ const gearFill=(TEX||GRAIN&&a.glit)&&ALL.includes(a)?`url(#pat-${ALL.indexOf(a)})`:a.gear;
+ if(a.coat)o.push(piece(cut([[-sw*1.02,ySh-hu*.05],[sw*1.02,ySh-hu*.05],[sw*1.3,T*.86],[-sw*1.3,T*.86]],r),shade(a.coat,.8),r,0));
+ if(a.cape)o.push(piece(cut([[-sw*.9,ySh],[sw*.9,ySh],[sw*1.5,T*.8],[sw*.4,T*.84],[-sw*.6,T*.83],[-sw*1.5,T*.8]],r),a.cape,r));
+ // legs: thigh card, shin card with a calf and a knee notch, boot turned out with a toe point
+ for(const sd of[-1,1]){const h0=[sd*hw*.5+hip,yC];let foot=[sd*Math.min((P.wide||.15)*T*.5+hw*.2,legL*.55)+hip*.3,T-hu*.32];
+  let kx=(h0[0]+foot[0])/2,ky=(h0[1]+foot[1])/2;const contra=P.contra&&sd>0;
+  if(contra){foot=[h0[0]-hu*.35,T-hu*.45];kx=(h0[0]+foot[0])/2-hu*.12;ky+=hu*.05}
+  if(P.toes){kx+=sd*hu*.03;ky+=hu*.04}if(P.knees){kx+=sd*hu*.18}
+  o.push(piece(cut(SHAPED&&!a.jeans?limb(h0,[kx,ky],th,th*.8,TH):seg(h0,[kx,ky],th,th*.82),r),a.jeans?(a.pants||'#3a5a8a'):sk,r));
+  if(a.quad&&!a.jeans)o.push(mk(`M${h0[0]+sd*th*.3} ${h0[1]+hu*.3} Q${kx+sd*th*.5} ${(h0[1]+ky)/2} ${kx+sd*th*.2} ${ky-hu*.2}`,1.3,dk));
+  o.push(piece(cut(a.jeans?seg([kx,ky],foot,th*.8,shn*.75):shin([kx,ky],foot,shn,sd),r),a.jeans?(a.pants||'#3a5a8a'):sk,r));
+  if(!a.jeans)o.push(pad(r,kx,ky+hu*.02,[foot[0]-h0[0],foot[1]-h0[1]],th*(GRAIN?.88:.98),hu*(GRAIN?.22:.24),a.pad||a.g2));
+  if(HUM&&!a.jeans)o.push(mk(`M${kx-th*.3} ${ky+hu*.22} q${th*.3} ${hu*.08} ${th*.6} 0`,1.2,dk));
+  const heel=P.toes||contra?hu*.18:0,out=sd*(hu*.22+(P.splay?hu*.2:0)),fy=contra?foot[1]+hu*.32:T;
+  o.push(piece(cut([[foot[0]-shn*.85,foot[1]-hu*.55],[foot[0]+shn*.85,foot[1]-hu*.55],[foot[0]+shn*.9+out*.3,fy-hu*.12-heel],[foot[0]+shn*.9+out,fy-hu*.04],[foot[0]+shn*1.1+out*1.15,fy],[foot[0]-shn*1.0+out*.2,fy-heel*.5],[foot[0]-shn*.9,fy-hu*.1-heel]],r),a.boots,r)+(GRAIN?'':piece(cut([[foot[0]-shn*.92,foot[1]-hu*.6],[foot[0]+shn*.92,foot[1]-hu*.6],[foot[0]+shn*.92,foot[1]-hu*.48],[foot[0]-shn*.92,foot[1]-hu*.48]],r),a.btrim||a.g2,r,0))+(GRAIN?[]:[0,1,2]).map(k=>mk(`M${foot[0]-shn*.32} ${foot[1]-hu*(.4-k*.1)} L${foot[0]+shn*.32} ${foot[1]-hu*(.36-k*.1)}`,1,a.boots==='#111'||a.boots==='#1b1b1d'?'#9a9a9a':shade(a.boots,.55))).join('')+(a.bootStar&&!NOSIG?`<text x="${foot[0]+out*.3}" y="${(fy-hu*.12).toFixed(1)}" text-anchor="middle" font-family="Segoe UI Symbol" font-size="${(hu*.26).toFixed(1)}" fill="${a.g2}" stroke="#1b1b1d" stroke-width=".6">\u2605</text>`:''))}
+ // torso
+ const side=sd=>{const d=sd>0?dropSh:0;return[[sd*shn*1.05,yN+hu*.05],[sd*sw*.62,ySh-hu*.04+d],[sd*sw,ySh+hu*.14+d],[sd*cw*1.02,ySh+hu*.6],[sd*cw*(a.fem?.93:1),yCh],[sd*(ww+bel),yW+(bel?hu*.18:0)],[sd*hw+hip,yC-hu*.02]]};
+ const torsoAt=o.length;o.push(piece(cut(more(side(-1).concat([[hip,yC+hu*.08]],side(1).reverse()),.012),r),sk,r));
+ for(const sd of[-1,1])o.push(pinF(sd*hw*.5+hip,yC+hu*.05,hu*.05));
+ const trp=a.traps*(HUM&&a.fem?.45:1);if(a.traps>.3)o.push(piece(cut([[-sw*.62,ySh+hu*.02],[-shn*1.2*trp-hu*.15,yN-hu*(a.fem&&HUM?.15:.35)],[shn*1.2*trp+hu*.15,yN-hu*(a.fem&&HUM?.12:.32)],[sw*.62,ySh+hu*.02+dropSh]],r),shade(sk,.97),r,0));
+ if(bel>0){o.push(piece(cut([[-(ww+bel)*.85,yW-hu*.25],[0,yW-hu*.5],[(ww+bel)*.87,yW-hu*.24],[(ww+bel)*.98,yW+hu*.28],[0,yW+hu*.56],[-(ww+bel)*.96,yW+hu*.3]],r),sk,r));if(HUM)for(const sd of[-1,1])o.push(mk(`M${sd*(ww+bel)*.9} ${yW+hu*.12} q${-sd*hu*.06} ${hu*.03} ${-sd*hu*.1} 0`,1.3,dk))}
+ // chest: pec plates, abs as offset columns of small cut plates (count per wrestler), never a cross-scored block
+ const plate=c=>shade(sk,c);
+ if((!a.fem||a.r==='Power woman')&&!bel&&a.r!=='High flyer'){for(const sd of[-1,1])o.push((GRAIN?'<g filter="url(#psh0)">':'')+piece(cut([[sd*cw*.05,ySh+hu*.35],[sd*cw*.92,ySh+hu*.42],[sd*cw*.85,ySh+hu*.82],[sd*cw*.1,ySh+hu*.9]],r),plate(GRAIN?.95:.9),r,0)+(GRAIN?'</g>':''))}
+ if(a.abs&&(!HUM||GRAIN)){const rows=a.abs/2;for(let k=0;k<rows;k++)for(const sd of[-1,1]){const y0=yCh+hu*(.08+k*.27)+(sd>0?hu*.04:0),x0=sd*ww*.08;o.push(piece(cut([[x0,y0],[x0+sd*ww*.42,y0+hu*.02],[x0+sd*ww*.4,y0+hu*.21],[x0+sd*ww*.02,y0+hu*.22]],r),plate(GRAIN?.95:.91),r,0).replace('<path','<path'+(GRAIN?' filter="url(#psh0)"':'')))}}
+ if(HUM){o.push(mk(`M${-sw*.62} ${ySh+hu*.06} Q${-shn*1.4} ${ySh+hu*.18} ${-shn*.4} ${ySh+hu*.2} M${sw*.62} ${ySh+hu*.06+dropSh} Q${shn*1.4} ${ySh+hu*.18} ${shn*.4} ${ySh+hu*.2}`,1.4,dk)+mk(`M${-hu*.04} ${ySh+hu*.24} l${hu*.04} ${hu*.06} l${hu*.04} ${-hu*.06}`,1.2,dk));
+  if(!a.fem||a.r==='Power woman')o.push(mk(`M${-cw*.8} ${ySh+hu*.82} Q${-cw*.3} ${ySh+hu*1.0} 0 ${ySh+hu*.74} M${cw*.12} ${ySh+hu*.82} Q${cw*.5} ${ySh+hu*.98} ${cw*.82} ${ySh+hu*.78}`,1.5,dk));
+  // abs: short separate stroke pairs per row, offset, never a crossing plus sign
+  if(a.abs&&!GRAIN)for(let k=0;k<a.abs/2;k++)for(const sd of[-1,1]){const y0=yCh+hu*(.22+k*.26)+(sd>0?hu*.03:0);o.push(mk(`M${sd*ww*.1} ${y0} Q${sd*ww*.27} ${y0+hu*.04} ${sd*ww*.42} ${y0-hu*.01}`,1.3,dk))}
+  o.push(`<ellipse cx="${hip*.4}" cy="${yW+hu*.12}" rx="${hu*.02}" ry="${hu*.03}" fill="${dk}"/>`)}
+ // chest hair: irregular torn blobs of 3-4 sizes, wider than tall, some overlapping, no two the same
+ if(a.chestHair)for(const[tx,ty,ts]of[[-.48,.56,1.0],[-.2,.5,1.35],[.12,.53,.8],[.4,.58,1.15],[-.05,.72,.6],[.6,.66,.55]]){const cx=tx*cw,cy=ySh+hu*ty,s=hu*.12*ts,n=6+Math.floor(r()*3),pts=[];
+  for(let k=0;k<n;k++){const t=k/n*Math.PI*2,rr=(.65+r()*.45);pts.push([cx+Math.cos(t)*s*1.5*rr,cy+Math.sin(t)*s*.75*rr])}o.push(piece(cut(pts,r),shade(a.hc,.95+r()*.2),r,0))}
+ if(a.fem&&a.r!=='Power woman'&&!HUM)o.push(mk(`M${-ww*.22} ${yCh+hu*.12} l0 ${hu*.42} M${ww*.25} ${yCh+hu*.1} l0 ${hu*.44}`,1.3,dk));
+ if(a.tat&&a.tat.chest&&!NOSIG){const sd=a.tat.chest,x=sd*cw*.55,y=ySh+hu*.18,c=INKC(sk);o.push(`<path d="M${x-sd*cw*.35} ${y} Q${x} ${y-hu*.12} ${x+sd*cw*.42} ${y+hu*.05} L${x+sd*cw*.2} ${y+hu*.22} L${x} ${y+hu*.12} L${x-sd*cw*.15} ${y+hu*.32} L${x-sd*cw*.25} ${y+hu*.14}Z" fill="${c}"/>`)}
+ // gear
+ if(a.jeans)o.push(piece(cut([[-hw*1.04,yW+hu*.35],[hw*1.05,yW+hu*.34],[hw*1.08+hip,yC+hu*.3],[-hw*1.07+hip,yC+hu*.3]],r),a.pants||(TEX?'url(#denim)':'#3a5a8a'),r)+piece(cut([[-hw*1.06,yW+hu*.3],[hw*1.06,yW+hu*.28],[hw*1.06,yW+hu*.46],[-hw*1.06,yW+hu*.48]],r),'#2a1a10',r)+`<rect x="${-hu*.15}" y="${yW+hu*.29}" width="${hu*.3}" height="${hu*.2}" fill="#c9a24a"/>`);
+ else{const tw=Math.max(ww+bel*.6,hw)*1.05,bw2=Math.max(hw,ww)*1.08;o.push(piece(cut([[-tw,yW+hu*.3],[tw,yW+hu*.28],[bw2+hip,yC+hu*.05],[bw2*.35+hip,yC+hu*.42*LK],[-bw2*.35+hip,yC+hu*.44*LK],[-bw2+hip,yC+hu*.06]],r),gearFill,r,0)+piece(cut([[-tw*1.01,yW+hu*.27],[tw*1.01,yW+hu*.25],[tw*1.01,yW+hu*.4],[-tw*1.01,yW+hu*.42]],r),a.g2,r));
+  if(TEX){const yt=yW+hu*.42,yb=yC+hu*.4,fsz=Math.min(hu*.42,(yb-yt)*.62),ly=yt+(yb-yt)*.4+fsz*.35;
+   o.push(`<g transform="rotate(${((r()-.5)*14).toFixed(0)} ${hip} ${ly})"><text x="${hip}" y="${ly.toFixed(1)}" text-anchor="middle" font-family="Permanent Marker" font-size="${fsz.toFixed(1)}" fill="${a.g2}" stroke="#1b1b1d" stroke-width="1">${a.emb?'':a.ini}</text>${a.emb?`<circle cx="${hip}" cy="${(ly-fsz*.35).toFixed(1)}" r="${(fsz*.62).toFixed(1)}" fill="#1b1b1d"/><text x="${hip}" y="${(ly+fsz*.05).toFixed(1)}" text-anchor="middle" font-family="Segoe UI Symbol" font-size="${(fsz*1.1).toFixed(1)}" fill="${a.g2}">${a.emb}</text>`:''}</g>`)}}
+ if(a.top==='halter')o.push(piece(cut([[-cw*.98,ySh+hu*.42],[0,ySh+hu*.2],[cw*.98,ySh+hu*.42],[cw*.9,yCh-hu*.05],[0,yCh+hu*.05],[-cw*.9,yCh-hu*.05]],r),gearFill,r,0)+mk(`M${-cw*.3} ${ySh+hu*.3} L0 ${yN+hu*.15} L${cw*.3} ${ySh+hu*.3}`,2.6,a.gear));
+ if(a.top==='singlet')o.push(piece(cut([[-sw*.55,ySh],[-cw*.3,ySh+hu*.22],[cw*.3,ySh+hu*.22],[sw*.55,ySh+dropSh],[cw*.98,ySh+hu*.5],[ww*1.02,yW+hu*.3],[-ww*1.02,yW+hu*.3],[-cw*.98,ySh+hu*.5]],r),gearFill,r,0));
+ if(a.top==='crop')o.push(piece(cut([[-cw*.97,ySh+hu*.35],[-cw*.3,ySh+hu*.15],[cw*.3,ySh+hu*.15],[cw*.97,ySh+hu*.35],[cw*.92,yCh-hu*.1],[cw*.2,yCh-hu*.15],[0,yCh-hu*.05],[-cw*.92,yCh-hu*.1]],r),gearFill,r,0));
+ if(a.sash)o.push(piece(cut(GRAIN?[[-sw*.64,ySh],[-sw*.24,ySh-hu*.04],[cw*.98,yCh+hu*.2],[cw*.72,yCh+hu*.52]]:[[-sw*.6,ySh],[-sw*.3,ySh-hu*.02],[cw*.95,yCh+hu*.25],[cw*.75,yCh+hu*.45]],r),TEX?a.g2:gearFill,r,0));
+ if(a.coat)for(const sd of[-1,1])o.push(piece(cut([[sd*sw*1.0,ySh-hu*.02],[sd*cw*.42,ySh+hu*.1],[sd*cw*.5,yCh],[sd*hw*.75,yC+hu*.1],[sd*hw*.9,T*.84],[sd*sw*1.32,T*.85],[sd*sw*1.1,yW]],r),a.coat,r,1)+mk(`M${sd*cw*.42} ${ySh+hu*.1} L${sd*cw*.75} ${ySh+hu*.7} L${sd*cw*.5} ${yCh}`,1.4,shade(a.coat,1.8)));
+ // arms
+ const fist0=hu*.22*S.hand*({Giant:1.5,Powerhouse:1.3,Brawler:1.25}[a.r]||1.05);let farArm='',armAt=torsoAt;if(S.cel){const b=LIT(o.splice(0).join(''),hu);o.push(b);armAt=0}
+ for(const sd of[-1,1]){const far=turn&&sd!==turn,near=turn&&sd===turn,ao=[],k=sd<0?0:1,ang=Array.isArray(P.arms[0])?P.arms[k]:P.arms,d=sd>0?dropSh:0,s0=[sd*sw*.9*(far?.85:near?1.08:1)+(far?turn*hu*.1:0),ySh+hu*.2+d];
+  let sa=ang[0]+(P.handHip&&sd>0?24:0),ea=ang[1]+(P.handHip&&sd>0?-140:0);if(P.hipsBoth){sa=ang[0];ea=ang[1]}
+  const ul=hu*1.35*(far?.88:1),fl=hu*1.22*(far?.88:1),d1=dir(sa,sd),e=[s0[0]+d1[0]*ul,s0[1]+d1[1]*ul],d2=dir(sa+ea,sd),w=[e[0]+d2[0]*fl,e[1]+d2[1]*fl];
+  // arms always carry a darker edge, so an arm across the chest still reads as an arm
+  ao.push(piece(cut(SHAPED?limb(s0,e,au,au*.8,UA):seg(s0,e,au,au*.84),r),a.sleeve||sk,r,1));
+  if(a.tat&&a.tat.arm&&a.tat.arm.includes(sd)&&!a.sleeve&&!NOSIG)ao.push(tattoo(a.tat.st,[s0[0]+(e[0]-s0[0])*.15,s0[1]+(e[1]-s0[1])*.15],e,au*.8,sk,r));
+  const fw=Math.max(af*1.08,au*.78),fist=GRAIN?Math.max(fist0*.75,fw*1.05):fist0;ao.push(piece(cut(SHAPED?limb([e[0]-d2[0]*fw*.5,e[1]-d2[1]*fw*.5],w,fw,fw*.6,FA):seg(e,w,af*1.08,af*.72),r),a.sleeve||sk,r,1));
+  if(!(GRAIN&&sa>110))ao.push(GRAIN?pad(r,e[0],e[1],[d2[0],d2[1]],fw*1.08,fl*.15,a.pad||a.g2):pad(r,e[0],e[1],[w[0]-s0[0],w[1]-s0[1]],Math.max(au,fw)*1.04,hu*.17,a.pad||a.g2));
+  if(a.veins&&HUM){const p1=[e[0]+d2[0]*fl*.2,e[1]+d2[1]*fl*.2],p2=[e[0]+d2[0]*fl*.65,e[1]+d2[1]*fl*.65],nx=-d2[1],ny=d2[0],c=[(p1[0]+p2[0])/2+nx*af*.35,(p1[1]+p2[1])/2+ny*af*.35];
+   ao.push(mk(`M${p1[0].toFixed(1)} ${p1[1].toFixed(1)} Q${c[0].toFixed(1)} ${c[1].toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`,1.1,shade(sk,.65)))}
+  ao.push(piece(cut([[s0[0]-sd*au*.7,s0[1]-hu*.24],[s0[0]+sd*au*1.2,s0[1]-hu*.08],[s0[0]+sd*au*1.15,s0[1]+hu*.4],[s0[0]-sd*au*.3,s0[1]+hu*.34]],r),sk,r));
+  ao.push(pinF(s0[0]+sd*au*.3,s0[1]+hu*.05,hu*.05));
+  if(a.tape)ao.push(GRAIN?piece(cut(seg([w[0]-d2[0]*hu*.12,w[1]-d2[1]*hu*.12],w,fw*.66,fw*.64),r),'#f4f1e8',r,0):piece(cut(seg([e[0]+d2[0]*fl*.72,e[1]+d2[1]*fl*.72],w,af*.8,af*.76),r),'#f4f1e8',r,0));
+  const ang2=Math.atan2(d2[1],d2[0])*180/Math.PI-90,open=P.open&&sd>0&&!ready;
+  ao.push(`<g transform="translate(${w[0].toFixed(1)},${w[1].toFixed(1)}) rotate(${ang2.toFixed(1)})">${open?piece(cut([[-fist*.55,0],[fist*.55,0],[fist*.5,fist*1.4],[fist*.12,fist*1.55],[-fist*.42,fist*1.3]],r),sk,r,1)+piece(cut([[fist*.4*sd,fist*.2],[fist*.9*sd,fist*.65],[fist*.62*sd,fist*.82]],r),sk,r,1)
+   :piece(cut(SHAPED?[[-fist*.55,0],[fist*.55,0],[fist*.7,fist*.62],[fist*.6,fist*1.02],[fist*.42,fist*.96],[fist*.24,fist*1.08],[fist*.05,fist*1.0],[-fist*.13,fist*1.08],[-fist*.31,fist*1.0],[-fist*.5,fist*1.04],[-fist*.68,fist*.72]]:[[-fist*.62,0],[fist*.62,0],[fist*.7,fist*.95],[fist*.2,fist*1.15],[-fist*.65,fist*.95]],r),sk,r,1)+(HUM?mk(`M${-fist*.45} ${fist*.8} L${fist*.45} ${fist*.8}`,1,shade(sk,.6)):'')+piece(cut([[-sd*fist*.5,fist*.15],[sd*fist*.15,fist*.35],[sd*fist*.05,fist*.62],[-sd*fist*.6,fist*.55]],r),shade(sk,.93),r,0)+(a.tape?`<rect x="${-fist*.65}" y="${fist*.45}" width="${fist*1.3}" height="${fist*.22}" fill="#f4f1e8"/>`:'')}</g>`);const ag=LIT(ao.join(''),hu);if(far&&!P.guard)farArm=ag;else o.push(ag)}
+ if(farArm)o.splice(armAt,0,farArm);   // the far arm tucks behind the torso on a three-quarter turn
+ if(a.traps<=.3||HUM)o.push(piece(cut([[-shn*(HUM?1.05:.9),yN+hu*.25],[-shn*.82,headTop+hu*.7],[shn*.82,headTop+hu*.7],[shn*(HUM?1.05:.9),yN+hu*.25]],r),sk,r)+(HUM&&!a.fem?mk(`M${-shn*.6} ${headTop+hu*.85} L${-hu*.04} ${yN+hu*.2} M${shn*.6} ${headTop+hu*.85} L${hu*.04} ${yN+hu*.2}`,1.1,dk):'')+(a.hd.adam?mk(`M${-hu*.035} ${yN-hu*.05} l${hu*.035} ${hu*.06} l${hu*.035} ${-hu*.06}`,1.4,dk):''));
+ const tilt=(r()-.5)*(3+4*Math.min(sway,1))+turn*4+(P.htilt||0);
+ o.push(`<g transform="translate(${(lean+hip*.5+turn*hu*.15).toFixed(1)},${(headTop+hu*.5).toFixed(1)}) rotate(${tilt.toFixed(1)})"${S.tex?' filter="url(#psh1)"':''}>${LIT(head(a,hu,r,0,look),hu)}</g>`);
+ return{T,hu,g:INK(o.join(''),hu,au),hd:INK(LIT(head(a,hu,rngOf(a.n+V+'h')),hu),hu),lod:head(a,hu,rngOf(a.n+V+'h'),1)}}
+/* ---------- page ---------- */
+if(GRAIN){document.documentElement.style.setProperty('--rimw','17px');document.body.style.backgroundColor='#1d2a52'}
+document.getElementById('title').textContent=S.n;document.getElementById('sub').textContent=S.d;
+document.getElementById('nav').innerHTML=Object.keys(STY).map(k=>`<a href="?v=${k}${SHOW?'&show='+SHOW:''}" class="${k===V?'on':''}">${STY[k].n}</a>`).join('')+['','figs','heads','women','broadcast','scene','sig','stars','starheads','cap'].map(s=>`<a href="?v=${V}${s?'&show='+s:''}" class="${s===SHOW?'on':''}">${s||'all'}</a>`).join('');
+// patterned paper at 2x scale, inked in the second gear colour for contrast
+const PAT=ALL.map((a,i)=>{const c=a.gear,c2=a.g2;if(GRAIN&&a.glit)return`<pattern id="pat-${i}" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(17)"><rect width="5" height="5" fill="${c}"/><circle cx="1" cy="1.2" r=".55" fill="${shade(c,1.35)}"/><circle cx="3.6" cy="3.7" r=".35"/><circle cx="4.4" cy="2.4" r=".4" fill="#fff" opacity=".95"/><circle cx="0.6" cy="3.2" r=".38" fill="#fff" opacity=".8"/><circle cx="3.6" cy="3.7" r=".1" fill="#fff" opacity=".85"/><circle cx="3.9" cy="1" r=".4" fill="${shade(c,.72)}"/><circle cx="1.5" cy="4" r=".45" fill="${shade(c,1.2)}"/></pattern>`;return a.pat==='dots'?`<pattern id="pat-${i}" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="${c}"/><circle cx="9" cy="9" r="3.8" fill="${c2}"/></pattern>`
+ :a.pat==='stars'?`<pattern id="pat-${i}" width="26" height="26" patternUnits="userSpaceOnUse"><rect width="26" height="26" fill="${c}"/><path d="M13 3 L16 11 L24 11 L17.5 16 L20 24 L13 19 L6 24 L8.5 16 L2 11 L10 11Z" fill="${c2}"/></pattern>`
+ :a.pat==='scales'?`<pattern id="pat-${i}" width="20" height="15" patternUnits="userSpaceOnUse"><rect width="20" height="15" fill="${c}"/><path d="M0 15 Q10 0 20 15" fill="none" stroke="${c2}" stroke-width="2.6"/></pattern>`
+ :`<pattern id="pat-${i}" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="16" height="16" fill="${c}"/><rect width="6" height="16" fill="${c2}"/></pattern>`}).join('');
+const DEFS=`<svg width="0" height="0" style="position:absolute"><defs>${GRAIN?`<filter id="sh" x="-20%" y="-10%" width="140%" height="130%"><feDropShadow dx="5" dy="8" stdDeviation="7" flood-color="#050a1c" flood-opacity=".45"/></filter><filter id="grain" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="1.9" numOctaves="2" seed="7" result="n0"/><feGaussianBlur in="n0" stdDeviation=".45" result="n"/><feColorMatrix in="n" type="saturate" values="0" result="g"/><feComponentTransfer in="g" result="g2"><feFuncR type="linear" slope=".13" intercept=".925"/><feFuncG type="linear" slope=".13" intercept=".925"/><feFuncB type="linear" slope=".13" intercept=".925"/><feFuncA type="linear" slope="0" intercept="1"/></feComponentTransfer><feBlend in="SourceGraphic" in2="g2" mode="multiply" result="m"/><feComposite in="m" in2="SourceGraphic" operator="in"/></filter>`:`<filter id="sh"><feDropShadow dx="2" dy="3" stdDeviation="0" flood-color="#000" flood-opacity=".55"/></filter>`}
+ <filter id="wht"><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/></filter><filter id="blk"><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"/></filter>
+ <filter id="psh0"><feDropShadow dx=".5" dy=".7" stdDeviation="0" flood-color="#000" flood-opacity=".4"/></filter><filter id="psh1"><feDropShadow dx=".9" dy="1.2" stdDeviation="0" flood-color="#000" flood-opacity=".45"/></filter><filter id="psh2"><feDropShadow dx="1.5" dy="2" stdDeviation="0" flood-color="#000" flood-opacity=".5"/></filter>
+ <pattern id="denim" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#3a5a8a"/><rect width="2" height="6" fill="#33507c"/></pattern>${PAT}</defs></svg>`;
+const Fg=A.map(a=>figure(a,false,0,0,SHOW==='sig'?a.sig||{}:{}));
+const slot=Math.max(...Fg.map(f=>f.T))*(GRAIN?.4:.47),VW=slot*(A.length+.35),VH=Math.max(...Fg.map(f=>f.T))*1.08;
+const lineup=h=>`<div class="stage" style="height:${h}"><div class="floor"></div><svg viewBox="0 0 ${VW} ${VH}" preserveAspectRatio="xMidYMax meet" style="position:absolute;left:0;top:0;width:100%;height:calc(100% - 2.4em);overflow:visible;z-index:2">${Fg.map((f,i)=>`<g transform="translate(${slot*(i+.68)},${VH-f.T-VH*.012})" filter="url(#sh)">${f.g}</g>`).join('')}</svg>${A.map((a,i)=>`<span class="tag" style="left:${(i+.68)/(A.length+.35)*100}%">${a.n}<small>${a.r}</small></span>`).join('')}</div>`;
+const hb=(f,l)=>`<svg viewBox="${-f.hu*1.05} ${-f.hu*1.0} ${f.hu*2.1} ${f.hu*2.1}" preserveAspectRatio="xMidYMid meet"><g filter="url(#sh)">${l?f.lod:f.hd}</g></svg>`;
+const heads=(st='',idx)=>`<div class="heads" style="${st}">${(idx||A.map((_,i)=>i)).map(i=>`<div class="hcard"><span class="hlab">${A[i].n.split(' ')[0]}</span>${hb(Fg[i])}</div>`).join('')}</div>`;
+const tiles=`<div class="small"><b>True 64px roster tiles (simplified face)</b>${A.map((a,i)=>`<div class="px">${hb(Fg[i],1)}</div>`).join('')}</div>`;
+let html=DEFS;
+if(SHOW==='figs'&&GRAIN){const L=[['Zed Zenith',.525,1],['Shinji Skyscraper',.105],['Dex Diesel',.25],['Barbwire Burke',.39],['El Forajido',.64],['Hollywood Hazel',.785],['Coco Capital',.905],['Kid Comet',.52,0,.82]];
+ const F=L.map(([n])=>n==='Hollywood Hazel'?figure(A[6],false,0,0,{handHip:0,contra:0,arms:[[10,4],[18,10]]}):Fg[A.findIndex(a=>a.n===n)]),mx=Math.max(...F.map(f=>f.T)),VH=mx*1.24,VW=VH*2.12;
+ const g=L.map(([n,x,back,k],i)=>{const f=F[i],sc=k||(back?.95:1),y=VH*.99-(back?VH*.13:0);return`<g transform="translate(${(VW*x).toFixed(0)},${y.toFixed(0)}) scale(${sc}) translate(0,${-f.T})" filter="url(#sh)">${back?`<clipPath id="zclip"><rect x="-600" y="-200" width="1200" height="${(f.T*.78+200).toFixed(0)}"/></clipPath><g clip-path="url(#zclip)">${f.g}</g>`:f.g}</g>`}).join('');
+ html+=`<div class="stage" style="height:88vh"><div class="dfloor"></div><svg viewBox="0 0 ${VW} ${VH}" preserveAspectRatio="xMidYMax meet" style="position:absolute;left:0;top:0;width:100%;height:calc(100% - 3.4em);overflow:visible;z-index:2">${g}</svg>${L.filter(l=>!l[2]).map(([n,x],i)=>`<span class="dtag" style="left:${x*100}%;transform:translateX(-50%) rotate(${i%2?1:-1}deg)">${n}</span>`).join('')}</div>`}
+else if(SHOW==='figs'||SHOW==='sig')html+=lineup('86vh');
+else if(SHOW==='heads')html+=heads('grid-template-columns:repeat(5,1fr);height:76vh;grid-auto-rows:1fr')+tiles;
+else if(SHOW==='women')html+=heads('grid-template-columns:repeat(3,1fr);height:84vh',[6,7,8]);
+else if(SHOW==='broadcast'){const a1=figure(A[2],true,.6,HUM?1:0),a2=figure(A[1],true,-.6,HUM?-1:0),H=Math.max(a1.T,a2.T)*1.55,W=H*16/9;
+ const turn=()=>'';   // the turn is built into the figure (far side shorter and tucked), never skewed
+ let crowd='';const cr=rngOf('crowd');for(let k=0;k<160;k++){const x=cr()*W,y=H*.08+cr()*H*.22;crowd+=`<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${(H*.012+cr()*H*.006).toFixed(1)}" fill="hsl(${(cr()*360)|0},25%,${30+cr()*25|0}%)"/>`}
+ html+=`<div class="bc"><svg viewBox="0 0 ${W} ${H}" style="position:absolute;inset:.6em;width:calc(100% - 1.2em);height:calc(100% - 1.2em)" preserveAspectRatio="xMidYMid slice"><rect width="${W}" height="${H}" fill="#14161e"/>${crowd}
+  <polygon points="${W*.04},${H*.92} ${W*.96},${H*.92} ${W*.84},${H*.52} ${W*.16},${H*.52}" fill="#e9e1c9"/><polygon points="${W*.04},${H*.92} ${W*.96},${H*.92} ${W*.96},${H*.99} ${W*.04},${H*.99}" fill="#1f2a55"/>
+  ${[0,1,2].map(k=>`<line x1="${W*.16}" y1="${H*(.36+k*.05)}" x2="${W*.84}" y2="${H*(.36+k*.05)}" stroke="${['#c23b2a','#f4f1e8','#2c62ad'][k]}" stroke-width="${H*.007}"/>`).join('')}
+  <rect x="${W*.15}" y="${H*.3}" width="${W*.012}" height="${H*.24}" fill="#c9c9c9"/><rect x="${W*.838}" y="${H*.3}" width="${W*.012}" height="${H*.24}" fill="#c9c9c9"/>
+  <g transform="translate(${W*.31},${H*.9-a1.T}) ${turn(1)}" filter="url(#sh)">${a1.g}</g><g transform="translate(${W*.69},${H*.9-a2.T}) ${turn(-1)}" filter="url(#sh)">${a2.g}</g></svg>
+  <div class="chy">BARBWIRE BURKE vs DEX DIESEL<small>Wednesday Night Detonation · main event</small></div></div>`}
+else if(SHOW==='stars'||SHOW==='starheads'){
+ const grp=g=>STARS.filter(a=>a.grp===g),TT={AEW:'AEW · top 5',WWE:'WWE · top 5',Legend:'Legends · top 5'};
+ if(SHOW==='stars'){const row=(L,title)=>{const F=L.map(a=>figure(a,false,0,0,a.sig||{})),mx=Math.max(...F.map(f=>f.T)),VH=mx*1.32,VW=VH*6.3;
+   return`<div style="position:relative;height:30.5vh;margin:0 1.2em"><span class="strip" style="position:absolute;left:0;top:.1em;z-index:4;font-size:1.05em">${title}</span><div class="floor"></div><svg viewBox="0 0 ${VW} ${VH}" preserveAspectRatio="xMidYMax meet" style="position:absolute;left:0;top:0;width:100%;height:calc(100% - 2.4em);overflow:visible;z-index:2">${F.map((f,i)=>`<g transform="translate(${VW*(i+.62)/(L.length+.25)},${VH-f.T-VH*.012})" filter="url(#sh)">${f.g}</g>`).join('')}</svg>${L.map((a,i)=>`<span class="tag" style="left:${(i+.62)/(L.length+.25)*100}%">${a.n}</span>`).join('')}</div>`};
+  html+=['AEW','WWE','Legend'].map(g=>row(grp(g),TT[g])).join('')}
+ else{const F=STARS.map(a=>figure(a));html+=`<div class="heads" style="grid-template-columns:repeat(5,1fr);height:91vh;grid-auto-rows:1fr">${STARS.map((a,i)=>`<div class="hcard"><span class="hlab">${a.n} · ${a.grp}</span>${hb(F[i])}</div>`).join('')}</div>`}}
+else if(SHOW==='cap'){ // Create a Player test: one outfit and one face on nine body settings; every part is cut from the body numbers, so it morphs with them
+ const base={...A[3],tat:{st:'tribal',arm:[1]},beard:'short',hair:'crop',hc:'#3a2418',gear:'#c23b2a',g2:'#ffd43b',tape:1,ini:'X',open:0};
+ const V=[['Slim',{H:.95,sw:.13,cw:.115,ww:.095,hw:.1,au:.03,af:.027,th:.04,sh:.032,traps:0,abs:0}],['Athletic',{}],
+  ['Bodybuilder',{sw:.215,cw:.185,ww:.115,hw:.118,au:.064,af:.052,th:.066,sh:.05,traps:1.3,abs:6}],['Big man',{H:1.12,sw:.19,cw:.18,ww:.17,hw:.15,bel:.06,au:.055,af:.048,th:.066,sh:.058,traps:.9,abs:0}],
+  ['Super heavy',{H:1.2,sw:.2,cw:.2,ww:.21,hw:.18,bel:.1,au:.06,af:.052,th:.075,sh:.064,traps:1,abs:0}],['Tall and lean',{H:1.18,sw:.155,cw:.135,ww:.105,hw:.11,legs:.52,abs:4}],
+  ['Short and stocky',{H:.84,sw:.19,cw:.17,ww:.15,hw:.14,legs:.4,au:.052,th:.06,abs:0}],
+  ['Woman, athletic',{...B.wom,H:.92,top:'crop',beard:'none',hair:'waves',hc:'#5a3018',hd:{...A[8].hd},iris:'#4a8a3a',tat:{st:'sleeve',arm:[-1]}}],
+  ['Woman, power',{...B.pwom,H:.94,top:'singlet',beard:'none',hair:'puff',hc:'#1a1010',hd:{...A[7].hd},tat:0}]];
+ const F=V.map(([l,o])=>figure({...base,...o,n:'CAP '+l},false,0,0,{arms:[14,8]})),mx=Math.max(...F.map(f=>f.T)),VH=mx*1.15,VW=VH*5.0,n=V.length;
+ html+=`<div class="note" style="padding:0 1.2em">Create a Player test: the same outfit (trunks, pads, tape, tattoo, hair, beard) on nine body settings. Nothing is drawn at a fixed size: every part is cut from the body's own numbers (shoulders, chest, waist, hips, limb widths, height), so it morphs to fit.</div>
+ <div class="stage" style="height:80vh"><div class="floor"></div><svg viewBox="0 0 ${VW} ${VH}" preserveAspectRatio="xMidYMax meet" style="position:absolute;left:0;top:0;width:100%;height:calc(100% - 2.4em);overflow:visible;z-index:2">${F.map((f,i)=>`<g transform="translate(${VW*(i+.55)/(n+.1)},${VH-f.T-VH*.012})" filter="url(#sh)">${f.g}</g>`).join('')}</svg>${V.map(([l,o],i)=>`<span class="tag" style="left:${(i+.55)/(n+.1)*100}%">${l}<small>H ${(o.H||base.H).toFixed(2)} · shoulders ${(o.sw||base.sw).toFixed(3)}</small></span>`).join('')}</div>`}
+else if(SHOW==='scene'){ // the same figures in game scenes: ring action with overlap, a backstage face-off cropped waist-up, a small-scale entrance
+ const W=1920,H=980,put=(f,x,y,s,rot=0)=>`<g transform="translate(${x},${y}) rotate(${rot}) scale(${s}) translate(0,${-f.T})" filter="url(#sh)">${f.g}</g>`,cr=rngOf('scene');
+ let crowd='';for(let k=0;k<220;k++)crowd+=`<circle cx="${(cr()*1150).toFixed(0)}" cy="${(30+cr()*260).toFixed(0)}" r="${(9+cr()*6).toFixed(1)}" fill="hsl(${(cr()*360)|0},22%,${28+cr()*22|0}%)"/>`;
+ const dex=figure(A[1],true,.7,1,{arms:[[150,-60],[160,-55]],hipsBoth:0,knees:1,wide:.26,htilt:-22,open:1}),shi=figure(A[0],true,-.8,-1,{arms:[[30,40],[165,-30]],knees:1,wide:.3,htilt:18}),
+  kid=figure(A[4],true,.5,1,{arms:[[176,4],[168,10]],wide:.06,toes:1,knees:0,htilt:-8}),haz=figure(A[6],false,.8,1,{htilt:-6});
+ const coco=figure(A[7],true,.6,1,{nopin:1}),clem=figure(A[8],false,-.6,-1,{nopin:1});
+ const ring=`<svg x="0" y="0" width="1150" height="${H}" viewBox="0 0 1150 ${H}"><rect width="1150" height="${H}" fill="#14161e"/>${crowd}
+  <polygon points="40,900 1110,900 980,430 170,430" fill="#e9e1c9"/><polygon points="40,900 1110,900 1110,980 40,980" fill="#1f2a55"/>
+  ${[0,1,2].map(k=>`<line x1="150" y1="${330+k*45}" x2="1000" y2="${330+k*45}" stroke="${['#c23b2a','#f4f1e8','#2c62ad'][k]}" stroke-width="7"/>`).join('')}
+  <rect x="140" y="300" width="16" height="240" fill="#c9c9c9"/><rect x="994" y="300" width="16" height="240" fill="#c9c9c9"/>
+  ${put(dex,400,860,1.25)}${put(shi,760,870,1.25)}${put(kid,120,250,1.05,112)}${put(haz,110,975,1.0)}
+  <text x="40" y="60" font-family="Permanent Marker" font-size="34" fill="#ffd43b">RING · Kid dives onto the big men</text></svg>`;
+ const back=`<svg x="1170" y="0" width="750" height="480" viewBox="0 0 750 480"><rect width="750" height="480" fill="#3b3f4c"/>
+  ${[0,1,2,3,4,5].map(k=>`<rect x="${k*130-20}" y="0" width="118" height="480" fill="#43485a"/>`).join('')}<rect x="300" y="40" width="150" height="200" fill="#c23b2a" transform="rotate(-3 375 140)"/><text x="375" y="150" text-anchor="middle" font-family="Permanent Marker" font-size="34" fill="#ffd43b" transform="rotate(-3 375 140)">EWE</text>
+  ${put(coco,230,60+coco.T*2.15,2.15)}${put(clem,520,40+clem.T*2.15,2.15)}
+  <rect x="0" y="430" width="750" height="50" fill="#1f2a55"/><text x="20" y="465" font-family="Permanent Marker" font-size="26" fill="#ffd43b">BACKSTAGE · Coco vs Clementine, waist up</text></svg>`;
+ let ent='';const order=[3,5,2,0,1,7,6,8,4];order.forEach((i,k)=>{const f=figure(A[i],false,0,0),d=k/8,s=.24+d*.2;ent+=put(f,90+k*72+d*40,250+d*190,s)});
+ const ramp=`<svg x="1170" y="500" width="750" height="480" viewBox="0 0 750 480"><rect width="750" height="480" fill="#101218"/>
+  <polygon points="40,230 740,470 750,480 0,480 0,250" fill="#2a2d38"/>${[0,1,2,3,4,5,6].map(k=>`<circle cx="${60+k*110}" cy="40" r="16" fill="#ffd43b" opacity=".85"/>`).join('')}
+  ${ent}<text x="20" y="120" font-family="Permanent Marker" font-size="28" fill="#ffd43b">ENTRANCE · small scale (~70–150px)</text></svg>`;
+ html+=`<div class="bc" style="height:91vh"><svg viewBox="0 0 ${W} ${H}" style="position:absolute;inset:.6em;width:calc(100% - 1.2em);height:calc(100% - 1.2em)" preserveAspectRatio="xMidYMid meet">${ring}${back}${ramp}</svg></div>`}
+else html+=lineup('52vh')+heads()+tiles;
+document.getElementById('main').innerHTML=html;
+</script></body></html>

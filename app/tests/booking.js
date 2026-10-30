@@ -1,4 +1,4 @@
-/* Booking: card builder, match editor, side panel, the run flow (pre-show incident), the live broadcast and its calls from the gorilla position, report.
+/* Booking: the Clock Wall (book by hand, Who fits, option pop-ups, notes pop-ups), the run flow (pre-show incident), the live broadcast and its calls from the gorilla position, report.
    Build:  EWF_OUT=next-booking EWF_DEV=1 node build.js
    Run:    NODE_PATH=/opt/npm-tools/node_modules node app/tests/booking.js */
 const { open, go, overflow, shot, flash, state, fits, airShow } = require('./helper');
@@ -36,7 +36,7 @@ async function advance(page, how) {
 async function runShow(page, mode, check) {
   const seen = { pre: false };
   ok(!(await has(page, '[data-t="run"]')) && !(await has(page, '[data-t="asst"]')) && !(await has(page, '[data-t="asstrun"]')), mode + ': the card has no Run or assistant buttons of its own');
-  ok(await page.$eval('[data-t="advance"]', e => e.getAttribute('data-v') + ':' + e.querySelector('b').innerText.trim().toLowerCase() + ':' + e.getAttribute('data-tone')) === 'run:run show:air', mode + ': the key should say Run show, in green');
+  ok(await page.$eval('[data-t="advance"]', e => e.getAttribute('data-v') + ':' + e.querySelector('b').innerText.trim().toLowerCase() + ':' + e.getAttribute('data-tone')) === 'run:ring bell:air', mode + ': the key should say Ring bell, in green');
   await page.click('[data-t="advance"]');
   for (let k = 0; k < 6 && !(await has(page, '#live')); k++) {
     if (await has(page, '[data-t="pre"]')) {
@@ -60,95 +60,80 @@ async function section(mode) {
   const check = async name => { const o = await overflow(page); ok(o === '', mode + ' / ' + name + ': ' + o); const f = await fits(page); ok(f === '', mode + ' / ' + name + ' should fit one screen: ' + f); ok(!errs.length, mode + ' / ' + name + ': ' + errs.join(' | ')); steps.push(name); };
   const seg = i => '.sheet .seg[data-m="' + i + '"]';   // a match row; promos and angles sit between them
 
-  /* ---- the card builder ---- */
+  /* ---- the Clock Wall: book by hand ---- */
   await go(page, 'booking');
   const shows = await state(page, S => S.queue.map(q => q.name));
   ok(shows.length >= 2, mode + ': expected two shows this week');
-  ok(await txt(page, '.head h1') === shows[0], mode + ': heading should be the first show');
-  ok(/The card is empty/.test(await txt(page, '.b1-rows')), mode + ': empty card text');
-  ok(await has(page, '.onescreen'), mode + ': the card builder is a one-screen page');
-  ok(/This crowd expects an? [a-z- ]+, matches of [★¼½¾]+ or better\./.test(await txt(page, '.head')) && !/expects about/.test(await txt(page, '.head')) && !/%/.test(await txt(page, '[data-t="expect"]')), mode + ': what the crowd expects should be in words, not a number: ' + await txt(page, '.head'));
-  await page.click('[data-t="ladder"]');
-  ok((await page.$$('[data-t="ladder-list"] li')).length === 10 && (await page.$$('[data-t="ladder-list"] li.on')).length === 1 && /what your crowd expects/.test(await txt(page, '[data-t="ladder-list"] li.on')), mode + ': the ladder window should list ten rungs and mark this crowd’s');
-  await check('the ladder');
-  await page.click('#modal-ok');
+  ok(await txt(page, '[data-t="book1"] h1') === shows[0], mode + ': heading should be the first show');
+  ok(await has(page, '.onescreen') && await has(page, '[data-t="wall-roster"]') && await has(page, '[data-t="wall-pick-pane"]'), mode + ': the Clock Wall is a one-screen page of three windows');
+  ok(/\d+ min open/i.test(await txt(page, '[data-t="wall-open"]')), mode + ': an empty show is all open time: ' + await txt(page, '[data-t="wall-open"]'));
+  ok(/^Crowd: an? [a-z- ]+$/i.test(await txt(page, '[data-t="expect"]')) && /^[★¼½¾]+$/.test(await txt(page, '[data-t="expect-bar"]')), mode + ': what the crowd expects is in words and stars, not a number: ' + await txt(page, '[data-t="expect"]'));
   await check('empty card');
-  await page.click('[data-t="suggest"]');
-  const n = await count(page, '.sheet .seg:not(.sg)');   // matches only: promos and angles are .seg.sg
-  ok(n >= 3 && n === await state(page, S => S.card.length), mode + ': suggested card');
-  ok(await plant(page), mode + ': could not plant a headset call');
-  ok(/comments on every match on the sheet/.test(await txt(page, '[data-t="fog-note"]')), mode + ': the notes pane should say how the agent’s comments work');
-  for (let i = 0; i < n; i++) { await page.click('[data-t="edit"][data-v="' + i + '"]'); ok(await page.$eval('[data-t="pane"]', e => e.getAttribute('data-v')) === 'match' && /no read|No read|cannot tell|Nothing to flag|My read|Hard to read|not a regular team|running on fumes|squash|bad way/.test(await txt(page, '[data-t="agent-say"][data-v="' + i + '"]')), mode + ': selecting match ' + (i + 1) + ' should show the road agent’s comment on it: ' + await txt(page, '[data-t="agent-say"]')); await check('match ' + (i + 1) + ' selected'); }
-  await page.click('[data-t="done"]');
-  ok(await page.$eval('[data-t="pane"]', e => e.getAttribute('data-v')) === 'advice', mode + ': Done lets go of the match and the notes come back');
-  await check('suggest a card');
-
-  /* ---- the match editor ---- */
-  await page.click('[data-t="edit"][data-v="0"]');
-  ok(await has(page, '.b1-pane .editor') && await has(page, seg(0) + '.sel'), mode + ': the editor should open beside the sheet');
-  await page.selectOption('#m0-int', 'brutal');
-  ok(await state(page, S => S.card[0].int) === 'brutal' && /Brutal/.test(await txt(page, '.d1-meta')), mode + ': intensity');
-  await check('intensity');
+  await page.click('[data-t="add"]');
+  ok(await state(page, S => S.card.length) === 1 && await count(page, '[data-t="wall-hole"]') === 2, mode + ': + Match puts a match with two empty spots on the wall');
+  const w1 = await page.$eval('[data-t="wall-wr"]', e => +e.getAttribute('data-v'));
+  await page.click('[data-t="wall-wr"][data-v="' + w1 + '"]');
+  ok(await page.$eval('[data-t="wall-wr"][data-v="' + w1 + '"]', e => e.getAttribute('aria-pressed')) === 'true', mode + ': pressing a wrestler holds them');
+  await page.click('[data-t="wall-hole"]');
+  ok(await state(page, (S, id) => S.card[0].sides[0][0] === id, w1), mode + ': pressing a spot books the held wrestler there');
+  ok(await has(page, '[data-t="wall-fits"]') && await count(page, '[data-t="wall-fit"]') >= 3, mode + ': an empty spot shows who fits it');
+  await page.click('[data-t="wall-fit"]');
+  ok(await state(page, S => S.card[0].sides.every(s => s.every(id => id != null))), mode + ': Who fits books straight in');
+  ok(!/%/.test(await txt(page, '[data-t="wall-mast"]')), mode + ': the expected winner is in words: ' + await txt(page, '[data-t="wall-mast"]'));
+  await check('booked by hand');
+  await page.click('[data-t="wall-tile"][data-v="rules"]');
   const stip = await page.$eval('#m0-stip', e => [...e.options].map(o => o.value).find(v => v !== 'std'));
   await page.selectOption('#m0-stip', stip);
-  const stipName = await page.$eval('#m0-stip', e => e.options[e.selectedIndex].text);
-  ok(await state(page, S => S.card[0].stip) === stip && (await txt(page, '.d1-meta')).includes(stipName) && (await txt(page, seg(0) + ' .meta')).includes(stipName), mode + ': stipulation');
-  await check('stipulation');
-  await state(page, S => { S.card.forEach((m, i) => { if (i) delete m.call; }); });   // a suggested card may already hold a call; this check is about the one made here
+  ok(await state(page, S => S.card[0].stip) === stip, mode + ': the Rules tile changes the rules');
+  await page.click('#modal-ok');
+  await page.click('[data-t="wall-tile"][data-v="finish"]');
+  ok(!/%/.test(await page.$eval('#m0-call', e => [...e.options].map(o => o.text).join('|'))), mode + ': the Finish pop-up says chances in words');
   await page.selectOption('#m0-call', '0');
-  ok(await state(page, S => S.card[0].call) === 0 && /Your call: .* wins/.test(await txt(page, '.d1-meta')) && !/BP/.test(await txt(page, '.d1-meta')) && /Your call/.test(await txt(page, seg(0) + ' .meta')), mode + ': called finish');
-  ok(await state(page, S => GP.cardCost(S, S.card)) === 0 && /none spent on this card/.test(await txt(page, '.head')), mode + ': picking a winner costs no booking power');
-  ok(await state(page, S => GP.cardCost(S, S.card) <= S.bp), mode + ': the call should be affordable: ' + await state(page, S => GP.cardCost(S, S.card) + ' of ' + S.bp + ' BP, ' + S.card.map(m => m.call).join(',')));
-  ok(await page.$eval('#m0-call', e => e.value) === '0', mode + ': the select should show the call');
-  await check('called finish');
-  if (mode === 'desk') await shot(page, 'booking-desk-editor', true);
-  await page.click('[data-t="edit"][data-v="0"]');
-  ok(!(await has(page, '.editor')), mode + ': editor should close');
+  ok(await state(page, S => S.card[0].call) === 0 && await state(page, S => GP.cardCost(S, S.card)) === 0, mode + ': picking a winner costs no booking power');
+  await page.click('#modal-ok');
+  await check('options');
+  await page.click('[data-t="wall-unbook"]');
+  ok(await state(page, S => S.card[0].sides.some(s => s.some(id => id == null))), mode + ': the cross takes somebody off the card');
+  await page.click('[data-t="rm"]');
+  ok(await state(page, S => S.card.length) === 0, mode + ': Remove takes the match off the wall');
 
-  /* ---- order, add, remove ---- */
-  const who = i => txt(page, seg(i) + ' .who'), a = await who(0), b = await who(1);
+  /* ---- a suggested card, each piece picked ---- */
+  await page.click('[data-t="suggest"]');
+  const n = await state(page, S => S.card.length);
+  ok(n >= 3 && await count(page, '.cw-pc.match') === n, mode + ': suggested card');
+  ok(await plant(page), mode + ': could not plant a headset call');
+  for (let i = 0; i < n; i++) { await page.click('[data-t="edit"][data-v="' + i + '"]'); ok(/no read|No read|cannot tell|Nothing to flag|My read|Hard to read|not a regular team|running on fumes|squash|bad way|new pairing|first time/i.test(await txt(page, '[data-t="agent-say"][data-v="' + i + '"]')), mode + ': picking match ' + (i + 1) + ' should show the road agent’s comment on it: ' + await txt(page, '[data-t="agent-say"]')); await check('match ' + (i + 1) + ' picked'); }
+  ok(await has(page, '[data-t="wall-knock"]'), mode + ': what this card changes is beside the wall');
+  if (mode === 'desk') await shot(page, 'booking-desk-wall', true);
+
+  /* ---- order, and an unfinished card ---- */
+  const who = i => state(page, (S, k) => S.card[k].sides.map(s => s.join('+')).join('v'), i), a = await who(0), b = await who(1);
   await page.click('[data-t="edit"][data-v="0"]');
-  await page.click('[data-t="down"][data-v="0"]');
+  ok(await page.$eval('[data-t="up"]', e => e.disabled), mode + ': the first match cannot move earlier');
+  await page.click('[data-t="down"]');
   ok(await who(0) === b && await who(1) === a, mode + ': move down');
-  await check('move down');
-  await page.click('[data-t="up"][data-v="1"]');
+  await page.click('[data-t="up"]');
   ok(await who(0) === a && await who(1) === b, mode + ': move up');
-  ok(await page.$eval('[data-t="up"][data-v="0"]', e => e.disabled), mode + ': the first match cannot move earlier');
-  await page.click('[data-t="edit"][data-v="' + (n - 1) + '"]');
-  ok(await page.$eval('[data-t="down"][data-v="' + (n - 1) + '"]', e => e.disabled), mode + ': the last match cannot move later');
-  await check('move up');
+  await check('move');
   await page.click('[data-t="add"]');
-  ok(await count(page, '.sheet .seg[data-m]') === n + 1 && await has(page, '#m' + n + '-type') && /Unfinished/.test(await txt(page, seg(n) + ' .meta')), mode + ': add a match');
-  await page.selectOption('#m' + n + '-type', 'tag');
-  ok(await count(page, '.b1-pane [data-t="slot"]') === 4, mode + ': a tag match has four slots');
-  if (await has(page, '#m' + n + '-t0')) {
-    const team = await page.$eval('#m' + n + '-t0', e => e.options[1].value);
-    await page.selectOption('#m' + n + '-t0', team);
-    ok(await state(page, (S, k) => S.card[k].sides[0].every(id => id != null), n), mode + ': picking a team fills the side');
-    ok(await page.$eval('#m' + n + '-t0', e => e.value) === '', mode + ': the team list goes back to its heading');
-  }
-  await check('add a match');
   await page.click('[data-t="advance"]');
-  ok(/can’t run yet/.test(await flash(page)) && /Fix before the show can run/.test(await txt(page, '.flash.err:not([role])')), mode + ': an unfinished card should not run');
+  ok(/can’t run yet/.test(await flash(page)), mode + ': an unfinished card should not run');
   await check('validation');
   await page.click('[data-t="edit"][data-v="' + n + '"]');
-  await page.click('[data-t="rm"][data-v="' + n + '"]');
-  ok(await count(page, '.sheet .seg[data-m]') === n && !(await has(page, '.editor')), mode + ': remove a match');
-  await check('remove a match');
+  await page.click('[data-t="rm"]');
+  ok(await state(page, S => S.card.length) === n, mode + ': remove a match');
 
-  /* ---- the side panel ---- */
-  for (const t of [['promo', 'Opening promo'], ['feuds', 'Storylines in play'], ['targets', 'Promises and targets'], ['order', 'Running order'], ['clock', 'The top of the hour'], ['advice', 'Staff notes']]) {
-    await page.click('[data-t="bk"][data-v="' + t[0] + '"]');
-    ok(await txt(page, '.b1-pane .panel h2') === t[1], mode + ': side tab ' + t[0] + ' should be titled ' + t[1] + ', not ' + await txt(page, '.b1-pane .panel h2'));
-    ok(await page.$eval('[data-t="bk"][data-v="' + t[0] + '"]', e => e.getAttribute('aria-pressed')) === 'true', mode + ': tab pressed');
-    if (t[0] === 'promo') {
+  /* ---- the booking notes, each in its pop-up ---- */
+  for (const t of ['promo', 'feuds', 'targets', 'order', 'clock', 'advice']) {
+    await page.click('[data-t="bk"][data-v="' + t + '"]');
+    ok(await has(page, '[data-t="pane"][data-v="' + t + '"]'), mode + ': the ' + t + ' notes open in a pop-up');
+    if (t === 'promo') {
       const sp = await page.$eval('#plan-sp', e => e.options[1].value);
       await page.selectOption('#plan-sp', sp);
-      await page.selectOption('#plan-topic', await page.$eval('#plan-topic', e => e.options[1].value));
-      await page.selectOption('#plan-del', await page.$eval('#plan-del', e => e.options[1].value));
-      ok(await state(page, (S, v) => S.plan && S.plan.sp === +v, sp) && /an attempt with a \d+% chance/.test(await txt(page, '.b1-pane .panel')), mode + ': opening promo plan');
+      ok(await state(page, (S, v) => S.plan && S.plan.sp === +v, sp), mode + ': opening promo plan');
     }
-    await check('side tab: ' + t[0]);
+    await check('notes: ' + t);
+    await page.click('#modal-ok');
   }
   await shot(page, 'booking-' + mode + '-card', true);
 
@@ -289,7 +274,7 @@ async function section(mode) {
   await page.click('[data-t="advance"]');
   ok(/^BOOK SHOW$/i.test(await advWord(page)), mode + ': from the desk the big button leads to the next show: ' + await advWord(page));
   await page.click('[data-t="book-next"]');
-  ok(await txt(page, '.head h1') === shows[1] && /The card is empty/.test(await txt(page, '.b1-rows')), mode + ': the next show’s card is one press from the desk');
+  ok(await txt(page, '[data-t="book1"] h1') === shows[1] && /\d+ min open/i.test(await txt(page, '[data-t="wall-open"]')), mode + ': the next show’s card is one press from the desk');
   await check('close the report');
 
   /* ---- the second show, then Week booked ---- */

@@ -49,7 +49,7 @@ export function liveFeed(S,rep,si,b){
       var ids=s.ids||[],nsd=(s.sidesN||[]).length||2,per=Math.max(1,Math.floor(ids.length/nsd)),A=s.sidesN&&s.sidesN[0]||nm(ids[0]),B=s.sidesN&&s.sidesN[1]||nm(ids[per]);
       var f=ids.length>=2?feudOf(S,ids[0],ids[per]):null;
       fanPost(k+'s',s.title?$L.LF.title:(f&&f.heat>=50?$L.LF.feud:$L.LF.start),{a:A,b:B,t:s.title,show:show},s.title?260:120,mins);
-      for(var j=0;j<upto;j++)if(bc[j].h===1&&h01(k+'n'+j)<0.75){var x='';ids.forEach(function(id){var w=S.w[id];if(w&&!x&&bc[j].x&&bc[j].x.indexOf(w.name)>=0)x=w.name;});fanPost(k+'n'+j,$L.LF.near,{x:x||'they'},220,mins+Math.round((s.mins||10)*j/Math.max(1,bc.length)));}
+      for(var j=0;j<upto;j++)if(bc[j].h===1&&bc[j].fk&&h01(k+'n'+j)<0.75){var x='';ids.forEach(function(id){var w=S.w[id];if(w&&!x&&bc[j].x&&bc[j].x.indexOf(w.name)>=0)x=w.name;});fanPost(k+'n'+j,$L.LF.near,{x:x||'they'},220,mins+Math.round((s.mins||10)*j/Math.max(1,bc.length)));}
       if(done&&s.win){
         var wi=(s.wi&&s.wi.length?s.wi:[]),lid=ids.filter(function(id){return wi.indexOf(id)<0;})[0],W=S.w[wi[0]],Lw=S.w[lid],L=lid!=null?nm(lid):B,end=mins+(s.mins||10);
         var up=W&&Lw&&Lw.ovr-W.ovr>=12;

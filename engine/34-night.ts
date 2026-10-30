@@ -201,7 +201,7 @@ EVR.rematch=function(S,ev,choice,P,w,o){
 SHOWX.push(function(S,P,show,rep){
   if(P.id!==S.player||!rep.left||S.cal)return;
   var ev: any=nightMatter(S,P,rep);if(!ev)return;
-  ev.night=rep.left.key;$L.pushEv(S,ev);rep.left.matter=ev.id;
+  ev.night=rep.left.key;ev.cs=$L.repCS(rep);$L.pushEv(S,ev);rep.left.matter=ev.id;
   $L.note(S,'On your desk',ev.text.split('. ')[0]+'.','bad');
 });
 export function nightWin(S,w){S.quests.push({id:S.nid++,type:'win',w:w.id,due:S.week+2,text:'Promise: book a win for '+w.name+' by '+cal(S.week+2).label});}

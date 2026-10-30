@@ -3,7 +3,7 @@
   // engine/_gen/legacy.js
   var L = function(root) {
     "use strict";
-    var DB2, E2, CAL02, dbOf2, MONTHS2, STYLE2, STYLE_NAME2, MT2, STIP2, FIN2, LEN2, starQ2, starG2, starMeets2, PRODF2, PRODN2, RISKN2, RISK_STIP2, RISK_INJ2, TIXN2, TIX_P2, TIX_D2, ADVN2, ADV_H2, ADV_C2, SLOTN2, SLOT_V2, SLOT_MAX2, SLOT_REQ2, SLOT_RISK2, CAPS2, ACH2, FINISH2, ENTR2, clamp2, hash2, h012, rnd2, ri2, pick2, chance2, avg2, flat2, r12, names2, vsLabel2, cal2, PAY_TOP2, payTop2, payRatio2, wageFor2, workRate2, isDev2, rosterOf2, news2, award2, addWrestler2, buildPromo2, formTeam2, teamOf2, dissolveTeam2, partnerOf2, showMult2, msc2, viewersK2, demand2, ticket2, buysK2, capFor2, merchWeek2, wagesWeek2, baselineIncome2, calibrate2, calibrateShows2, calibrateCosts2, restAll2, expected2, activeFeuds2, feudOf2, feudsFor2, inFeud2, feudLabel2, feudStage2, startFeud2, heatUp2, turn2, divOk2, holdLvl2, titleById2, titleFull2, rkey2, titleFits2, eligible2, showTitles2, gimmickFor2, autoBook2, validate2, MODEL_CROWD2, ANGDONE2, EFX2, MQX2, CRX2, FINX2, POST2, SHOWX2, WEEKX2, NEWX2, ANGX2, EVMAKE2, EVR2, QEND2, PREX2, TASKX2, workOf2, chem2, addOvr2, fill2, GR2, sayPick2, expand2, say2, STIPLINE2, CHEAP2, REACT2, pop2, venueFor2, nth2, weeksAgo2, memoryLines2, callMatch2, winOdds2, doMatch2, settleFeud2, vacateFor2, afterBell2, promoScore2, angle2, BEATS2, beatTag2, BEAT_WHO2, ACTN2, feudAct2, nextBigName2, FEUDLETS2, genAngle2, LIVE_FIZZ2, LIVE_FIZZW2, LIVE_SHELF2, LIVE_FLAT2, isBigWeek2, nextBigFrom2, feudPlan2, feudSeg2, PHASE_N2, feudPhase2, feudActAt2, feudActCal2, rivalRipe2, feudDue2, closeChapter2, feudLead2, feudPayMult2, feudHeatRoom2, feudFizzle2, feudFile2, feudEmber2, emberOf2, feudHomeAt2, STORY_COST2, SEASON_N2, bigShort2, STORY_STAKES2, storyTurner2, STIP_NEED2, stipNeed2, stipFitOf2, dirtSheet2, showPool2, cardHype2, hypeParts2, showStart2, showStep2, POP_EDGE2, FIRST_NIGHT2, firstNight2, SEG_OUT2, SEG_CROWD2, segSentences2, segPeople2, stageSeg2, runShow2, showEnd2, dropQuest2, matchQuests2, keptPromise2, LIVE_MAX_TV2, LIVE_MAX_BIG2, LIVE_HM_CD2, LIVEK2, LIVE_ORDER2, LIVE_POST2, liveMatch2, liveLater2, livePut2, liveIntro2, CHAOS_SAFE2, afterBellText2, liveMax2, liveMake2, livePre2, livePost2, liveFinish2, livePlay2, FACE_CD2, OWNER_CD2, FACE_UP2, FACE_DOWN2, faceOf2, faceHere2, faceOn2, faceHype2, faceWarn2, topNames2, NET_CD2, netClock2, BOTCH_CD2, AUD_CD2, OT_CD2, AUD_CR2, ZONE_WORD2, ringOk2, lcdOk2, lcdSet2, botchRead2, lenUp2, lenDown2, nightNote2, nightWriters2, NIGHT_CD2, NIGHT_OUT2, NIGHT_FURY2, nightFree2, nightMark2, nightMatter2, nightWin2, weekShows2, startWeek2, leaveCompany2, joinCompany2, settle2, hasQuest2, money2, pushEv2, EV2, genEvents2, renewAsk2, EV_TYPES2, evTy2, FLAG_WORDS2, MODEL_YEAR2, evList2, evName2, evRule2, EV_SPN2, EV_SPC2, EV_SPH2, EV_HMAX2, evSpendCost2, evAfterDark2, flagWeekFrom2, SP_TIER2, mkOffer2, refreshOffers2, sponsorBroken2, showKey2, onCard2, replaceOn2, gramPick2, gramCase2, gram2, GR_SHEET2, GR_WEB2, GR_CHAT2, GR_PROMO2, promoSpeech2, MOVES2, GR_SHAPE2, matchShape2, GR_FEUD2, GR_POD2, P2D62, odds2, mkCheck2, rollCheck2, rollText2, moraleMod2, trustMod2, SKILLMOD2, skillMods2, addChecks2, GIMS2, GIMBY2, gimFit2, assignGim2, initGimmicks2, TRAITS2, has2, earn2, bump2, STABLEN2, stableOf2, endStable2, leaveStable2, stableMates2, micOf2, hasMouthpiece2, STYLES2, ROOTS2, PLEDGE2, SKILLS2, cap12, xpNeed2, gainXp2, initYou2, talkDiscount2, pledgeRenew2, moraleTarget2, bpGrant2, grantBP2, matchSetup2, cardCost2, spendBP2, ownerQuest2, directiveDone2, recalibrate2, YEAR_GROW2, YEAR_MIN_SHOWS2, yearNew2, yearInfo2, REL_MEM2, REL_ON2, REL_STRONG2, relBlank2, relState2, relMigrate2, rmAll2, relIdx2, relGet2, relEntry2, bondOf2, respOf2, jealOf2, relOf2, tieOf2, note2, relMine2, relSet2, relBump2, youRemember2, youLean2, relChem2, bondWord2, rankFor2, tournActive2, koPairs2, tournAdvance2, tournPair2, syncTitles2, yearEnd2, powerHeld2, powerScore2, CAMP_CAP2, CAMP_C2, CAMPN2, FOCUS2, campCost2, ovrCap2, phaseOf2, PHASE2, careerLine2, retire2, birthday2, rookieClass2, HIDDEN2, margin2, rng2, ROLE2, ZONES2, INTN2, MEDN2, MED_C2, MED_R2, MED_L2, MED_I2, EXN2, PUSHN2, medCost2, zonesOf2, zoneFloor2, maxZone2, fictional2, assignRoles2, autoMentor2, egoLines2, egoSum2, roomMood2, egoTarget2, stressAdd2, breakdown2, hurtRisk2, hurtZone2, OWNZ2, OPPZ2, bsInit2, HOUSE2, hasRule2, houseSlots2, houseHeat2, ruleMorale2, HOUSE_VIEW2, houseView2, apMax2, PLACES2, ownerMod2, activeRoster2, apActs2, CASES2, mkCase2, courtApply2, CLOCKS2, starPick2, tickClocks2, mAvg2, isMulti2, isGim2, tenureW2, MGC2, mainG2, mNote2, MODELS2, modelOf2, mixOf2, fitFor2, riskRange2, spMax2, modelJoin2, fitMed2, fitShape2, MOOD_WORDS2, STRESS_WORDS2, YOU_WORDS2, wordOf2, dosTies2, PPL_ROOMS2, PPL_MAX2, pplMatter2, pplFeudOf2, pplOther2, pplWorst2, peopleNow2, pplRaise2, pplSide2, pplTxt2, PPL_ACT2, DIFF2, DPART_N2, dif2, FED_SIZE2, FED_REGION2, clean2, mkFedDef2, draftRoster2, mile2, ystat2, BGS2, EMPH2, createStats2, TOPIC2, DELIV2, PKIND2, promoParts2, promoCheck2, planPromo2, promoWords2, xf2, isGuest2, relMod2, TEMPER2, temperOf2, temperKey2, temperMod2, agreeTradeMod2, gapMod2, startXf2, endXf2, tradeVal2, FANS2, fanFor2, netPosts2, SAGA2, sagaChapter2, newSaga2, sagaCheck2, sagaAdvance2, chronicle2, stipUseList2, stipWorn2, REFEREES2, refFor2, CATCHES2, catchFresh2, catchBoost2, barCity2, GUESTS2, HOF_SPEECH2, atHome2, homeWord2, msAward2, gimFresh2, NOTES2, noteMins2, noteSkill2, HOWS2, UNCLEAN2, howOf2, sourMood2, masked2, STIPFIT2, TFIN2, teamSides2, teamFin2, SGRID2, styleKey2, styleBlend2, flagshipWeek2, lpFeud2, presMove2, SROLE_N2, SROLE_D2, srFit2, stableRoles2, stableWeak22, memBetray2, memOf2, S_name2, MOM2, AFTER2, momTop2, momMine2, momLater2, momLose2, KEPT_MAX2, LIFE2, GR_SIFT2, SIFT_N2, SROLES2, staffOf2, SROLE_OTHER2, agentOf2, agentQ2, agentRisk2, SCHEMA_VERSION2, STYLE_KEY2, STYLE_OUT2, RMAP2, ROLES2, PUSH2, REL_TYPES2, ID_RE2, SCHEMAS2, lev2, nearest2, safeRel2, econ2, buildDB2, netsOf2, FALLBACK_NAMES2, slug2, asstInit2, asstLvl2, ASTN2, asstPickLen2, asstBook2, ED_PUSH_N2, ED_STYLE_N2, ED_ROLE_N2, ED_REL_N2, ED_RATINGS2, ED_TABLES2, ED_TABLE_N2, ED_TAB2, edRnd2, edPick2, edShape2, edId2, edFind2, edHome2, edIsWrestler2, ED_LADDER2, edRatings2, edNames2, ED_LISTS2, ED_QUICK2, histWeek2, histApply2, LOOK_ATTIRES2, LOOK_SLOTS2, LOOK_PARTS2, LOOK_KICK2, LOOK_POS2, lkStr2, lkId2, lkNum2, lkPrune2, lookClean2, lkWorker2, lookFin2, FIN_KO2, FIN_PAY2, finProt2, BTRAIT2, repMetric2, BNEED2, RECK2, ccCost2, ccRefusal2, TRVN2, TRV_C2, TRV_R2, travelCost2, holdPeer2, LINEK2, lineHeat2, lineCurve2, linesWeek2, tapeValue2, tapeWeekly2, showCity2, diehard2, sceneOk2, bgOk2, HOOKS2, MAKE_SHOWS2, MAKE_PER_SHOW2, MAKE_WAIT2, MAKE_BELT_GAP2, MAKE_SHOW_GAP2, MAKE_BOOM2, MAKE_CROWD2, WORLD_BELT_GAP2, WORLD_SHOW_GAP2, BELT_NEED2, MAKE_DAYS2, MAKE_SHOW_WORDS2, MAKE_TITLE_WORDS2, MAKE_SIZE2, makeWrestlers2, makeSizeWord2, makeShowIncome2, makeCleanName2, mkCount2, mkOf2, mkLog2, makeShowCost2, showOccasions2, MAKE_SHOW_NONE2, makeShowWhy2, makeShowCheck2, addShow2, removeShow2, makeTitleMax2, makeTitleCost2, makeTitleLevels2, beltOccasions2, MAKE_BELT_NONE2, makeBeltWait2, beltOccasion2, makeTitleWhy2, addTitle2, titleBusy2, makePick2, rivalNew2, rivalGrow2, VSTYLE2, mkVoices2, deskWage2, voiceOf2, voiceChem2, deskQ2, deskHeat2, deskNames2, campers2, trainerQ2, schoolCap2, schoolFee2, schoolRun2, goalTier2, topTitleFor2, GOALK2, newGoal2, goalText2, LOANT2, INVWANT2, financeCost2, LICK2, licStars2, DEPT2, deptSpent2, INDIES2, INDIE_NEW2, INDIE_SIZE2, INDIE_NIGHT2, indieMeta2, indiesOn2, indieOf2, NC_A2, NC_B2, NC_SHOW2, NC_TITLE2, newCompany2, NIGHT_ALT2, nightOf2, regionOf2, nightRivals2, nightOpen2, AIR_NETS2, AIR_TIERN2, AIR_WORD2, AIR_YEAR2, AIR_DEAL_MIN2, AIR_DEAL_SPAN2, AIR_GAP2, AIR_TIER_V2, AIR_TIER_REACH2, airLevelOf2, airWord2, airStep2, airRec2, airNets2, airPickNet2, airTier02, airYears2, airDealWeeks2, airOf2, airPF2, airRate2, airProd2, airReach2, airNight2, airStart2, airPay2, airStay2, airSign2, airFits2, airOffer2, airAsk2, airRival2, airDemote2, airInfo2, BELT_PLATES2, BELT_METALS2, BELT_STRAPS2, BELT_GEMS2, BELT_SIDES2, BELT_SIDE_SHAPES2, BELT_TRIMS2, beltHas2, beltWordClean2, beltWordOf2, beltFill2, starsOf2, boardTouch2, CRITIC2, criticScore2, criticRank2, speechFor2, LOGO_SHAPES2, LOGO_STYLES2, LOGO_LAYS2, LOGO_FINS2, LOGO_FONTS2, LOGO_EXTRAS2, LOGO_COLS2, LOGO_MODEL2, logoHas2, logoLetters2, logoTag2, logoLum2, logoDist2, logoBehind2, logoReads2, logoFix2, logoFill2, logoKey2, NET_TASTE2, NET_KEYS2, netTaste2, netTarget2, netClash2, netPleased2, netCardClash2, REGIONS2, TASTEN2, homeReg2, tourCost2, tourBoost2, tasteVal2, tasteFit2, tasteDraw2, retireCompany2, topTitle2, STRM_PRICE2, STRM_OPEN2, STRM_RUN2, streamOn2, streamCap2, streamOpenCost2, streamRunCost2, CANCEL_WARN2, HOUSE_DRAW2, BACK_RUN2, BACK_CS2, showOff2, MAP_W2, MAP_H2, MAP_ABC2, MAPS2, CITY_AT2, TOWN_AT2, VENUE_RE2, BLD_TIER2, BLD_WORDS2, cityBuildings2, venueName2, cityOfVenue2, placeOf2, mapById2, mapXY2, mapHas2, mapArea2, HOME_KM2, homeKm2, homeNear2, homeWeight2, homeHype2, homeHypeAt2, geoDist2, roadRoute2, roadCity2, soldOutLast2, roadCap2, MKT_WORDS2, mktBase2, mktKnow2, coldNight2, weatherMult2, mktMult2, mktWord2, roadMktNow2, saleSpan2, saleFrac2, stopDraw2, stopSales2, roadSoldNow2, roadAhead2, MAP_FIRST2, roadMap2, roadShape2, CONT_AT2, roadNearest2, SHAPES2, JOB_TERMS2, jobCheck2, isoParts2, chalCheck2, SCN_BUILT2, SCN_OPS2, scnSign2, SCN_WIN2, SCN2, scnFill2, scnLoad2, scnJudge2, scnCut2, SH_HOT2, SH_SLOW2, shIds2, shFacts2, shOpener2, shTopLvl2, SH_MT2, shPrev2, shBreak2, shapeAuto2, SEGLEN2, SEGLENN2, SEGK2, segLen2, segMins2, segSlots2, segList2, segRead2, segPool2, segTitleOf2, segChoices2, segWhy2, segMean2, segLook2, segLabel2, runSeg2, segBooked2, SEGFX2, SEGHEAT2, SEGBOND2, SEGK02, segoClean2, segkClean2, segkSync2, STIP_SETS2, STIP_BASES2, STIP02, STIPNOTE02, STIPLINE02, STIPNEED02, stipBase2, stipClean2, stipSync2, edStipPut2, LF2, LF_PRESS2, crowdWord2, liveFeed2, NET_FEED_MAX2, NET_SHEETS2, netPickH2, netHandle2, netLikes2, netPost2, netStarPost2, NET_WIN_F2, NET_WIN_H2, NET_NEW2, NET_LOSE2, NET_RIVAL2, NET_TURN2, netTurn2, netMentions2, netRumours2, netBackstage2, netThrowback2, netMoment2, netSheet2, taskOpen2, ADV_DAYS2, showDay2, wasNow2, reqOf2, faceCandidates2, CLAUSE2, clausesWanted2, datesFull2, SHOW_LEN2, TIME_OVER2, TIME_FREE2, TIME_LIGHT2, PLAN_MINS2, TOP_GOOD2, TOP_BAD2, MT_OVER2, STIP_SET2, showMins2, bellMins2, brMins2, matchSlot2, hasPlan2, showClock2, OPENS2, openKind2, showTimes2, fitShow2, showFill2, PLOT_PUSH_CD2, PLOT_TAPE2, PLOT_POS2, PLOT2, plotTeams2, plotPushable2, plotTapeOn2, SHOW_WORDS2, GRADES2, gradeIdx2, gradeG2, gradeA2, gradeMeets2, CROWD_PTS2, crowdScoreD2, crowdScore2, repCS2, verdictBand2, cgFix2, showWord2, capW2, showVerdict2, ARCH_KEEP2, ARCH_YEARS2, ARCH_LOG2, FA_CAP2, ROSTER_CAP2, TITLE_KEEP2, archYear2, arcHeels2, arcFaces2, ARCS2, arcFill2, arcEnd2, arcWord2, arcSplit2, AUD2, AUD_MODEL2, AUD_DRIFT2, audInit2, audReach2, audLean2, audTarget2, audBase2, audTotal2, audOffer2, CT_BIG2, CT_INDIE2, CT_ROLL2, ctWeekly2, ctPolicy2, ctFee2, ctAssign2, ctWeek2, payWeek2, DEBUT2, KNOW02, knowMake2, gasLimit2, fogSkill2, readP2, reads2, agentName2, matchRead2, fogLook2, EAR_BAD2, EAR_GOOD2, earLine2, cardFlags2, GFX2, GIM_WORDS2, gimFromWords2, gimBestFit2, gimSmart2, gfx2, gimStip2, gimPair2, KF_WORDS2, kfWord2, kfInit2, kfFind2, kfLeakP2, MID_MAX2, midStory2, overallRaw2, overallOf2, BP_CARRY2, AP_CARRY2, bpPerShow2, CLOG_MAX2, CLOG_SKIP2, clog2, pmMoney2, pmReview2, P0month2, PRESS_FIRST2, PRESS_LAST2, PRESS_BEAT2, PRESS_ACT2, pressInit2, pressWord2, pressSources2, pressWho2, PROG_ATTR2, PROG_BY2, DEV2, STYLE_PRI2, GIM_PRI2, progNeed2, progAgeX2, progInit2, progAll2, progCap2, progCost2, progGain2, progUse2, progSpend2, progAuto2, PROG_HC2, progShow2, rgWhy2, rgRow2, progLose2, regWeek2, RW_MOVES2, RW_LINES2, rwMoves2, brSurprisePool2, brFee2, STAFF_TAG2, STAFF_LVL2, staffTag2, staffVoice2, staffUnvoice2, toStaffOk2, SUG_FLAT2, VQ_FEEL2, VQ_SOUND2, VQ_CROWD2, venueQuirks2, DISASTER2, WW_KEEP2, wwCompany2, wwFile2, verdictWord2, WR_STYLE2, GR_WROOM2, WR_FIRST2, WR_LAST2, wrInit2, wrName2, wrPitch2, POD_EPS2, POD_MAX2, POD_SEGS2, podFirst2, podPlain2, podShowName2, podInit2, podTone2, podPickSide2, podWrite2;
+    var DB2, E2, CAL02, dbOf2, MONTHS2, STYLE2, STYLE_NAME2, MT2, STIP2, FIN2, LEN2, starQ2, starG2, starMeets2, PRODF2, PRODN2, RISKN2, RISK_STIP2, RISK_INJ2, TIXN2, TIX_P2, TIX_D2, ADVN2, ADV_H2, ADV_C2, SLOTN2, SLOT_V2, SLOT_MAX2, SLOT_REQ2, SLOT_RISK2, CAPS2, ACH2, FINISH2, ENTR2, clamp2, hash2, h012, rnd2, ri2, pick2, chance2, avg2, flat2, r12, names2, vsLabel2, cal2, PAY_TOP2, payTop2, payRatio2, wageFor2, workRate2, isDev2, rosterOf2, news2, award2, addWrestler2, buildPromo2, formTeam2, teamOf2, dissolveTeam2, partnerOf2, showMult2, msc2, viewersK2, demand2, ticket2, buysK2, capFor2, merchWeek2, wagesWeek2, baselineIncome2, calibrate2, calibrateShows2, calibrateCosts2, restAll2, expected2, activeFeuds2, feudOf2, feudsFor2, inFeud2, feudLabel2, feudStage2, startFeud2, heatUp2, turn2, divOk2, holdLvl2, titleById2, titleFull2, rkey2, titleFits2, eligible2, showTitles2, gimmickFor2, autoBook2, validate2, MODEL_CROWD2, ANGDONE2, EFX2, MQX2, CRX2, FINX2, POST2, SHOWX2, WEEKX2, NEWX2, ANGX2, EVMAKE2, EVR2, QEND2, PREX2, TASKX2, workOf2, chem2, addOvr2, fill2, GR2, sayPick2, expand2, say2, STIPLINE2, CHEAP2, REACT2, pop2, venueFor2, nth2, weeksAgo2, memoryLines2, callMatch2, winOdds2, doMatch2, settleFeud2, vacateFor2, afterBell2, promoScore2, angle2, BEATS2, beatTag2, BEAT_WHO2, ACTN2, feudAct2, nextBigName2, FEUDLETS2, genAngle2, LIVE_FIZZ2, LIVE_FIZZW2, LIVE_SHELF2, LIVE_FLAT2, isBigWeek2, nextBigFrom2, feudPlan2, feudSeg2, PHASE_N2, feudPhase2, feudActAt2, feudActCal2, rivalRipe2, feudDue2, closeChapter2, feudLead2, feudPayMult2, feudHeatRoom2, feudFizzle2, feudFile2, feudEmber2, emberOf2, feudHomeAt2, STORY_COST2, SEASON_N2, bigShort2, STORY_STAKES2, storyTurner2, STIP_NEED2, stipNeed2, stipFitOf2, dirtSheet2, showPool2, cardHype2, hypeParts2, showStart2, showStep2, POP_EDGE2, FIRST_NIGHT2, firstNight2, SEG_OUT2, SEG_CROWD2, segSentences2, segPeople2, stageSeg2, runShow2, showEnd2, dropQuest2, matchQuests2, keptPromise2, LIVE_MAX_TV2, LIVE_MAX_BIG2, LIVE_HM_CD2, LIVEK2, LIVE_ORDER2, LIVE_POST2, liveMatch2, liveLater2, livePut2, liveIntro2, CHAOS_SAFE2, afterBellText2, liveMax2, liveMake2, liveRoom2, livePre2, livePost2, liveFinish2, livePlay2, FACE_CD2, OWNER_CD2, FACE_UP2, FACE_DOWN2, faceOf2, faceHere2, faceOn2, faceHype2, faceWarn2, topNames2, NET_CD2, netClock2, BOTCH_CD2, AUD_CD2, OT_CD2, AUD_CR2, ZONE_WORD2, ringOk2, lcdOk2, lcdSet2, botchRead2, lenUp2, lenDown2, nightNote2, nightWriters2, NIGHT_CD2, NIGHT_OUT2, NIGHT_FURY2, nightFree2, nightMark2, nightMatter2, nightWin2, weekShows2, startWeek2, leaveCompany2, joinCompany2, settle2, hasQuest2, money2, pushEv2, EV2, genEvents2, renewAsk2, EV_TYPES2, evTy2, FLAG_WORDS2, MODEL_YEAR2, evList2, evName2, evRule2, EV_SPN2, EV_SPC2, EV_SPH2, EV_HMAX2, evSpendCost2, evAfterDark2, flagWeekFrom2, SP_TIER2, mkOffer2, refreshOffers2, sponsorBroken2, showKey2, onCard2, replaceOn2, gramPick2, gramCase2, gram2, GR_SHEET2, GR_WEB2, GR_CHAT2, GR_PROMO2, promoSpeech2, MOVES2, GR_SHAPE2, matchShape2, GR_FEUD2, GR_POD2, P2D62, odds2, mkCheck2, rollCheck2, rollText2, moraleMod2, trustMod2, SKILLMOD2, skillMods2, addChecks2, GIMS2, GIMBY2, gimFit2, assignGim2, initGimmicks2, TRAITS2, has2, earn2, bump2, STABLEN2, stableOf2, endStable2, leaveStable2, stableMates2, micOf2, hasMouthpiece2, STYLES2, ROOTS2, PLEDGE2, SKILLS2, cap12, xpNeed2, gainXp2, initYou2, talkDiscount2, pledgeRenew2, moraleTarget2, bpGrant2, grantBP2, matchSetup2, cardCost2, spendBP2, ownerQuest2, directiveDone2, recalibrate2, TREE_CAP2, SK_SAYS2, TREE2, TREE_TIER2, treeNeed2, treeNode2, treeSpent2, treeTotal2, treeSync2, treeHas2, YEAR_GROW2, YEAR_MIN_SHOWS2, yearNew2, yearInfo2, REL_MEM2, REL_ON2, REL_STRONG2, relBlank2, relState2, relMigrate2, rmAll2, relIdx2, relGet2, relEntry2, bondOf2, respOf2, jealOf2, relOf2, tieOf2, note2, relMine2, relSet2, relBump2, youRemember2, youLean2, relChem2, bondWord2, rankFor2, tournActive2, koPairs2, tournAdvance2, tournPair2, syncTitles2, yearEnd2, powerHeld2, powerScore2, CAMP_CAP2, CAMP_C2, CAMPN2, FOCUS2, campCost2, ovrCap2, phaseOf2, PHASE2, careerLine2, retire2, birthday2, rookieClass2, HIDDEN2, margin2, rng2, ROLE2, ZONES2, INTN2, MEDN2, MED_C2, MED_R2, MED_L2, MED_I2, EXN2, PUSHN2, medCost2, zonesOf2, zoneFloor2, maxZone2, fictional2, assignRoles2, autoMentor2, egoLines2, egoSum2, roomMood2, egoTarget2, stressAdd2, breakdown2, hurtRisk2, hurtZone2, OWNZ2, OPPZ2, bsInit2, HOUSE2, hasRule2, houseSlots2, houseHeat2, ruleMorale2, HOUSE_VIEW2, houseView2, apMax2, PLACES2, ownerMod2, activeRoster2, apActs2, CASES2, mkCase2, courtApply2, CLOCKS2, starPick2, tickClocks2, mAvg2, isMulti2, isGim2, tenureW2, MGC2, mainG2, mNote2, MODELS2, modelOf2, mixOf2, fitFor2, riskRange2, spMax2, modelJoin2, fitMed2, fitShape2, MOOD_WORDS2, STRESS_WORDS2, YOU_WORDS2, wordOf2, dosTies2, PPL_ROOMS2, PPL_MAX2, pplMatter2, pplFeudOf2, pplOther2, pplWorst2, peopleNow2, pplRaise2, pplSide2, pplTxt2, PPL_ACT2, DIFF2, DPART_N2, dif2, FED_SIZE2, FED_REGION2, clean2, mkFedDef2, draftRoster2, mile2, ystat2, BGS2, EMPH2, createStats2, TOPIC2, DELIV2, PKIND2, promoParts2, promoCheck2, planPromo2, promoWords2, xf2, isGuest2, relMod2, TEMPER2, temperOf2, temperKey2, temperMod2, agreeTradeMod2, gapMod2, startXf2, endXf2, tradeVal2, FANS2, fanFor2, netPosts2, SAGA2, sagaChapter2, newSaga2, sagaCheck2, sagaAdvance2, chronicle2, stipUseList2, stipWorn2, REFEREES2, refFor2, CATCHES2, catchFresh2, catchBoost2, barCity2, GUESTS2, HOF_SPEECH2, atHome2, homeWord2, msAward2, gimFresh2, NOTES2, noteMins2, noteSkill2, HOWS2, UNCLEAN2, howOf2, sourMood2, masked2, STIPFIT2, TFIN2, teamSides2, teamFin2, SGRID2, styleKey2, styleBlend2, flagshipWeek2, lpFeud2, presMove2, SROLE_N2, SROLE_D2, srFit2, stableRoles2, stableWeak22, memBetray2, memOf2, S_name2, MOM2, AFTER2, momTop2, momMine2, momLater2, momLose2, KEPT_MAX2, LIFE2, GR_SIFT2, SIFT_N2, SROLES2, staffOf2, SROLE_OTHER2, agentOf2, agentQ2, agentRisk2, SCHEMA_VERSION2, STYLE_KEY2, STYLE_OUT2, RMAP2, ROLES2, PUSH2, REL_TYPES2, ID_RE2, SCHEMAS2, lev2, nearest2, safeRel2, econ2, buildDB2, netsOf2, FALLBACK_NAMES2, slug2, asstInit2, asstLvl2, ASTN2, asstPickLen2, asstBook2, ED_PUSH_N2, ED_STYLE_N2, ED_ROLE_N2, ED_REL_N2, ED_RATINGS2, ED_TABLES2, ED_TABLE_N2, ED_TAB2, edRnd2, edPick2, edShape2, edId2, edFind2, edHome2, edIsWrestler2, ED_LADDER2, edRatings2, edNames2, ED_LISTS2, ED_QUICK2, histWeek2, histApply2, LOOK_ATTIRES2, LOOK_SLOTS2, LOOK_PARTS2, LOOK_KICK2, LOOK_POS2, lkStr2, lkId2, lkNum2, lkPrune2, lookClean2, lkWorker2, lookFin2, FIN_KO2, FIN_PAY2, finProt2, BTRAIT2, repMetric2, BNEED2, RECK2, ccCost2, ccRefusal2, TRVN2, TRV_C2, TRV_R2, travelCost2, holdPeer2, LINEK2, lineHeat2, lineCurve2, linesWeek2, tapeValue2, tapeWeekly2, showCity2, diehard2, sceneOk2, bgOk2, HOOKS2, MAKE_SHOWS2, MAKE_PER_SHOW2, MAKE_WAIT2, MAKE_BELT_GAP2, MAKE_SHOW_GAP2, MAKE_BOOM2, MAKE_CROWD2, WORLD_BELT_GAP2, WORLD_SHOW_GAP2, BELT_NEED2, MAKE_DAYS2, MAKE_SHOW_WORDS2, MAKE_TITLE_WORDS2, MAKE_SIZE2, makeWrestlers2, makeSizeWord2, makeShowIncome2, makeCleanName2, mkCount2, mkOf2, mkLog2, makeShowCost2, showOccasions2, MAKE_SHOW_NONE2, makeShowWhy2, makeShowCheck2, addShow2, removeShow2, makeTitleMax2, makeTitleCost2, makeTitleLevels2, beltOccasions2, MAKE_BELT_NONE2, makeBeltWait2, beltOccasion2, makeTitleWhy2, addTitle2, titleBusy2, makePick2, rivalNew2, rivalGrow2, VSTYLE2, mkVoices2, deskWage2, voiceOf2, voiceChem2, deskQ2, deskHeat2, deskNames2, campers2, trainerQ2, schoolCap2, schoolFee2, schoolRun2, goalTier2, topTitleFor2, GOALK2, newGoal2, goalText2, LOANT2, INVWANT2, financeCost2, LICK2, licStars2, DEPT2, deptSpent2, INDIES2, INDIE_NEW2, INDIE_SIZE2, INDIE_NIGHT2, indieMeta2, indiesOn2, indieOf2, NC_A2, NC_B2, NC_SHOW2, NC_TITLE2, newCompany2, NIGHT_ALT2, nightOf2, regionOf2, nightRivals2, nightOpen2, AIR_NETS2, AIR_TIERN2, AIR_WORD2, AIR_YEAR2, AIR_DEAL_MIN2, AIR_DEAL_SPAN2, AIR_GAP2, AIR_TIER_V2, AIR_TIER_REACH2, airLevelOf2, airWord2, airStep2, airRec2, airNets2, airPickNet2, airTier02, airYears2, airDealWeeks2, airOf2, airPF2, airRate2, airProd2, airReach2, airNight2, airStart2, airPay2, airStay2, airSign2, airFits2, airOffer2, airAsk2, airRival2, airDemote2, airInfo2, BELT_PLATES2, BELT_METALS2, BELT_STRAPS2, BELT_GEMS2, BELT_SIDES2, BELT_SIDE_SHAPES2, BELT_TRIMS2, beltHas2, beltWordClean2, beltWordOf2, beltFill2, starsOf2, boardTouch2, CRITIC2, criticScore2, criticRank2, speechFor2, LOGO_SHAPES2, LOGO_STYLES2, LOGO_LAYS2, LOGO_FINS2, LOGO_FONTS2, LOGO_EXTRAS2, LOGO_COLS2, LOGO_MODEL2, logoHas2, logoLetters2, logoTag2, logoLum2, logoDist2, logoBehind2, logoReads2, logoFix2, logoFill2, logoKey2, NET_TASTE2, NET_KEYS2, netTaste2, netTarget2, netClash2, netPleased2, netCardClash2, REGIONS2, TASTEN2, homeReg2, tourCost2, tourBoost2, tasteVal2, tasteFit2, tasteDraw2, retireCompany2, topTitle2, STRM_PRICE2, STRM_OPEN2, STRM_RUN2, streamOn2, streamCap2, streamOpenCost2, streamRunCost2, CANCEL_WARN2, HOUSE_DRAW2, BACK_RUN2, BACK_CS2, showOff2, MAP_W2, MAP_H2, MAP_ABC2, MAPS2, CITY_AT2, TOWN_AT2, VENUE_RE2, BLD_TIER2, BLD_WORDS2, cityBuildings2, venueName2, cityOfVenue2, placeOf2, mapById2, mapXY2, mapHas2, mapArea2, HOME_KM2, homeKm2, homeNear2, homeWeight2, homeHype2, homeHypeAt2, geoDist2, roadRoute2, roadCity2, soldOutLast2, roadCap2, MKT_WORDS2, mktBase2, mktKnow2, coldNight2, weatherMult2, mktMult2, mktWord2, roadMktNow2, saleSpan2, saleFrac2, stopDraw2, stopSales2, roadSoldNow2, roadAhead2, MAP_FIRST2, roadMap2, roadShape2, CONT_AT2, roadNearest2, SHAPES2, JOB_TERMS2, jobCheck2, isoParts2, chalCheck2, SCN_BUILT2, SCN_OPS2, scnSign2, SCN_WIN2, SCN2, scnFill2, scnLoad2, scnJudge2, scnCut2, SH_HOT2, SH_SLOW2, shIds2, shFacts2, shOpener2, shTopLvl2, SH_MT2, shPrev2, shBreak2, shapeAuto2, SEGLEN2, SEGLENN2, SEGK2, segLen2, segMins2, segSlots2, segList2, segRead2, segPool2, segTitleOf2, segChoices2, segWhy2, segMean2, segLook2, segLabel2, runSeg2, segBooked2, SEGFX2, SEGHEAT2, SEGBOND2, SEGK02, segoClean2, segkClean2, segkSync2, STIP_SETS2, STIP_BASES2, STIP02, STIPNOTE02, STIPLINE02, STIPNEED02, stipBase2, stipClean2, stipSync2, edStipPut2, LF2, LF_PRESS2, crowdWord2, liveFeed2, NET_FEED_MAX2, NET_SHEETS2, netPickH2, netHandle2, netLikes2, netPost2, netStarPost2, NET_WIN_F2, NET_WIN_H2, NET_NEW2, NET_LOSE2, NET_RIVAL2, NET_TURN2, netTurn2, netMentions2, netRumours2, netBackstage2, netThrowback2, netMoment2, netSheet2, taskOpen2, ADV_DAYS2, showDay2, wasNow2, reqOf2, faceCandidates2, CLAUSE2, clausesWanted2, datesFull2, SHOW_LEN2, TIME_OVER2, TIME_FREE2, TIME_LIGHT2, PLAN_MINS2, TOP_GOOD2, TOP_BAD2, MT_OVER2, STIP_SET2, showMins2, bellMins2, brMins2, matchSlot2, hasPlan2, showClock2, OPENS2, openKind2, showTimes2, fitShow2, showFill2, PLOT_PUSH_CD2, PLOT_TAPE2, PLOT_POS2, PLOT2, plotTeams2, plotPushable2, plotTapeOn2, SHOW_WORDS2, GRADES2, gradeIdx2, gradeG2, gradeA2, gradeMeets2, CROWD_PTS2, crowdScoreD2, crowdScore2, repCS2, verdictBand2, cgFix2, showWord2, capW2, showVerdict2, ARCH_KEEP2, ARCH_YEARS2, ARCH_LOG2, FA_CAP2, ROSTER_CAP2, TITLE_KEEP2, archYear2, arcHeels2, arcFaces2, ARCS2, arcFill2, arcEnd2, arcWord2, arcSplit2, AUD2, AUD_MODEL2, AUD_DRIFT2, audInit2, audReach2, audLean2, audTarget2, audBase2, audTotal2, audOffer2, CT_BIG2, CT_INDIE2, CT_ROLL2, ctWeekly2, ctPolicy2, ctFee2, ctAssign2, ctWeek2, payWeek2, DEBUT2, dirInit2, dirParts2, dirRead2, dirTrend2, DIR_TAG2, dirTag2, DIR_STYLES2, dirStyle2, dirRhythm2, dirBudget2, dirCalls2, dirGate2, dirOpen2, dirClose2, KNOW02, knowMake2, gasLimit2, fogSkill2, readP2, reads2, agentName2, matchRead2, fogLook2, EAR_BAD2, EAR_GOOD2, earLine2, cardFlags2, GFX2, GIM_WORDS2, gimFromWords2, gimBestFit2, gimSmart2, gfx2, gimStip2, gimPair2, KF_WORDS2, kfWord2, kfInit2, kfFind2, kfLeakP2, MID_MAX2, midStory2, overallRaw2, overallOf2, BP_CARRY2, AP_CARRY2, bpPerShow2, CLOG_MAX2, CLOG_SKIP2, clog2, pmMoney2, pmReview2, P0month2, PRESS_FIRST2, PRESS_LAST2, PRESS_BEAT2, PRESS_ACT2, pressInit2, pressWord2, pressSources2, pressWho2, PROG_ATTR2, PROG_BY2, DEV2, STYLE_PRI2, GIM_PRI2, progNeed2, progAgeX2, progInit2, progAll2, progCap2, progCost2, progGain2, progUse2, progSpend2, progAuto2, PROG_HC2, progShow2, rgWhy2, rgRow2, progLose2, regWeek2, RW_MOVES2, RW_LINES2, rwMoves2, rivalBk2, brSurprisePool2, brFee2, STAFF_TAG2, STAFF_LVL2, staffTag2, staffVoice2, staffUnvoice2, toStaffOk2, SUG_FLAT2, VQ_FEEL2, VQ_SOUND2, VQ_CROWD2, venueQuirks2, DISASTER2, WW_KEEP2, wwCompany2, wwFile2, verdictWord2, WR_STYLE2, GR_WROOM2, WR_FIRST2, WR_LAST2, wrInit2, wrName2, wrPitch2, POD_EPS2, POD_MAX2, POD_SEGS2, podFirst2, podPlain2, podShowName2, podInit2, podTone2, podPickSide2, podWrite2;
     root.GP = E2;
     return { get DB() {
       return DB2;
@@ -841,6 +841,10 @@
       return liveMake2;
     }, set liveMake(v) {
       liveMake2 = v;
+    }, get liveRoom() {
+      return liveRoom2;
+    }, set liveRoom(v) {
+      liveRoom2 = v;
     }, get livePre() {
       return livePre2;
     }, set livePre(v) {
@@ -1345,6 +1349,46 @@
       return recalibrate2;
     }, set recalibrate(v) {
       recalibrate2 = v;
+    }, get TREE_CAP() {
+      return TREE_CAP2;
+    }, set TREE_CAP(v) {
+      TREE_CAP2 = v;
+    }, get SK_SAYS() {
+      return SK_SAYS2;
+    }, set SK_SAYS(v) {
+      SK_SAYS2 = v;
+    }, get TREE() {
+      return TREE2;
+    }, set TREE(v) {
+      TREE2 = v;
+    }, get TREE_TIER() {
+      return TREE_TIER2;
+    }, set TREE_TIER(v) {
+      TREE_TIER2 = v;
+    }, get treeNeed() {
+      return treeNeed2;
+    }, set treeNeed(v) {
+      treeNeed2 = v;
+    }, get treeNode() {
+      return treeNode2;
+    }, set treeNode(v) {
+      treeNode2 = v;
+    }, get treeSpent() {
+      return treeSpent2;
+    }, set treeSpent(v) {
+      treeSpent2 = v;
+    }, get treeTotal() {
+      return treeTotal2;
+    }, set treeTotal(v) {
+      treeTotal2 = v;
+    }, get treeSync() {
+      return treeSync2;
+    }, set treeSync(v) {
+      treeSync2 = v;
+    }, get treeHas() {
+      return treeHas2;
+    }, set treeHas(v) {
+      treeHas2 = v;
     }, get YEAR_GROW() {
       return YEAR_GROW2;
     }, set YEAR_GROW(v) {
@@ -4153,6 +4197,62 @@
       return DEBUT2;
     }, set DEBUT(v) {
       DEBUT2 = v;
+    }, get dirInit() {
+      return dirInit2;
+    }, set dirInit(v) {
+      dirInit2 = v;
+    }, get dirParts() {
+      return dirParts2;
+    }, set dirParts(v) {
+      dirParts2 = v;
+    }, get dirRead() {
+      return dirRead2;
+    }, set dirRead(v) {
+      dirRead2 = v;
+    }, get dirTrend() {
+      return dirTrend2;
+    }, set dirTrend(v) {
+      dirTrend2 = v;
+    }, get DIR_TAG() {
+      return DIR_TAG2;
+    }, set DIR_TAG(v) {
+      DIR_TAG2 = v;
+    }, get dirTag() {
+      return dirTag2;
+    }, set dirTag(v) {
+      dirTag2 = v;
+    }, get DIR_STYLES() {
+      return DIR_STYLES2;
+    }, set DIR_STYLES(v) {
+      DIR_STYLES2 = v;
+    }, get dirStyle() {
+      return dirStyle2;
+    }, set dirStyle(v) {
+      dirStyle2 = v;
+    }, get dirRhythm() {
+      return dirRhythm2;
+    }, set dirRhythm(v) {
+      dirRhythm2 = v;
+    }, get dirBudget() {
+      return dirBudget2;
+    }, set dirBudget(v) {
+      dirBudget2 = v;
+    }, get dirCalls() {
+      return dirCalls2;
+    }, set dirCalls(v) {
+      dirCalls2 = v;
+    }, get dirGate() {
+      return dirGate2;
+    }, set dirGate(v) {
+      dirGate2 = v;
+    }, get dirOpen() {
+      return dirOpen2;
+    }, set dirOpen(v) {
+      dirOpen2 = v;
+    }, get dirClose() {
+      return dirClose2;
+    }, set dirClose(v) {
+      dirClose2 = v;
     }, get KNOW0() {
       return KNOW02;
     }, set KNOW0(v) {
@@ -4437,6 +4537,10 @@
       return rwMoves2;
     }, set rwMoves(v) {
       rwMoves2 = v;
+    }, get rivalBk() {
+      return rivalBk2;
+    }, set rivalBk(v) {
+      rivalBk2 = v;
     }, get brSurprisePool() {
       return brSurprisePool2;
     }, set brSurprisePool(v) {
@@ -5082,6 +5186,7 @@
       player: playerId,
       diff: L.DIFF[opts.diff] ? opts.diff : "normal",
       iron: !!opts.iron,
+      dst: opts.dir || void 0,
       dpart: opts.dpart && typeof opts.dpart === "object" ? { money: clamp(+opts.dpart.money | 0, 0, 2), inj: clamp(+opts.dpart.inj | 0, 0, 2), ego: clamp(+opts.dpart.ego | 0, 0, 2), rival: clamp(+opts.dpart.rival | 0, 0, 2) } : null,
       mode: "booker",
       w: [],
@@ -5412,7 +5517,7 @@
     w.tw = S.week;
     w.gs = S.week;
     L.mile(S, w, "turn", "Turned " + (w.align === "F" ? "face" : "heel") + (why ? ": " + why : "") + (tired ? " (too soon after the last turn)" : built ? " (well built)" : ""));
-    L.news(S, "story", w.name + " turns " + (w.align === "F" ? "face" : "heel") + (why ? " \u2014 " + why : "") + "." + note2);
+    L.news(S, "story", w.name + " turns " + (w.align === "F" ? "face" : "heel") + (why ? ": " + why : "") + "." + note2);
     if (w.promo === S.player) award(S, "ACH_TURN");
   }
   function divOk(P, t, w) {
@@ -6093,11 +6198,10 @@
     open_A: ["{a} and {b} feel each other out before {a} takes control.", "{a} out-wrestles {b} in the opening minutes.", "A cautious start, and {a} finds the first opening.", "{a} gets the better of the early exchanges."],
     open_multi: ["It is every wrestler for themselves, and {a} is the first to find a target in {b}.", "The bell rings and the ring fills with bodies. {a} goes straight for {b}.", "No partners, no friends, and the referee has their hands full. {a} starts with {b}.", "Everyone is a rival here. {a} and {b} collide first while the others circle."],
     open_six: ["Three against three, and the corner is a crowded place. {a} starts for their side against {b}.", "A six-man tag: {a} and {b} start it, and the other four lean on the ropes.", "Six bodies, two corners, one referee. {a} and {b} get things going.", "{a} tags in, {b} tags out, and the crowd cannot keep track of who is legal."],
-    mid_multi: ["The ring turns into a pile-up and {b} is lost in the middle of it.", "Two of them spill to the floor while {a} and {b} trade near-falls, and a third breaks up the cover.", "Alliances flip every thirty seconds. {b} thinks about trusting {a}, then thinks better of it.", "Nobody can stay on one opponent for long. {a} is pulled off {b} twice in a minute."],
+    mid_multi: ["The ring turns into a pile-up and {b} is lost in the middle of it.", "Two of them spill to the floor while {a} and {b} trade big moves in the ring.", "Alliances flip every thirty seconds. {b} thinks about trusting {a}, then thinks better of it.", "Nobody can stay on one opponent for long. {a} is pulled off {b} twice in a minute."],
     mid_six: ["The hot tag brings the crowd up. {b} cannot reach the corner while {a} cuts the ring in half.", "{a} is cut off from the corner, and the other side takes turns.", "Chaos in the corner: the referee has three wrestlers on the apron and no idea who is legal.", "{b} makes the tag and the whole building rises with them."],
     limb: ["arm", "leg", "knee", "shoulder", "neck"],
     mid: ["{b} fights back and the two trade near-falls.", "{b} cuts {a} off and slows the pace.", "{b} rallies, and the momentum swings back and forth.", "{b} survives a close call and fires up.", "{b} catches {a} coming in and turns the tide.", "Back and forth they go. Neither can keep the advantage.", "{b} finds a second wind out of nowhere."],
-    near: ["Cover by {b}! One, two... no! {a} kicks out!", "{b} hooks the leg! One, two... {a} gets the shoulder up!", "{a} goes for the finish, but {b} slips out the back!", "#bigmove# from {b}! That has to be it... only a two count!", "{a} thought that was three. So did I, {c}!", "Shoulder up at two and nine-tenths!"],
     bigmove: ["A huge clothesline", "A spinning kick", "A suplex out of nowhere", "A dive to the floor", "A knee to the jaw", "A slam in the centre of the ring", "A counter in mid-air"],
     late: ["We are past the {mark}-minute mark and neither one will stay down.", "{mark} minutes gone, and they are still throwing everything they have.", "They have been at it for over {mark} minutes. Somebody has to break."],
     q_great: ["This is a classic in the making.", "Remember where you were when you saw this one.", "I have not seen many better than this, {p}.", "They are going to be talking about this match for years."],
@@ -6133,7 +6237,6 @@
     br_final: ["{l} charges, {w} ducks, and {l} goes over the top! {w} wins it!", "{w} clotheslines {l} over the top rope! It is over!", "{l} is teetering on the apron... and {w} knocks {l} to the floor! {w} has done it!"],
     mid2: ["{a} takes over again and goes to work.", "{b} is hanging on, and {a} smells it.", "{a} slows it down and makes {b} pay for every inch.", "Now it is {a} with the upper hand, and the crowd does not know who to believe."],
     tease: ["{a} signals for the finish... {b} blocks it!", "{a} sets up for the big one, and {b} wriggles free!", "{b} sees it coming and rolls to the floor. Not yet!", "{a} goes for it, and {b} counters at the last second!"],
-    near2: ["Another cover! One, two... NO! How did {a} kick out of that?", "Everything they have got! One, two... and {a} is still alive!", "{b} cannot believe it. Neither can I, {c}. Two and a half!", "That should have been it! The referee\u2019s hand was coming down!"],
     chant: ["They are chanting both names now, {p}.", "Listen to that. Half the building for {a}, half for {b}.", "The whole place is standing. Nobody wants to sit down for this.", "Stomping in the stands. You can feel it up here."],
     chantF: ["\u201C{n}! {n}!\u201D The whole building is chanting it.", "Listen to them, {p}. They are chanting for {n} before the bell.", "You cannot hear yourself think in here. Every voice is for {n}."],
     chantH: ["The crowd has a chant for {n}, and it is not a kind one.", "Every seat in the house is letting {n} have it.", "{n} cups an ear and the boos only get louder."],
@@ -6327,21 +6430,17 @@
     if (shp && shp.intro) bc.push({ t: "col", x: shp.intro.charAt(0).toUpperCase() + shp.intro.slice(1) });
     if (mem[1]) raw("pbp", mem[1]);
     if (L.STIPLINE[x.stip]) raw("pbp", sayPick(S, L.STIPLINE[x.stip]));
-    if (x.mins > 8) {
-      pbp(mk ? "mid_" + mk : "mid");
-      pbp("near", 1);
-    }
+    if (x.mins > 8) pbp(mk ? "mid_" + mk : "mid");
     if (shp && shp.spot) bc.push({ t: "pbp", x: shp.spot.charAt(0).toUpperCase() + shp.spot.slice(1) });
     if (x.mins >= 14 && !mk) hp("pbp", "mid2");
     if (x.mins >= 12 && x.CR >= 75) hp("col", "chant");
     if (x.mins >= 14 && !mk) hp("pbp", "tease");
     if (x.mins >= 20) pbp("late");
-    if (x.mins >= 18 && x.MQ >= 70) hp("pbp", "near2", 1);
     if (shp && shp.late) bc.push({ t: "pbp", x: shp.late.charAt(0).toUpperCase() + shp.late.slice(1), h: 1 });
     if (x.fko) {
-      bc.push({ t: "pbp", x: (x.fko.again ? x.fko.who + " hits " + x.fko.f + "! This is it! One, two... " : "Out of nowhere, " + x.fko.who + " hits " + x.fko.f + "! One, two... ") + x.fko.by + " KICKS OUT!", h: 1 });
+      bc.push({ t: "pbp", x: (x.fko.again ? x.fko.who + " hits " + x.fko.f + "! This is it! One, two... " : "Out of nowhere, " + x.fko.who + " hits " + x.fko.f + "! One, two... ") + x.fko.by + " KICKS OUT!", h: 1, fk: 1 });
       raw("col", x.fko.huge ? "Nobody kicks out of that, {p}! Nobody! I have never seen that!" : "{p}, I have seen that move finish bigger names than this. Not tonight!");
-    } else if (!x.fm && x.win >= 0 && x.lfin && (x.main || x.big) && x.mins >= 18 && h01(hk + "fko") < 0.3) bc.push({ t: "pbp", x: x.lname + " hits " + (/^the /i.test(x.lfin) ? "" : "the ") + x.lfin + "! One, two... " + o.w + " kicks out!", h: 1 });
+    } else if (!x.fm && x.win >= 0 && x.lfin && (x.main || x.big) && x.mins >= 18 && h01(hk + "fko") < 0.3) bc.push({ t: "pbp", x: x.lname + " hits " + (/^the /i.test(x.lfin) ? "" : "the ") + x.lfin + "! One, two... " + o.w + " kicks out!", h: 1, fk: 1 });
     col(x.bad ? "q_off" : x.MQ >= 88 ? "q_great" : x.MQ >= 75 ? "q_good" : x.MQ >= 60 ? "q_ok" : x.MQ >= 45 ? "q_poor" : "q_bad");
     if (x.mins >= 14 && x.CR >= 82) col("c_hot");
     var mf = (x.fx || []).filter(function(q) {
@@ -7659,7 +7758,7 @@
     feudPlan(S, f);
     if (f.tww === S.week && f.twR !== S.week) {
       f.twR = S.week;
-      f.fresh = Math.min(100, f.fresh + 30);
+      f.fresh = Math.min(100, f.fresh + (L.treeHas && L.treeHas(S, "cr_third") ? 45 : 30));
     }
     if (amt <= 0) return { amt, cap: 100 };
     var x = 0.3 + 0.7 * f.fresh / 100;
@@ -7838,10 +7937,10 @@
     var p = E.feudPlan(S, f);
     return { ok: true, msg: feudLabel(S, f) + " ends at " + p.end.at + (p.end.in <= 0 ? ", this week" : p.end.in === 1 ? ", next week" : ", in " + p.end.in + " weeks") + ". Book the two of them on that show." };
   };
-  E.setMatchEnd = function(S, i, on) {
+  E.setMatchEnd = function(S, i, on2) {
     var m = S.card[i];
     if (!m) return false;
-    if (on) m.end = 1;
+    if (on2) m.end = 1;
     else delete m.end;
     return true;
   };
@@ -8731,8 +8830,8 @@
   L.livePost = livePost;
   L.liveFinish = liveFinish;
   L.livePlay = livePlay;
-  var LIVE_MAX_TV = 3;
-  var LIVE_MAX_BIG = 4;
+  var LIVE_MAX_TV = 2;
+  var LIVE_MAX_BIG = 3;
   var LIVE_HM_CD = 8;
   var LIVEK = {};
   var LIVE_ORDER = ["chaos", "titlecall", "runin", "hotmic"];
@@ -9102,7 +9201,7 @@
   };
   function liveMax(S) {
     var sh = S.queue[S.qi];
-    return sh && sh.big ? L.LIVE_MAX_BIG : L.LIVE_MAX_TV;
+    return L.dirCalls ? L.dirCalls(S, !!(sh && sh.big)) : sh && sh.big ? L.LIVE_MAX_BIG : L.LIVE_MAX_TV;
   }
   function liveMake(S, L2, kind, ev) {
     ev.kind = kind;
@@ -9115,13 +9214,24 @@
     L2.had[kind] = (L2.had[kind] || 0) + 1;
     return ev;
   }
+  function liveRoom(S, L2, idx) {
+    var st = L2.st, last = L2.card.length - 1, ahead = false;
+    for (var j = idx + 1; j < st.steps.length; j++) {
+      var x = st.steps[j];
+      if (x.t === "match" && x.i === last) {
+        ahead = true;
+        break;
+      }
+    }
+    return liveMax(S) - (ahead ? 1 : 0);
+  }
   function livePre(S, L2) {
     var st = L2.st, step = st.steps[st.k], ev = null, k;
     if (!step || L2.pre === st.k) return null;
     L2.pre = st.k;
     for (k = 0; k < L.LIVE_ORDER.length && !ev; k++) {
       var kind = L.LIVE_ORDER[k], K = L.LIVEK[kind];
-      if (!K.pre || !K.free && (L2.cnt >= liveMax(S) || L2.had[kind])) continue;
+      if (!K.pre || !K.free && (L2.cnt >= liveRoom(S, L2, st.k) || L2.had[kind])) continue;
       ev = K.pre(S, L2, step);
       if (ev) liveMake(S, L2, kind, ev);
     }
@@ -9138,7 +9248,7 @@
     L2.post = i;
     var seg = L2.last >= 0 ? st.rep.segs[L2.last] : null;
     if (!seg) return null;
-    if (L2.cnt >= liveMax(S) + 1) return null;
+    if (L2.cnt >= liveRoom(S, L2, i)) return null;
     for (var k = 0; k < L.LIVE_POST.length; k++) {
       var kind = L.LIVE_POST[k], K = L.LIVEK[kind];
       if (!K || !K.post || L2.had[kind]) continue;
@@ -9316,8 +9426,8 @@
   function faceHype(S, P, card) {
     var w = faceOf(S);
     if (!w || S.cal || P.id !== S.player || !card.length) return 0;
-    var on = faceOn(card, w.id);
-    return on === 2 ? L.FACE_UP : on === 1 ? 0 : faceHere(S, w) && S.week > S.fc.w ? -L.FACE_DOWN : 0;
+    var on2 = faceOn(card, w.id);
+    return on2 === 2 ? L.FACE_UP : on2 === 1 ? 0 : faceHere(S, w) && S.week > S.fc.w ? -L.FACE_DOWN : 0;
   }
   function faceWarn(S, card) {
     var w = faceOf(S);
@@ -9922,10 +10032,10 @@
       return s.k === "match";
     }), talk = rep.segs.filter(function(s) {
       return s.k !== "match";
-    }), on = {};
+    }), on2 = {};
     rep.segs.forEach(function(s) {
       (s.ids || []).forEach(function(id) {
-        on[id] = 1;
+        on2[id] = 1;
       });
     });
     var bt = talk.slice().sort(function(a, b) {
@@ -9943,7 +10053,7 @@
     if (under) out.push({ x: "The crowd took to " + under.win + " tonight, louder than for the main event. The writers want them higher on the card.", s: 1 });
     var f = S.feuds.filter(function(q) {
       return !q.res && q.promo === P.id && q.heat >= 50 && !q.a.concat(q.b).some(function(id) {
-        return on[id];
+        return on2[id];
       }) && q.a.concat(q.b).every(function(id) {
         return S.w[id] && S.w[id].promo === P.id && !(S.w[id].inj > 0);
       });
@@ -10403,6 +10513,7 @@
     var ev = nightMatter(S, P, rep);
     if (!ev) return;
     ev.night = rep.left.key;
+    ev.cs = L.repCS(rep);
     L.pushEv(S, ev);
     rep.left.matter = ev.id;
     L.note(S, "On your desk", ev.text.split(". ")[0] + ".", "bad");
@@ -10506,7 +10617,10 @@
     S.inbox = S.inbox.filter(function(e) {
       return !e.done;
     });
+    L.dirRead(S);
+    L.dirOpen(S);
     genEvents(S);
+    L.dirClose(S);
   }
   function leaveCompany(S, w, why, quiet) {
     var P = S.promos[w.promo];
@@ -10740,6 +10854,7 @@
     ev.id = S.nid++;
     ev.done = !ev.choices;
     ev.result = null;
+    if (L.dirGate(S, ev)) return ev;
     S.inbox.push(ev);
     return ev;
   }
@@ -11383,7 +11498,13 @@
   WEEKX.push(function(S) {
     var P = S.promos[S.player];
     S.sponsors = S.sponsors.filter(function(x) {
-      if (sponsorBroken(S, P, x)) {
+      if (sponsorBroken(S, P, x) && (L.treeHas && L.treeHas(S, "of_sponsor")) && !x.warned) {
+        x.warned = 1;
+        L.news(S, "money", x.name + " is unhappy, but gives you one more week to put it right.");
+        L.note(S, x.name + " gives you one more week", "Put its terms right by the end of next week: " + x.text.toLowerCase() + ".", "bad");
+      } else if (!sponsorBroken(S, P, x)) {
+        if (x.warned) delete x.warned;
+      } else {
         L.news(S, "money", x.name + " pulled its sponsorship: " + x.text.toLowerCase() + " was the deal.");
         P.image = clamp(P.image - 0.3, 5, 100);
         return false;
@@ -11998,10 +12119,11 @@
       { t: "{w} has been on the defensive all match, but here comes the comeback!", if: function(c) {
         return c.k === "comeback";
       } },
-      { t: "{a} hits the {fa}... and {b} kicks out! Nobody kicks out of that!", if: function(c) {
+      { t: "{a} hits {fa}, but {b} rolls to the floor before the cover!", if: function(c) {
         return !!c.fa && c.hot;
       } },
-      { t: "{b} goes for the {fb}, but {a} slips out of it!", if: function(c) {
+      // no cover: near falls only come from a finisher the engine saw kicked out of
+      { t: "{b} goes for {fb}, but {a} slips out of it!", if: function(c) {
         return !!c.fb;
       } },
       { t: "Both of them are down, {p}. The referee starts to count.", if: function(c) {
@@ -12039,8 +12161,8 @@
       small: srt[1].name,
       am: pk(L.MOVES[A.style] || L.MOVES.A, "am"),
       bm: pk(L.MOVES[B.style] || L.MOVES.A, "bm"),
-      fa: A.fin || null,
-      fb: B.fin || null,
+      fa: A.fin ? /^the /i.test(A.fin) ? A.fin : "the " + A.fin : null,
+      fb: B.fin ? /^the /i.test(B.fin) ? B.fin : "the " + B.fin : null,
       hot: x.MQ >= 72 && x.mins >= 12
     };
     return { k, intro: gram(L.GR_SHAPE, "intro", c, hk + "i"), spot: x.mins > 8 && k !== "squash" ? gram(L.GR_SHAPE, "spot", c, hk + "s") : null, late: x.mins >= 12 && k !== "squash" ? gram(L.GR_SHAPE, "late", c, hk + "l") : null };
@@ -12868,13 +12990,13 @@
     return t.charAt(0).toUpperCase() + t.slice(1);
   }
   function xpNeed(l) {
-    return 80 + 50 * l;
+    return 100 + 60 * l;
   }
   function gainXp(S, n) {
     var b = S.booker;
     if (!b || S.cal) return;
     b.xp += Math.round(n);
-    while (b.xp >= xpNeed(b.lvl) && b.lvl < 22) {
+    while (b.xp >= xpNeed(b.lvl)) {
       b.xp -= xpNeed(b.lvl);
       b.lvl++;
       b.pts++;
@@ -12886,7 +13008,7 @@
     var d = S.custom && S.custom.id === S.player ? S.custom : L.DB.promotions.filter(function(p) {
       return p.id === S.player;
     })[0], o = d.owner || { name: "The owner", style: "stars", roots: "tradition", pledge: "pay" };
-    S.booker = { name: String(opts.name || "").trim().slice(0, 24) || "The Booker", xp: 0, lvl: 1, pts: 0, sk: { creative: 0, talk: 0, eye: 0, motivator: 0, clout: 0 } };
+    S.booker = { name: String(opts.name || "").trim().slice(0, 24) || "The Booker", xp: 0, lvl: 1, pts: 0, sk: { creative: 0, talk: 0, eye: 0, motivator: 0, clout: 0 }, tree: {} };
     if (opts.booker) {
       S.booker.xp = opts.booker.xp;
       S.booker.lvl = opts.booker.lvl;
@@ -12894,6 +13016,7 @@
       Object.keys(S.booker.sk).forEach(function(k) {
         S.booker.sk[k] = opts.booker.sk[k] || 0;
       });
+      S.booker.tree = JSON.parse(JSON.stringify(opts.booker.tree || {}));
     }
     S.owner = { name: o.name, trust: 55, me: false, style: o.style, roots: o.roots, pledge: o.pledge, lobby: {}, asked: 0, creedWeek: -99, wage0: wagesWeek(S, S.promos[S.player]) };
     S.creedScore = 60;
@@ -12920,7 +13043,7 @@
   }
   function moraleTarget(S) {
     var o = S.owner, b = S.booker;
-    return 65 + L.dif(S).mor + ((S.trust == null ? 60 : S.trust) - 60) / 5 + (b ? 1.5 * b.sk.motivator : 0) + (o ? o.pledge === "pay" ? 5 : o.pledge === "stable" ? 3 : 0 : 0);
+    return 65 + L.dif(S).mor + ((S.trust == null ? 60 : S.trust) - 60) / 5 + (b ? 1.5 * b.sk.motivator : 0) + (o ? o.pledge === "pay" ? 5 : o.pledge === "stable" ? 3 : 0 : 0) - (L.treeHas && L.treeHas(S, "of_lean") ? 4 : 0);
   }
   E.spendPoint = function(S, k) {
     var b = S.booker, sk = L.SKILLS[k];
@@ -12931,7 +13054,7 @@
   };
   function bpGrant(S) {
     var P = S.promos[S.player], n = P.shows.length, b = S.booker, o = S.owner, big = cal(S.week).wom === 4 ? 3 : 0;
-    return Math.max(1, (o.me ? n * 3 + 2 + Math.floor(b.lvl / 2) : Math.round(n * 1.5) + Math.floor(o.trust / 25) + Math.floor(b.lvl / 3)) + b.sk.clout + big + L.dif(S).bp);
+    return Math.max(1, (o.me ? n * 3 + 2 : Math.round(n * 1.5) + Math.floor(o.trust / 25)) + b.sk.clout + big + L.dif(S).bp);
   }
   function grantBP(S) {
     var g = bpGrant(S);
@@ -13376,12 +13499,12 @@
   E.advice = function(S, card) {
     var P = S.promos[S.player], show = S.queue[S.qi];
     if (!show) return [];
-    var agent = [], writer = [], ann = [], n = card.length, on = {}, twice = {}, extra = S.booker.sk.eye >= 3 ? 1 : 0;
+    var agent = [], writer = [], ann = [], n = card.length, on2 = {}, twice = {}, extra = S.booker.sk.eye >= 3 ? 1 : 0;
     card.forEach(function(m) {
       flat(m.sides).forEach(function(id) {
         if (id != null) {
-          if (on[id]) twice[id] = 1;
-          on[id] = 1;
+          if (on2[id]) twice[id] = 1;
+          on2[id] = 1;
         }
       });
     });
@@ -13416,7 +13539,7 @@
         return w.inj <= 0 && !(w.away >= S.week) && (show.big || !show.brand || w.brand === show.brand);
       };
       if (!av(a) || !av(b)) return;
-      if (!(on[a.id] && on[b.id])) writer.push("Nothing tonight for " + feudLabel(S, f) + "? Both need to be on the show or the feud cools.");
+      if (!(on2[a.id] && on2[b.id])) writer.push("Nothing tonight for " + feudLabel(S, f) + "? Both need to be on the show or the feud cools.");
       else if (show.big && f.heat >= 60 && !card.some(function(m) {
         var ids = flat(m.sides);
         return ids.indexOf(a.id) >= 0 && ids.indexOf(b.id) >= 0;
@@ -13446,7 +13569,7 @@
     var pool = eligible(S, P, show).sort(function(a, b) {
       return b.ovr - a.ovr;
     }).slice(0, 8).filter(function(w) {
-      return !on[w.id] && S.week - w.lu >= 3;
+      return !on2[w.id] && S.week - w.lu >= 3;
     });
     if (pool.length) ann.push(pool[0].name + " has been off the shows for " + (S.week - pool[0].lu) + " weeks. People are asking.");
     var out = [], cap = 2 + extra;
@@ -13504,6 +13627,201 @@
   L.ownerQuest = ownerQuest;
   L.directiveDone = directiveDone;
   L.recalibrate = recalibrate;
+
+  // engine/65-youtree.ts
+  var TREE_CAP = { creative: 5, talk: 5, eye: 3, motivator: 5, clout: 3 };
+  var SK_SAYS = {
+    creative: "Creative +1: hotter feuds, better angles, better odds on creative gambles",
+    talk: "Negotiation +1: cheaper contracts and better odds when you talk someone round",
+    motivator: "Motivator +1: steadier morale and more effort in the ring",
+    eye: "Eye +1: surer road agent reads and potential seen in young wrestlers",
+    clout: "Clout +1: one more point of booking power every week"
+  };
+  var TREE = {
+    creative: { n: "Creative", d: "Stories, promos and angles.", nodes: [
+      { id: "cr_pen", t: 0, k: "bonus", sk: "creative", n: "Sharp pen" },
+      { id: "cr_ear", t: 0, k: "bonus", sk: "creative", n: "An ear for a line" },
+      { id: "cr_room", t: 1, k: "bonus", sk: "creative", n: "Run the room" },
+      { id: "cr_pull", t: 1, k: "bonus", sk: "clout", n: "Pull in the office" },
+      { id: "cr_audible", t: 1, k: "action", n: "Call an audible", d: "Once a show, when nothing else needs you, call the main event\u2019s finish yourself while it is on the air." },
+      { id: "cr_twist", t: 2, k: "bonus", sk: "creative", n: "Twist the knife" },
+      { id: "cr_weight", t: 2, k: "bonus", sk: "clout", n: "Weight to throw" },
+      { id: "cr_shock", t: 2, k: "trade", n: "Shock value", d: "Promos and angles hit harder, but every angle on a show costs the owner\u2019s trust, each more than the last." },
+      { id: "cr_master", t: 3, k: "bonus", sk: "creative", n: "Master storyteller" },
+      { id: "cr_boss", t: 3, k: "bonus", sk: "clout", n: "The book is yours" },
+      { id: "cr_third", t: 3, k: "action", n: "A third act", d: "A twist gives a story half as much room again before it goes stale." }
+    ] },
+    office: { n: "Office", d: "Money, contracts and the network.", nodes: [
+      { id: "of_deal", t: 0, k: "bonus", sk: "talk", n: "Deal maker" },
+      { id: "of_read", t: 0, k: "bonus", sk: "talk", n: "Read the table" },
+      { id: "of_clause", t: 1, k: "action", n: "One more clause", d: "A wrestler can take four clauses in a deal instead of three, and asks for less with each." },
+      { id: "of_firm", t: 1, k: "bonus", sk: "talk", n: "Firm hand" },
+      { id: "of_sweeten", t: 2, k: "action", n: "Sweeten the deal", d: "On Storylines: three booking power for a better rate at your next network renewal." },
+      { id: "of_closer", t: 2, k: "bonus", sk: "talk", n: "Closer" },
+      { id: "of_lean", t: 2, k: "trade", n: "Lean books", d: "Wages cost 8% less, but the roster\u2019s mood settles lower." },
+      { id: "of_shark", t: 3, k: "bonus", sk: "talk", n: "Shark" },
+      { id: "of_sponsor", t: 3, k: "action", n: "Sponsor patience", d: "A sponsor gives you one more week before walking." }
+    ] },
+    locker: { n: "Locker room", d: "People.", nodes: [
+      { id: "lr_steady", t: 0, k: "bonus", sk: "motivator", n: "Steady voice" },
+      { id: "lr_door", t: 0, k: "bonus", sk: "motivator", n: "Open door" },
+      { id: "lr_meet", t: 1, k: "action", n: "Closed-door meeting", d: "In wrestlers\u2019 court, once a month: sit two people with real heat down and settle most of it." },
+      { id: "lr_trust", t: 1, k: "bonus", sk: "motivator", n: "Earned trust" },
+      { id: "lr_patience", t: 2, k: "action", n: "Patience", d: "Held problems wait a week longer before they lapse." },
+      { id: "lr_leader", t: 2, k: "bonus", sk: "motivator", n: "Leader" },
+      { id: "lr_hard", t: 2, k: "trade", n: "Hard but fair", d: "Your rulings in court land harder, but everyone warms to you more slowly." },
+      { id: "lr_father", t: 3, k: "bonus", sk: "motivator", n: "Locker room leader" },
+      { id: "lr_extra", t: 3, k: "action", n: "One more hour", d: "One more action point every week." }
+    ] },
+    eye: { n: "Eye", d: "Seeing what is hidden.", nodes: [
+      { id: "ey_scout", t: 0, k: "bonus", sk: "eye", n: "Scout" },
+      { id: "ey_tape", t: 0, k: "action", n: "Watch the tape", d: "The road agent reads more of every match on the sheet." },
+      { id: "ey_judge", t: 1, k: "bonus", sk: "eye", n: "Good judge" },
+      { id: "ey_smell", t: 1, k: "action", n: "Smell trouble", d: "See how long each waiting matter has before it lapses." },
+      { id: "ey_word", t: 2, k: "action", n: "Read the weather", d: "The word on your desk says what is driving the week." },
+      { id: "ey_seer", t: 3, k: "bonus", sk: "eye", n: "Seer" }
+    ] }
+  };
+  for (const b in TREE) TREE[b].nodes.forEach((n) => {
+    n.c = n.t === 3 ? 2 : 1;
+    if (n.k === "bonus") n.d = SK_SAYS[n.sk] + ".";
+  });
+  var TREE_TIER = (() => {
+    let m = 0;
+    for (const b in TREE) TREE[b].nodes.forEach((n) => {
+      m = Math.max(m, n.t);
+    });
+    return Array.from({ length: m + 1 }, (_, i) => i);
+  })();
+  function treeNeed(br, t) {
+    let s = 0;
+    TREE[br].nodes.forEach((n) => {
+      if (n.t < t && !n.soon) s += n.c;
+    });
+    return Math.ceil(s * 0.6);
+  }
+  function treeNode(id) {
+    for (const b in TREE) for (const n of TREE[b].nodes) if (n.id === id) return Object.assign({ br: b }, n);
+    return null;
+  }
+  function treeSpent(bk, br) {
+    let s = 0;
+    TREE[br].nodes.forEach((n) => {
+      if (bk.tree && bk.tree[n.id]) s += n.c;
+    });
+    return s;
+  }
+  function treeTotal() {
+    let s = 0;
+    for (const b in TREE) TREE[b].nodes.forEach((n) => {
+      s += n.c;
+    });
+    return s;
+  }
+  function treeSync(bk) {
+    if (!bk) return;
+    if (!bk.tree) bk.tree = {};
+    const sk = { creative: 0, talk: 0, eye: 0, motivator: 0, clout: 0 };
+    for (const b in TREE) TREE[b].nodes.forEach((n) => {
+      if (n.k === "bonus" && bk.tree[n.id]) sk[n.sk] = Math.min(TREE_CAP[n.sk], sk[n.sk] + 1);
+    });
+    bk.sk = sk;
+  }
+  function treeHas(S, id) {
+    const b = S && S.booker;
+    return !!(b && b.tree && b.tree[id]);
+  }
+  E.TREE = TREE;
+  E.bpGrantOf = function(S) {
+    return L.bpGrant(S);
+  };
+  E.treeInfo = function(S) {
+    const bk = Object.assign({}, S.booker, { tree: S.booker.tree || {} });
+    const sk = bk.sk || {}, stand = {};
+    for (const k in TREE_CAP) stand[k] = { v: sk[k] || 0, cap: TREE_CAP[k], n: SK_SAYS[k].split(" +")[0] };
+    return {
+      pts: bk.pts,
+      lvl: bk.lvl,
+      stand,
+      total: treeTotal(),
+      owned: Object.keys(bk.tree).length,
+      branches: Object.keys(TREE).map((b) => {
+        const sp = treeSpent(bk, b);
+        return {
+          id: b,
+          n: TREE[b].n,
+          d: TREE[b].d,
+          spent: sp,
+          tiers: TREE_TIER.map((t) => {
+            const need = treeNeed(b, t);
+            return {
+              t,
+              need,
+              open: sp >= need,
+              nodes: TREE[b].nodes.filter((n) => n.t === t).map((n) => ({
+                id: n.id,
+                n: n.n,
+                d: n.d,
+                k: n.k,
+                sk: n.sk,
+                c: n.c,
+                has: !!bk.tree[n.id],
+                soon: !!n.soon,
+                can: !n.soon && !bk.tree[n.id] && sp >= need && bk.pts >= n.c
+              }))
+            };
+          })
+        };
+      })
+    };
+  };
+  E.treeSpend = function(S, id) {
+    const bk = S.booker, n = treeNode(id);
+    if (!n) return { ok: false, msg: "There is no such skill." };
+    if (!bk.tree) bk.tree = {};
+    if (bk.tree[id]) return { ok: false, msg: "You already have " + n.n + "." };
+    if (n.soon) return { ok: false, msg: n.n + " is coming in a later update." };
+    if (treeSpent(bk, n.br) < treeNeed(n.br, n.t)) return { ok: false, msg: "Spend " + (treeNeed(n.br, n.t) - treeSpent(bk, n.br)) + " more in " + TREE[n.br].n + " to open this." };
+    if (bk.pts < n.c) return { ok: false, msg: "It costs " + n.c + " skill point" + (n.c > 1 ? "s" : "") + "." };
+    bk.pts -= n.c;
+    bk.tree[id] = 1;
+    treeSync(bk);
+    return { ok: true, msg: n.n + ". " + n.d };
+  };
+  var RESPEC_TRUST = [5, 8, 12, 16];
+  E.treeRespecCost = function(S) {
+    const bk = S.booker || {}, own = !!(S.owner && S.owner.me), P = S.promos[S.player], n = Object.keys(bk.tree || {}).length;
+    const yr = Math.floor((S.week - 1) / 48), k = Math.min(3, bk.rsY === yr ? bk.rsN || 0 : 0);
+    const trust = own ? 0 : RESPEC_TRUST[k], money2 = own ? Math.round(L.wagesWeek(S, P) * (1 + k * 0.5)) : 0, t0 = own ? 0 : Math.round(S.owner.trust);
+    const why = !n ? "There is nothing to take back yet." : own ? P.cash < money2 ? "It costs $" + money2.toLocaleString("en-US") + " in wages, and the company cannot pay it now." : "" : t0 <= trust ? "It would cost " + trust + " of the owner\u2019s trust, and you only have " + t0 + ". It would cost you the job." : "";
+    return { n, own, k, trust, cash: money2, t0, t1: own ? 0 : t0 - trust, can: !why, why };
+  };
+  E.treeRespec = function(S) {
+    const bk = S.booker, C = E.treeRespecCost(S);
+    if (!C.can) return { ok: false, msg: C.why };
+    let back = 0;
+    for (const id in bk.tree) {
+      const n = treeNode(id);
+      if (n) back += n.c;
+    }
+    bk.tree = {};
+    bk.pts += back;
+    treeSync(bk);
+    const yr = Math.floor((S.week - 1) / 48);
+    bk.rsN = (bk.rsY === yr ? bk.rsN || 0 : 0) + 1;
+    bk.rsY = yr;
+    if (C.own) S.promos[S.player].cash -= C.cash;
+    else S.owner.trust = Math.max(0, S.owner.trust - C.trust);
+    const cost = C.own ? "$" + C.cash.toLocaleString("en-US") + " in wages" : C.trust + " of the owner\u2019s trust";
+    L.note(S, "You started the tree again, for " + cost, back + " skill point" + (back > 1 ? "s" : "") + " to spend again.", "bad");
+    if (!C.own) L.news(S, "you", S.owner.name + " noticed you changed your whole approach. Do it again this year and it will cost more.");
+    return { ok: true, msg: "Every skill is gone and " + back + " point" + (back > 1 ? "s are" : " is") + " back to spend. It cost " + cost + ".", back };
+  };
+  E.spendPoint = function() {
+    return false;
+  };
+  L.treeHas = treeHas;
+  L.treeSync = treeSync;
 
   // engine/66-owner-year.ts
   L.yearNew = yearNew;
@@ -13724,6 +14042,7 @@
   }
   function youRemember(S, w, k, text, v) {
     if (!w || S.cal) return;
+    if (v > 0 && L.treeHas && L.treeHas(S, "lr_hard")) v = Math.round(v * 0.8 * 10) / 10;
     var Y = S.rmY || (S.rmY = {}), e = Y[w.id] || (Y[w.id] = { v: 0, mem: [] });
     e.v = clamp(e.v + v, -100, 100);
     e.mem.unshift({ w: S.week, k, t: text, v });
@@ -15658,7 +15977,7 @@
     S.pep = null;
   });
   function apMax(S) {
-    return 3 + (S.booker && S.booker.lvl >= 5 ? 1 : 0) + (S.owner && S.owner.me ? 1 : 0);
+    return 3 + (L.treeHas && L.treeHas(S, "lr_extra") ? 1 : 0) + (S.booker && S.booker.lvl >= 5 ? 1 : 0) + (S.owner && S.owner.me ? 1 : 0);
   }
   var PLACES = {
     office: { n: "The owner\u2019s office", d: "Where the money and the booking power come from." },
@@ -15694,6 +16013,10 @@
         L2.push({ id: "case", n: "Hear the case: " + S.w[c.a].name + " against " + S.w[c.b].name, d: c.text, cid: c.id });
       });
       if (!L2.length) L2.push({ id: "none", n: "No cases on the docket", d: "Nobody has brought a dispute this week.", off: true });
+      if (L.treeHas && L.treeHas(S, "lr_meet")) {
+        var mcd = S.lcd && S.lcd.meet, mon = mcd != null && S.week - mcd < 4;
+        L2.push({ id: "meet", n: "Closed-door meeting", d: mon ? "You held one this month. The next can wait until week " + (mcd + 4) + "." : "Two people with real heat, in your office, door shut. Most of the heat goes.", need: "pair", off: mon });
+      }
     } else if (pl === "trainer") {
       L2.push({ id: "treat", n: "Stand over the trainer while they work", d: "One wrestler: eight points off every worn body zone, and a week off an injury of two weeks or more.", need: "w" });
     } else if (pl === "gym") {
@@ -15762,6 +16085,13 @@
     } else if (act === "sponsors") {
       refreshOffers(S);
       msg = "Three new sponsor offers are on the Manage screen, under Deals.";
+    } else if (act === "meet") {
+      if (L.bondOf(S, a.id, b.id) > -L.REL_ON) return { ok: false, msg: a.name + " and " + b.name + " have no real heat to settle." };
+      (S.lcd || (S.lcd = {})).meet = S.week;
+      L.relBump(S, a.id, b.id, { bond: Math.round(-L.bondOf(S, a.id, b.id) * 0.6) }, { k: "meet", keep: true, t: "You sat " + a.name + " and " + b.name + " down behind a closed door." });
+      L.youRemember(S, a, "meet", "You sat them down with " + b.name + " and made them talk it out.", 2);
+      L.youRemember(S, b, "meet", "You sat them down with " + a.name + " and made them talk it out.", 2);
+      msg = a.name + " and " + b.name + " come out of your office without shaking hands, but the worst of it is gone.";
     } else if (act === "case") {
       var res = E.courtRule(S, +o.cid, +o.v);
       if (!res.ok) return res;
@@ -15912,6 +16242,10 @@
     (S.verdicts || (S.verdicts = [])).unshift({ w: S.week, win: win.id, lose: lose.id, fair, judge: byYou ? null : S.lastJudge || null, rep, n: lose.cl });
     if (S.verdicts.length > 20) S.verdicts.length = 20;
     S.lastJudge = null;
+    if (byYou && (L.treeHas && L.treeHas(S, "lr_hard"))) {
+      lose.morale = clamp(lose.morale - 3, 0, 100);
+      win.morale = clamp(win.morale + 2, 0, 100);
+    }
     if (byYou) {
       win.you = clamp((win.you || 0) + 1, -1, 1);
       if (fair) {
@@ -21522,6 +21856,7 @@
     if (!ev) return null;
     ev.type = "mom";
     ev.mid = id;
+    ev.dir = 1;
     return pushEv(S, ev);
   };
   L.MOM = MOM;
@@ -21694,9 +22029,9 @@
   E.sift = function(S) {
     var P = S.promos[S.player], R = rosterOf(S, P.id).filter(function(w) {
       return !w.nw && !w.rt;
-    }), on = {}, out = [], seen = {};
+    }), on2 = {}, out = [], seen = {};
     R.forEach(function(w) {
-      on[w.id] = w;
+      on2[w.id] = w;
     });
     var feuding = function(a, b) {
       return activeFeuds(S).some(function(f) {
@@ -21704,7 +22039,7 @@
       });
     };
     var add = function(k, a, b, score, facts) {
-      if (!on[a] || !on[b] || a === b || feuding(a, b)) return;
+      if (!on2[a] || !on2[b] || a === b || feuding(a, b)) return;
       var key = rkey(a, b);
       if (seen[key] && seen[key].score >= score) return;
       var A = S.w[a], B = S.w[b], c = { k, a: A.name, b: B.name, n: facts.n || 3, g: facts.g || "" };
@@ -21717,7 +22052,7 @@
       var h = S.h2h[key], ids = key.split("-").map(Number);
       if (h.n < 3 || Math.abs(h.a - h.b) > 1) return;
       var lo = Math.min(ids[0], ids[1]), hi = Math.max(ids[0], ids[1]);
-      if (!on[lo] || !on[hi]) return;
+      if (!on2[lo] || !on2[hi]) return;
       add("rubber", lo, hi, 40 + h.n * 6, { n: h.n + 1, lines: ["They have met " + h.n + " times on your shows.", S.w[lo].name + " " + h.a + ", " + S.w[hi].name + " " + h.b + (h.n - h.a - h.b > 0 ? ", and " + (h.n - h.a - h.b) + " with no winner" : "") + "."] });
     });
     P.titles.forEach(function(t) {
@@ -21725,7 +22060,7 @@
       var cur = t.holders[0], h = (t.hist || []).slice(-3);
       h.forEach(function(r) {
         var old = +String(r.ids).split(",")[0];
-        if (r.to == null || old === cur || !on[old]) return;
+        if (r.to == null || old === cur || !on2[old]) return;
         if (S.week - r.to > 24) return;
         add("rematch", cur, old, 70 - (S.week - r.to), { lines: [S.w[old].name + " lost the " + t.name + " to " + S.w[cur].name + " " + (S.week - r.to <= 1 ? "last week" : S.week - r.to + " weeks ago") + ".", "There has been no rematch."] });
       });
@@ -21746,12 +22081,12 @@
       });
     });
     R.forEach(function(st) {
-      var t = st.coach != null ? on[st.coach] : null;
+      var t = st.coach != null ? on2[st.coach] : null;
       if (!t || st.ovr < t.ovr - 8) return;
       add("teach", st.id, t.id, 45 + (st.ovr - t.ovr), { lines: [t.name + " trained " + st.name + ".", st.ovr >= t.ovr ? "The student is now the bigger name." : "The student is closing in."] });
     });
     (S.teams || []).forEach(function(tm) {
-      if (!tm.m || tm.m.length !== 2 || !on[tm.m[0]] || !on[tm.m[1]]) return;
+      if (!tm.m || tm.m.length !== 2 || !on2[tm.m[0]] || !on2[tm.m[1]]) return;
       var ja = jealOf(S, tm.m[0], tm.m[1]), jb = jealOf(S, tm.m[1], tm.m[0]), j = Math.max(ja, jb);
       if (j < 35) return;
       var x = ja >= jb ? tm.m[0] : tm.m[1], y = x === tm.m[0] ? tm.m[1] : tm.m[0];
@@ -21760,21 +22095,21 @@
     P.titles.forEach(function(t) {
       if (t.tag || !t.holders.length) return;
       var ch = t.holders[0];
-      if (!on[ch]) return;
+      if (!on2[ch]) return;
       Object.keys(S.h2h || {}).forEach(function(key) {
         var h = S.h2h[key], ids = key.split("-").map(Number);
         if (ids.indexOf(ch) < 0) return;
         var o = ids[0] === ch ? ids[1] : ids[0];
-        if (!on[o]) return;
+        if (!on2[o]) return;
         var lo = Math.min(ch, o), cw = ch === lo ? h.a : h.b, ow = ch === lo ? h.b : h.a;
         if (cw < 2 || ow > 0 || S.w[o].ovr < S.w[ch].ovr - 10) return;
         add("chase", o, ch, 40 + cw * 7, { lines: [S.w[ch].name + " holds the " + t.name + " and has beaten " + S.w[o].name + " " + (cw === 2 ? "twice" : cw + " times") + ".", S.w[o].name + " has never won one. The crowd is starting to want it."] });
       });
     });
     (S.stables || []).forEach(function(st) {
-      if (st.promo !== P.id || !on[st.leader]) return;
+      if (st.promo !== P.id || !on2[st.leader]) return;
       st.m.forEach(function(id) {
-        if (id === st.leader || !on[id]) return;
+        if (id === st.leader || !on2[id]) return;
         var j = jealOf(S, id, st.leader), b = bondOf(S, id, st.leader);
         if (j < 35 && b > -REL_ON && (st.tension || 0) < 40) return;
         add("mutiny", id, st.leader, 35 + Math.max(j, -b, st.tension || 0) / 2, { g: st.name, lines: [S.w[id].name + " is in " + st.name + ", and " + S.w[st.leader].name + " leads it.", j >= 35 ? S.w[id].name + " wants that spot." : b <= -REL_ON ? "The two of them do not get on." : "The group has been on edge for weeks."] });
@@ -21787,7 +22122,7 @@
       }), seen2 = {};
       for (var i = 1; i < H.length; i++) {
         var a = +String(H[i - 1].ids).split(",")[0], b = +String(H[i].ids).split(",")[0];
-        if (a === b || !on[a] || !on[b]) continue;
+        if (a === b || !on2[a] || !on2[b]) continue;
         var k = rkey(a, b);
         seen2[k] = (seen2[k] || 0) + 1;
       }
@@ -21932,10 +22267,10 @@
   E.hasBoss = function(S) {
     return staffOf(S, "boss").length > 0;
   };
-  E.bossMakes = function(S, i, on) {
+  E.bossMakes = function(S, i, on2) {
     var m = S.card && S.card[i];
     if (!m) return false;
-    if (on && E.hasBoss(S)) m.boss = 1;
+    if (on2 && E.hasBoss(S)) m.boss = 1;
     else delete m.boss;
     return true;
   };
@@ -22772,15 +23107,15 @@
     }).sort(function(a, b) {
       return A.fav[b] - A.fav[a];
     }).slice(0, 6);
-    var on = {};
+    var on2 = {};
     card.forEach(function(m) {
       [].concat.apply([], m.sides).forEach(function(id) {
-        on[id] = 1;
+        on2[id] = 1;
       });
     });
     var swaps = lv, done = 0;
     favs.forEach(function(id) {
-      if (on[id] || done >= swaps) return;
+      if (on2[id] || done >= swaps) return;
       var f = S.w[id];
       var cand = card.filter(function(m2, i) {
         return i < card.length - 1 && m2.mt === "1v1" && !m2.title && m2.sides.every(function(s) {
@@ -22793,9 +23128,9 @@
           return w && w.g === f.g && w.ovr <= f.ovr + 6;
         });
         if (ix >= 0 && !(show.brand && f.brand !== show.brand && !show.big)) {
-          on[m.sides[ix][0]] = 0;
+          on2[m.sides[ix][0]] = 0;
           m.sides[ix] = [id];
-          on[id] = 1;
+          on2[id] = 1;
           done++;
           break;
         }
@@ -24729,14 +25064,14 @@
       var worked = w.wk === S.week, n = worked ? w.wkW === S.week ? w.wkN || 1 : 1 : 0;
       w.rd = clamp((w.rd || 0) + (worked ? (5 + (n - 1) * 3) * cut : -9 - (w.rest === S.week ? 6 : 0)), 0, 100);
     });
-    var on = R.filter(function(w) {
+    var on2 = R.filter(function(w) {
       return w.wk === S.week && w.inj <= 0;
     }).sort(function(a2, b2) {
       return hash("car" + S.week + a2.id) - hash("car" + S.week + b2.id);
     });
     var fric = [0.02, 0.01, 4e-3][P.trv || 0];
-    for (var i = 0; i + 1 < on.length; i += 3) {
-      var grp = on.slice(i, i + 3);
+    for (var i = 0; i + 1 < on2.length; i += 3) {
+      var grp = on2.slice(i, i + 3);
       for (var a = 0; a < grp.length; a++) for (var b = a + 1; b < grp.length; b++) {
         var x = grp[a], y = grp[b], v = bondOf(S, x.id, y.id) / 10;
         relBump(S, x.id, y.id, { bond: relOf(S, x.id, y.id) < 0 ? -3 : 2.5 }, null);
@@ -28820,18 +29155,18 @@
     };
   })();
   E.streamInfo = function(S) {
-    var P = S.promos[S.player], st = P.strm || {}, on = !!st.on, maj = P.shows.filter(function(sh) {
+    var P = S.promos[S.player], st = P.strm || {}, on2 = !!st.on, maj = P.shows.filter(function(sh) {
       return !sh.big && sh.tier === 2;
     }).map(function(sh) {
       return sh.name;
     });
     return {
-      on,
-      since: on ? cal(st.on).label : null,
+      on: on2,
+      since: on2 ? cal(st.on).label : null,
       subs: st.subs || 0,
       wk: st.wk || 0,
       cap: streamCap(S, P),
-      pay: on ? st.pay || 0 : 0,
+      pay: on2 ? st.pay || 0 : 0,
       open: streamOpenCost(P),
       run: streamRunCost(P),
       price: L.STRM_PRICE,
@@ -31170,7 +31505,7 @@
     return "";
   }
   function segMean(S, w, bonus) {
-    return 0.62 * micOf(S, w) + 0.38 * w.ovr + (bonus || 0) + (S.booker && w.promo === S.player ? S.booker.sk.creative : 0);
+    return 0.62 * micOf(S, w) + 0.38 * w.ovr + (bonus || 0) + (S.booker && w.promo === S.player ? S.booker.sk.creative + (L.treeHas && L.treeHas(S, "cr_shock") ? 1.5 : 0) : 0);
   }
   function segLook(S, sg, slot) {
     var why = segWhy(S, sg, slot);
@@ -31942,7 +32277,7 @@
         var ids = s.ids || [], nsd = (s.sidesN || []).length || 2, per = Math.max(1, Math.floor(ids.length / nsd)), A = s.sidesN && s.sidesN[0] || nm(ids[0]), B = s.sidesN && s.sidesN[1] || nm(ids[per]);
         var f = ids.length >= 2 ? feudOf(S, ids[0], ids[per]) : null;
         fanPost(k + "s", s.title ? L.LF.title : f && f.heat >= 50 ? L.LF.feud : L.LF.start, { a: A, b: B, t: s.title, show }, s.title ? 260 : 120, mins);
-        for (var j = 0; j < upto; j++) if (bc[j].h === 1 && h01(k + "n" + j) < 0.75) {
+        for (var j = 0; j < upto; j++) if (bc[j].h === 1 && bc[j].fk && h01(k + "n" + j) < 0.75) {
           var x = "";
           ids.forEach(function(id) {
             var w = S.w[id];
@@ -32871,7 +33206,7 @@
     var P = S.promos[S.player], corp = P && P.model === "corporate";
     return Object.keys(L.CLAUSE).filter(function(k) {
       return !(corp && k === "outside") && L.CLAUSE[k].wants(S, w);
-    }).slice(0, 3);
+    }).slice(0, L.treeHas && L.treeHas(S, "of_clause") ? 4 : 3);
   }
   E.clauses = function(S, id) {
     var w = S.w[id];
@@ -34193,12 +34528,12 @@
   SHOWX.push(function(S, P, show, rep, card) {
     var A = S.arc;
     if (S.cal || P.id !== S.player || !A || A.done) return;
-    var last = card && card[card.length - 1], ids = last ? flat(last.sides) : [], on = Object.keys(A.cast).some(function(r) {
+    var last = card && card[card.length - 1], ids = last ? flat(last.sides) : [], on2 = Object.keys(A.cast).some(function(r) {
       return ids.indexOf(A.cast[r]) >= 0;
     });
     if (A.wk !== S.week) {
       A.wk = S.week;
-      if (on) {
+      if (on2) {
         if (A.s < 50) A.s = clamp(A.s + 0.5, 0, 50);
       } else A.s = clamp(A.s - 1, 0, 100);
     }
@@ -34626,6 +34961,7 @@
       if (w.promo !== P.id) return;
       s += w.dl === "show" && w.fee != null ? w.shw === S.week ? w.fee * (w.shn || 1) : 0 : w.wage;
     });
+    if (P.id === S.player && (L.treeHas && L.treeHas(S, "of_lean"))) s = Math.round(s * 0.92);
     return s + deskWage(S, P);
   }
   E.contractOf = function(S, w) {
@@ -34761,6 +35097,348 @@
   });
   L.DEBUT = DEBUT;
 
+  // engine/99-director.ts
+  var DIR_PARTS = { open: 25, clocks: 20, room: 20, money: 15, stories: 10, wait: 10 };
+  function dirInit(S) {
+    if (!S.dir) S.dir = { st: S.dst || "promoter", t: [], seen: 0, fire: S.week, log: [] };
+    return S.dir;
+  }
+  function dirParts(S) {
+    const P = S.promos[S.player], R = rosterOf(S, P.id).filter((w) => !w.nw);
+    const open = S.inbox.filter((e) => !e.done);
+    const o = clamp(open.length * 4 + open.filter((e) => e.due != null || e.type === "expire").length * 3, 0, DIR_PARTS.open);
+    let worst = 0, sum = 0;
+    Object.keys(S.clocks || {}).forEach((k) => {
+      const d2 = L.CLOCKS[k], c = S.clocks[k];
+      if (!d2 || !d2.bad || !c) return;
+      const f = clamp(c.v / d2.segs, 0, 1);
+      worst = Math.max(worst, f);
+      sum += f;
+    });
+    const ck = clamp(worst * 14 + sum * 3, 0, DIR_PARTS.clocks);
+    const avg2 = R.length ? R.reduce((a, w) => a + w.morale, 0) / R.length : 65;
+    const low = R.filter((w) => w.morale < 35).length;
+    let heat = 0;
+    const ids = {};
+    R.forEach((w) => {
+      ids[w.id] = 1;
+    });
+    Object.keys(S.rm || {}).forEach((k) => {
+      const e = S.rm[k], p = k.split("-");
+      if (e && e.bond <= -L.REL_STRONG && ids[p[0]] && ids[p[1]]) heat++;
+    });
+    const rm = clamp((65 - avg2) * 0.5 + low * 2 + heat * 2, 0, DIR_PARTS.room);
+    const wk = wagesWeek(S, P) || 1, weeks = P.cash / wk;
+    const mo = clamp((8 - weeks) * (DIR_PARTS.money / 8), 0, DIR_PARTS.money);
+    const hot = S.feuds.filter((f) => !f.dead && (f.a || []).concat(f.b || []).some((id) => S.w[id] && S.w[id].promo === P.id)).reduce((a, f) => Math.max(a, f.heat || 0), 0);
+    const st = clamp(hot / 10, 0, DIR_PARTS.stories);
+    const d = dirInit(S), quiet = Math.max(0, S.week - d.fire);
+    const wt = clamp(quiet * 4, 0, DIR_PARTS.wait);
+    const t = Math.round(o + ck + rm + mo + st + wt);
+    return { t: clamp(t, 0, 100), open: Math.round(o), clocks: Math.round(ck), room: Math.round(rm), money: Math.round(mo), stories: Math.round(st), wait: Math.round(wt), quiet };
+  }
+  function dirRead(S) {
+    const d = dirInit(S);
+    const ids = S.inbox.map((e) => e.id), top = ids.length ? Math.max.apply(null, ids) : 0;
+    if (top > d.seen) {
+      if (d.seen) d.fire = S.week;
+      d.seen = top;
+    }
+    const r = dirParts(S);
+    d.t.push(r.t);
+    if (d.t.length > 8) d.t.shift();
+    return r;
+  }
+  function dirTrend(S) {
+    const t = dirInit(S).t;
+    if (t.length < 3) return "settling";
+    const now = t[t.length - 1], before = t.slice(0, -1).reduce((a, v) => a + v, 0) / (t.length - 1);
+    return now >= 60 ? "peak" : now > before + 6 ? "building" : now < before - 6 ? "easing" : "steady";
+  }
+  E.dirInfo = function(S) {
+    const r = dirParts(S);
+    return { t: r.t, parts: r, trend: dirTrend(S), hist: dirInit(S).t.slice() };
+  };
+  L.dirRead = dirRead;
+  var DIR_TAG = {
+    // forced: dated, a deal, an order, the calendar, or required in the first year
+    expire: "forced",
+    finalyear: "forced",
+    rights: "forced",
+    handover: "forced",
+    network: "forced",
+    sponsor: "forced",
+    awards: "forced",
+    hof: "forced",
+    arcch: "forced",
+    xfdeal: "forced",
+    invasion: "forced",
+    directive: "forced",
+    o_strong: "forced",
+    o_belt: "forced",
+    o_elevate: "forced",
+    nightmove: "forced",
+    netback: "forced",
+    netexec: "forced",
+    netmeet: "forced",
+    // problems
+    holdout: "problem",
+    losing: "problem",
+    shot: "problem",
+    furious: "problem",
+    mutiny: "problem",
+    clique: "problem",
+    leak: "problem",
+    riot: "problem",
+    carfight: "problem",
+    scrum: "problem",
+    banged: "problem",
+    ko: "problem",
+    rebel: "problem",
+    walkup: "problem",
+    travel: "problem",
+    mainflop: "problem",
+    champout: "problem",
+    rematch: "problem",
+    clause: "problem",
+    goalblocked: "problem",
+    agreetrouble: "problem",
+    counter: "problem",
+    flop: "problem",
+    protect: "problem",
+    prove: "problem",
+    power: "problem",
+    shoot: "problem",
+    lights: "problem",
+    cash: "problem",
+    offer: "problem",
+    chant: "problem",
+    friends: "problem",
+    truck: "problem",
+    win: "problem",
+    // chances
+    break: "chance",
+    buzz: "chance",
+    caughtfire: "chance",
+    upset: "chance",
+    pitch: "chance",
+    team: "chance",
+    mentor: "chance",
+    investor: "chance",
+    exclusive: "chance",
+    guest: "chance",
+    callup: "chance",
+    awardraise: "chance",
+    wroom: "chance",
+    rivalry: "chance",
+    ccask: "chance",
+    // colour
+    dream: "colour",
+    life: "colour",
+    mom: "colour",
+    secondcareer: "colour",
+    lastwin: "colour",
+    passed: "colour"
+  };
+  function dirTag(ev) {
+    return DIR_TAG[ev.type] || "problem";
+  }
+  var DIR_STYLES = {
+    promoter: { n: "The Promoter", d: "Steady pressure. One headline most weeks, rarely more than two problems open at once.", budget: () => 3, tv: 2, big: 3, lean: 0 },
+    carny: { n: "The Carny", d: "Wild swings. Quiet spells, then several things at once, with bigger chances and bigger trouble.", budget: (S) => {
+      const h = L.h01("dc" + S.seed + ":" + S.week);
+      return h < 0.35 ? 1 : h < 0.7 ? 3 : 5;
+    }, tv: 3, big: 4, lean: 0.1 },
+    purist: { n: "The Purist", d: "Slow burns. Fewer matters, more about people than money; shocks are rare.", budget: () => 2, tv: 2, big: 2, lean: -0.05 }
+  };
+  function dirStyle(S) {
+    const st = dirInit(S).st;
+    return DIR_STYLES[st] || DIR_STYLES.promoter;
+  }
+  function dirRhythm(S, wk) {
+    const w = wk || S.week, wom = L.cal(w).wom;
+    return wom === 3 || wom === 4 ? 1 : wom === 1 && w > 1 ? -1 : 0;
+  }
+  function dirBudget(S, wk) {
+    const w0 = S.week;
+    if (wk) S.week = wk;
+    const b = Math.max(1, dirStyle(S).budget(S) + dirRhythm(S, wk));
+    S.week = w0;
+    return b;
+  }
+  function dirCalls(S, big) {
+    const y = dirStyle(S);
+    return big ? y.big : y.tv;
+  }
+  var DIR_HOLD_WEEKS = 3;
+  var DIR_A = 85;
+  function dirWeight(S, ev) {
+    const w = ev.w != null ? S.w[ev.w] : null, o = ev.o != null ? S.w[ev.o] : null;
+    const tag = dirTag(ev);
+    return (w ? w.ovr : 50) + (o ? o.ovr * 0.3 : 0) + (tag === "colour" ? -40 : 0) + L.h01("dw" + S.seed + ":" + ev.id) * 3;
+  }
+  var DIR_NOW = { scrum: 1 };
+  function dirKeep(S) {
+    return DIR_HOLD_WEEKS + (L.treeHas && L.treeHas(S, "lr_patience") ? 1 : 0);
+  }
+  L.dirKeep = dirKeep;
+  function dirAlive(S, ev) {
+    if (DIR_NOW[ev.type]) return false;
+    if (S.week - (ev.held || S.week) > dirKeep(S)) return false;
+    for (const k of ["w", "o"]) {
+      const x = ev[k] != null ? S.w[ev[k]] : null;
+      if (ev[k] != null && (!x || x.promo !== S.player)) return false;
+    }
+    return true;
+  }
+  function dirAdmit(S, ev, count) {
+    const d = dirInit(S);
+    delete ev.held;
+    ev.dir = 1;
+    S.inbox.push(ev);
+    if (count) d.n++;
+    d.log.unshift({ wk: S.week, id: ev.id, t: ev.type, a: "in" });
+    if (d.log.length > 16) d.log.length = 16;
+  }
+  function dirHold(S, ev) {
+    const d = dirInit(S);
+    if (ev.held == null) ev.held = S.week;
+    d.held.push(ev);
+    d.log.unshift({ wk: S.week, id: ev.id, t: ev.type, a: "held" });
+    if (d.log.length > 16) d.log.length = 16;
+  }
+  function dirGate(S, ev) {
+    if (ev.done || ev.dir) return false;
+    const d = dirInit(S);
+    if (!d.held) d.held = [];
+    if (dirTag(ev) === "forced") return false;
+    if (ev.night != null) {
+      if (ev.cs != null && ev.cs >= DIR_A) {
+        dirHold(S, ev);
+        return true;
+      }
+      if (d.n >= dirBudget(S)) {
+        dirHold(S, ev);
+        return true;
+      }
+      ev.dir = 1;
+      d.hook = 1;
+      d.n++;
+      return false;
+    }
+    if (d.batch) {
+      d.batch.push(ev);
+      return true;
+    }
+    if (S.qi >= S.queue.length) {
+      if ((d.late || 0) < dirBudget(S, S.week + 1) - 1) {
+        ev.dir = 1;
+        d.late = (d.late || 0) + 1;
+        return false;
+      }
+      dirHold(S, ev);
+      return true;
+    }
+    if (d.n < dirBudget(S) - (d.hook ? 0 : 1)) {
+      ev.dir = 1;
+      d.n++;
+      return false;
+    }
+    dirHold(S, ev);
+    return true;
+  }
+  function dirOpen(S) {
+    const d = dirInit(S);
+    if (!d.held) d.held = [];
+    d.n = d.late || 0;
+    d.late = 0;
+    d.hook = 0;
+    d.batch = [];
+  }
+  function dirClose(S) {
+    const d = dirInit(S), offers = (d.batch || []).slice();
+    delete d.batch;
+    const back = d.held.filter((e) => dirAlive(S, e));
+    d.held.filter((e) => back.indexOf(e) < 0 && dirTag(e) === "problem").forEach((e) => {
+      const w = e.w != null ? S.w[e.w] : null;
+      if (w && w.promo === S.player) {
+        w.morale = clamp(w.morale - 6, 0, 100);
+        L.youRemember(S, w, "ignored", "They came to you and you never got to it.", -5);
+      }
+    });
+    d.held.filter((e) => back.indexOf(e) < 0 && dirTag(e) === "chance").forEach((e) => {
+      const w = e.w != null ? S.w[e.w] : null;
+      if (w && w.promo === S.player) w.morale = clamp(w.morale - 4, 0, 100);
+    });
+    const lapsed = d.held.filter((e) => back.indexOf(e) < 0 && dirTag(e) !== "colour");
+    if (lapsed.length && !S.owner.me) {
+      const cost = lapsed.reduce((a, e) => a + (dirTag(e) === "problem" ? 2 : 0.75), 0);
+      S.owner.trust = clamp(S.owner.trust - cost, 0, 100);
+      L.note(S, "The owner", lapsed.length === 1 ? "Something on your desk was let slide, and the owner noticed." : lapsed.length + " things were let slide, and the owner noticed.", "bad");
+    }
+    d.held = [];
+    back.forEach((e) => {
+      if (dirTag(e) === "problem" && e.w != null && S.w[e.w]) S.w[e.w].morale = clamp(S.w[e.w].morale - 2, 0, 100);
+    });
+    const all = back.concat(offers);
+    if (!all.length) return;
+    const t = d.t.length ? d.t[d.t.length - 1] : 40;
+    const wantChance = L.h01("dh" + S.seed + ":" + S.week) < 0.05 + 0.6 * t / 100 + dirStyle(S).lean;
+    const byW = (a, b) => dirWeight(S, b) - dirWeight(S, a) || a.id - b.id;
+    const pool = all.slice().sort(byW);
+    const pref = pool.filter((e) => dirTag(e) === (wantChance ? "chance" : "problem"));
+    const head = pref[0] || pool.find((e) => dirTag(e) !== "colour") || pool[0];
+    const rest = pool.filter((e) => e !== head);
+    dirAdmit(S, head, true);
+    head.head = 1;
+    const open = Math.max(1, dirBudget(S) - 1);
+    const calm = t < 55;
+    if (calm) rest.sort((a, b) => (dirTag(b) === "problem" ? 1 : 0) - (dirTag(a) === "problem" ? 1 : 0) || byW(a, b));
+    rest.forEach((e) => {
+      if (d.n < open && dirTag(e) !== "colour") dirAdmit(S, e, true);
+      else dirHold(S, e);
+    });
+    d.held.slice().forEach((e) => {
+      if (d.n < open && dirTag(e) === "colour") {
+        d.held.splice(d.held.indexOf(e), 1);
+        dirAdmit(S, e, true);
+      }
+    });
+  }
+  var DIR_WORDS = { peak: "A storm is breaking", building: "A storm is building", steady: "A steady week", easing: "Things are calming down", settling: "Finding your feet" };
+  E.dirDesk = function(S) {
+    const d = dirInit(S), tr = dirTrend(S), t = d.t.length ? d.t[d.t.length - 1] : 0;
+    const word = d.n === 0 && !(d.held || []).length ? "A quiet week" : DIR_WORDS[tr] || "A steady week";
+    return { word, st: d.st, style: (DIR_STYLES[d.st] || DIR_STYLES.promoter).n, t: tr, held: (d.held || []).map((e) => ({ id: e.id, type: e.type, tag: dirTag(e), text: e.text, since: e.held })), cost: 1, ap: S.ap, calm: t < 35 };
+  };
+  E.dirPull = function(S, id) {
+    const d = dirInit(S), i = (d.held || []).findIndex((e) => e.id === id);
+    if (i < 0) return { ok: false, msg: "That matter is no longer waiting." };
+    if ((S.ap || 0) < 1) return { ok: false, msg: "You need an action point to bring it to your desk." };
+    const ev = d.held.splice(i, 1)[0];
+    S.ap -= 1;
+    dirAdmit(S, ev, false);
+    return { ok: true, msg: "It is on your desk now.", id: ev.id };
+  };
+  E.dirTag = dirTag;
+  E.DIR_STYLES = DIR_STYLES;
+  E.dirSetStyle = function(S, st) {
+    const d = dirInit(S);
+    if (!DIR_STYLES[st]) return { ok: false, msg: "There is no such style." };
+    if (st === d.st) return { ok: true, msg: "That is already how the week runs." };
+    if (S.iron && S.week > 1) return { ok: false, msg: "In iron man the style is set for the whole game." };
+    if (S.live) return { ok: false, msg: "Not while a show is on the air." };
+    const cost = S.week > 1 && !S.owner.me ? 4 : 0;
+    if (cost) S.owner.trust = clamp(S.owner.trust - cost, 0, 100);
+    d.st = st;
+    return { ok: true, msg: DIR_STYLES[st].n + " it is." + (cost ? " The owner wonders why the office keeps changing its mind." : ""), cost };
+  };
+  E.dirBudget = dirBudget;
+  L.dirCalls = dirCalls;
+  L.dirGate = dirGate;
+  L.dirOpen = dirOpen;
+  L.dirClose = dirClose;
+
   // engine/99-fog.ts
   L.knowMake = knowMake;
   L.gasLimit = gasLimit;
@@ -34797,7 +35475,7 @@
     return clamp((a ? 0.4 + 0.45 * agentQ(a) : 0.25) + fogSkill(S), 0.05, 0.95);
   }
   function reads(S, m, key) {
-    return h01(S.seed + ":rd:" + S.week + ":" + key + ":" + (agentOf(S, m) ? m.agent : "h")) < readP(S, m);
+    return h01(S.seed + ":rd:" + S.week + ":" + key + ":" + (agentOf(S, m) ? m.agent : "h")) < Math.min(0.95, readP(S, m) + (L.treeHas && L.treeHas(S, "ey_tape") ? 0.1 : 0));
   }
   function agentName(S, m) {
     var a = agentOf(S, m);
@@ -35150,7 +35828,7 @@
         return m.sides.length === 2 && m.sides[0][0] != null && m.sides[1][0] != null && !!feudOf(S, m.sides[0][0], m.sides[1][0]);
       }, show = S.queue[S.qi], el = show ? eligible(S, P, show).map(function(w) {
         return w.id;
-      }) : [], on = function(id) {
+      }) : [], on2 = function(id) {
         return card.some(function(m) {
           return flat(m.sides).indexOf(id) >= 0;
         });
@@ -35169,14 +35847,14 @@
           if (m3.title === t2.id && m3.sides.length === 2 && m3.sides[0].length === 1 && m3.sides[1].length === 1 && flat(m3.sides).indexOf(c) >= 0) at2 = i2;
         });
         if (at2 >= 0) {
-          if (on(q.w) || fm(card[at2])) return;
+          if (on2(q.w) || fm(card[at2])) return;
           var m = card[at2];
           m.sides = [[c], [q.w]];
           m.call = null;
           ch = true;
           return;
         }
-        if (on(c) || on(q.w)) return;
+        if (on2(c) || on2(q.w)) return;
         for (var i = n - 2; i >= 0; i--) {
           var m2 = card[i];
           if (m2.title || m2.mt !== "1v1" || fm(m2) || m2.end) continue;
@@ -36518,7 +37196,6 @@
     cut: ["{b} tries to fight back, but {a} cuts it off with {m}.", "{b} goes for a comeback and runs straight into {m}.", "Not so fast: {a} stops {b} cold with {m}."],
     swing: ["{a} reverses it and hits {m}!", "Out of nowhere, {a} turns it round with {m}!", "{a} counters and lands {m}!", "{a} fights out of it and connects with {m}!"],
     sig: ["{a} hits {s}! The crowd knows what that is!", "{a} goes to the well: {s}!", "That is {s}, {a}\u2019s signature, and it lands clean!"],
-    near: ["Cover! One, two... {b} kicks out!", "{a} hooks the leg! One, two... no! {b} gets a shoulder up!", "One, two... so close! {b} is still in this!"],
     col: ["{p}, {b} is fighting from underneath, but you can never count them out.", "These two know each other, {p}. Every move is answered.", "The crowd is right in this one, {p}.", "{a} is controlling the tempo, {p}. Smart wrestling.", "Listen to this place, {p}! They are hanging on every move.", "You can feel the momentum going back and forth, {p}."]
   };
   L.RW_LINES = RW_LINES;
@@ -36582,7 +37259,6 @@
           sigUsed[A.id + s.n] = 1;
           ctx.s = s.n;
           out.push({ t: "pbp", x: fill(pick2(L.RW_LINES.sig), ctx), h: 1 });
-          if (h() < 0.6) out.push({ t: "pbp", x: fill(pick2(L.RW_LINES.near), ctx), h: 1 });
           continue;
         }
         ctx.m = pick2(M.filter(function(m) {
@@ -36590,8 +37266,7 @@
         })).n;
         kind = j === 0 ? "open" : swap ? "swing" : h() < 0.35 ? "cut" : "press";
         out.push({ t: "pbp", x: cap(fill(pick2(L.RW_LINES[kind]), ctx)) });
-        if (late && h() < 0.25) out.push({ t: "pbp", x: fill(pick2(L.RW_LINES.near), ctx), h: 1 });
-        else if (h() < 0.22) out.push({ t: "col", x: cap(fill(pick2(L.RW_LINES.col), ctx)) });
+        if (h() < 0.22) out.push({ t: "col", x: cap(fill(pick2(L.RW_LINES.col), ctx)) });
       }
       bc.splice.apply(bc, [at + 1, 0].concat(out));
       return bc;
@@ -36600,6 +37275,130 @@
   L.RW_MOVES = RW_MOVES;
   L.RW_LINES = RW_LINES;
   L.rwMoves = rwMoves;
+
+  // engine/99-rivalbook.ts
+  var BK_LEAN = {
+    corporate: ["office", "locker", "eye", "creative"],
+    outlaw: ["creative", "locker", "eye", "office"],
+    workrate: ["eye", "creative", "locker", "office"],
+    purist: ["eye", "locker", "creative", "office"],
+    underdog: ["locker", "creative", "eye", "office"],
+    startup: ["office", "creative", "eye", "locker"],
+    spectacle: ["creative", "eye", "locker", "office"],
+    tradition: ["locker", "eye", "creative", "office"],
+    joshi: ["eye", "locker", "creative", "office"],
+    classic: ["creative", "office", "locker", "eye"]
+  };
+  var BK_STYLE = { creative: "The storyteller", office: "The suit", locker: "The players\u2019 booker", eye: "The scout" };
+  var BK_SAYS = { creative: "Better matches: Creative", motivator: "Harder workers: Motivator", talk: "Cheaper wages: Negotiation", clout: "More buzz: Clout", eye: "Young talent grows: Eye" };
+  var BK_FIRST = ["Dale", "Marty", "Gina", "Rocco", "Lena", "Hal", "Tess", "Vic", "Nora", "Buck", "Ida", "Sal", "Rhoda", "Gus", "Wren", "Abe", "Flo", "Cyrus", "Dot", "Lyle"];
+  var BK_LAST = ["Pruitt", "Okafor", "Delacroix", "Haskins", "Moreau", "Vance", "Tamura", "Kowalczyk", "Ibarra", "Lindqvist", "Mabry", "Stroud", "Quintero", "Fennimore", "Adair", "Castellan", "Rourke", "Nakashima", "Brandvold", "Ortega"];
+  function bkSpend(bk) {
+    for (let guard = 0; guard < 99 && bk.pts > 0; guard++) {
+      let took = false;
+      for (const br of bk.lean) {
+        const sp = treeSpent(bk, br), n = TREE[br].nodes.find((x) => !bk.tree[x.id] && !x.soon && sp >= treeNeed(br, x.t) && bk.pts >= x.c);
+        if (n) {
+          bk.tree[n.id] = 1;
+          bk.pts -= n.c;
+          took = true;
+          break;
+        }
+      }
+      if (!took) break;
+    }
+    treeSync(bk);
+  }
+  function bkGain(bk, n) {
+    bk.xp += n;
+    while (bk.xp >= xpNeed(bk.lvl)) {
+      bk.xp -= xpNeed(bk.lvl);
+      bk.lvl++;
+      bk.pts++;
+    }
+    bkSpend(bk);
+  }
+  function on(S) {
+    return !S.nobk;
+  }
+  function rivalBk(S, P) {
+    if (!P || P.id === S.player) return null;
+    if (P.bk) return P.bk;
+    const h = (k) => h01(S.seed + ":bk:" + P.id + ":" + k);
+    const lean = BK_LEAN[P.model] || BK_LEAN.classic, lvl = 1 + Math.floor((P.image || 30) / 15);
+    const used = new Set((S.order || []).map((x) => S.promos[x] && S.promos[x].bk && S.promos[x].bk.name).filter(Boolean));
+    let f = Math.floor(h("f") * BK_FIRST.length), l = Math.floor(h("l") * BK_LAST.length), name = "";
+    for (let i = 0; i < 400; i++) {
+      name = BK_FIRST[(f + i) % BK_FIRST.length] + " " + BK_LAST[(l + Math.floor(i / BK_FIRST.length) * 7 + i) % BK_LAST.length];
+      if (!used.has(name)) break;
+    }
+    const bk = P.bk = { name, lvl: 1, xp: 0, pts: 0, tree: {}, lean, sk: {} };
+    for (let l2 = 1; l2 < lvl; l2++) bkGain(bk, xpNeed(bk.lvl));
+    treeSync(bk);
+    return bk;
+  }
+  function bkRate(S, bk) {
+    const y = Math.floor((S.week - 1) / 48), per = y <= 0 ? 6 : y === 1 ? 4 : 3;
+    return xpNeed(bk.lvl) * per / 48;
+  }
+  NEWX.push(function(S) {
+    (S.order || []).forEach((id) => {
+      if (id !== S.player) rivalBk(S, S.promos[id]);
+    });
+  });
+  WEEKX.push(function(S) {
+    (S.order || []).forEach((id) => {
+      const P = S.promos[id];
+      if (!P || id === S.player || P.dead) return;
+      const bk = rivalBk(S, P);
+      if (!bk) return;
+      const was = bk.lvl;
+      bkGain(bk, bkRate(S, bk));
+      if (on(S)) {
+        const k = bk.sk;
+        if (k.talk && L.payWeek) P.cash += Math.round(L.payWeek(S, P) * 0.02 * k.talk);
+        if (k.eye) rosterOf(S, P.id).filter((w) => !w.nw && w.age <= 25 && w.pot > (w.xp || 0)).sort((a, b) => b.pot - a.pot).slice(0, 3).forEach((w) => {
+          w.xp += 0.04 * k.eye;
+        });
+      }
+      if (bk.lvl > was && bk.lvl % 5 === 0) L.news(S, "world", bk.name + ", who books " + P.name + ", has reached level " + bk.lvl + ".");
+    });
+  });
+  SHOWX.push(function(S, P) {
+    if (S.cal || !P || P.id === S.player || !on(S) || !P.bk) return;
+    const c = P.bk.sk.clout || 0;
+    if (c) P.image = Math.min(100, P.image + 0.02 * c);
+  });
+  MQX.push(function(ctx) {
+    const S = ctx.S, P = ctx.P;
+    if (!P || P.id === S.player || !on(S)) return null;
+    const bk = rivalBk(S, P);
+    const c = bk ? bk.sk.creative || 0 : 0;
+    return c ? { d: 0.3 * c, x: null } : null;
+  });
+  EFX.push(function(ctx) {
+    const S = ctx.S, P = ctx.P;
+    if (!P || P.id === S.player || !on(S)) return 0;
+    const bk = rivalBk(S, P);
+    return bk ? 0.6 * (bk.sk.motivator || 0) : 0;
+  });
+  E.rivalBooker = function(S, id) {
+    const P = S.promos[id];
+    if (!P || id === S.player) return null;
+    const bk = P.bk;
+    if (!bk) return null;
+    const top = Object.keys(BK_SAYS).sort((a, b) => (bk.sk[b] || 0) - (bk.sk[a] || 0))[0];
+    return {
+      name: bk.name,
+      lvl: bk.lvl,
+      style: BK_STYLE[bk.lean[0]],
+      lean: bk.lean[0],
+      sk: Object.assign({}, bk.sk),
+      skills: Object.keys(bk.tree).length,
+      does: bk.sk[top] ? BK_SAYS[top] + " " + bk.sk[top] : "Still learning"
+    };
+  };
+  L.rivalBk = rivalBk;
 
   // engine/99-royal.ts
   L.brSurprisePool = brSurprisePool;
@@ -36619,9 +37418,9 @@
       var w = id != null && S.w[id];
       if (w) g[w.g] = (g[w.g] || 0) + 1;
     });
-    var G = g.F > g.M ? "F" : "M", on = {};
+    var G = g.F > g.M ? "F" : "M", on2 = {};
     flat(m.sides).forEach(function(id) {
-      on[id] = 1;
+      on2[id] = 1;
     });
     var leg = function(w) {
       var p = E.persona(S, w.id);
@@ -36630,25 +37429,25 @@
     return Object.keys(S.w).map(function(k) {
       return S.w[k];
     }).filter(function(w) {
-      return w && w.promo === "FA" && w.rt == null && !w.nw && !(w.inj > 0) && w.g === G && !on[w.id];
+      return w && w.promo === "FA" && w.rt == null && !w.nw && !(w.inj > 0) && w.g === G && !on2[w.id];
     }).sort(function(a, b) {
       return leg(b) - leg(a) || b.ovr - a.ovr;
     });
   }
-  E.brShot = function(S, i, on) {
+  E.brShot = function(S, i, on2) {
     var m = S.card && S.card[i];
     if (!m || m.mt !== "br") return { ok: false };
-    if (on) m.shot = 1;
+    if (on2) m.shot = 1;
     else delete m.shot;
     return { ok: true };
   };
   function brFee(w) {
     return Math.round((2e3 + w.ovr * w.ovr * 3) / 500) * 500;
   }
-  E.brSurprise = function(S, i, on) {
+  E.brSurprise = function(S, i, on2) {
     var m = S.card && S.card[i];
     if (!m || m.mt !== "br") return { ok: false };
-    if (on) m.surp = 1;
+    if (on2) m.surp = 1;
     else delete m.surp;
     return { ok: true };
   };
@@ -36689,10 +37488,10 @@
       return r;
     };
   })();
-  E.lockMatch = function(S, i, on) {
+  E.lockMatch = function(S, i, on2) {
     var m = S.card && S.card[i];
     if (!m) return { ok: false };
-    if (on) m.lock = 1;
+    if (on2) m.lock = 1;
     else delete m.lock;
     return { ok: true };
   };
@@ -37142,10 +37941,10 @@
     if (!show) return out;
     var nm = function(id) {
       return S.w[id].name;
-    }, on = {}, seen = {};
+    }, on2 = {}, seen = {};
     card.forEach(function(m) {
       flat(m.sides).forEach(function(id) {
-        on[id] = 1;
+        on2[id] = 1;
       });
     });
     card.forEach(function(m, i) {
@@ -37166,7 +37965,7 @@
       if (f) out.sets.push(m.end ? feudLabel(S, f) + " ends here: the next story starts from what happens." : feudLabel(S, f) + " moves on.");
       if (m.title && i < card.length - 1) out.sets.push("A title match below the main event: a new champion would need a story.");
     });
-    Object.keys(on).forEach(function(id) {
+    Object.keys(on2).forEach(function(id) {
       var w = S.w[id];
       if (seen[id]) return;
       if (w.cond < 50) {
@@ -37187,13 +37986,13 @@
     }
     activeFeuds(S).filter(function(f) {
       return f.promo === P.id && f.heat >= 50 && !f.a.concat(f.b).some(function(id) {
-        return on[id];
+        return on2[id];
       });
     }).slice(0, 2).forEach(function(f) {
       out.cold.push(feudLabel(S, f) + " is hot and not on the show.");
     });
     var fw = faceOf(S);
-    if (fw && card.length && !on[fw.id]) out.cold.push(fw.name + ", the face of the company, sits this one out.");
+    if (fw && card.length && !on2[fw.id]) out.cold.push(fw.name + ", the face of the company, sits this one out.");
     var A = E.fogInfo ? E.fogInfo(S) : null, who = A && A.head ? A.head : "Your road agent", sharp = h01(S.seed + ":gut:" + S.week + ":" + card.length) < clamp(0.4 + fogSkill(S), 0.1, 0.95);
     var good = out.sets.length + out.moments.length, bad = out.risk.length + out.cold.length;
     if (!card.length) out.gut = "";
@@ -37578,6 +38377,103 @@
   L.wrName = wrName;
   L.wrPitch = wrPitch;
 
+  // engine/99-youacts.ts
+  LIVEK.callaud = {
+    n: "Call an audible",
+    free: 1,
+    pre: function(S, L2, step) {
+      if (!treeHas(S, "cr_audible") || L2.aud || step.t !== "match" || step.i !== L2.card.length - 1) return null;
+      const M = liveMatch(S, L2, step.i);
+      if (!M || M.c.sides.length !== 2 || M.m.mt === "br" || M.m.call != null || M.m.ff || M.m.nc) return null;
+      L2.aud = 1;
+      const A = M.c.sides[0], B = M.c.sides[1];
+      return {
+        phase: "mid",
+        mi: step.i,
+        who: A[0].id,
+        other: B[0].id,
+        text: "The main event is on, and nothing else needs you. You have the referee\u2019s ear: call the finish, or let them work it out.",
+        why: ["Call an audible: once a show, you can call the main event\u2019s finish on the air"],
+        safe: 0,
+        choices: [
+          { n: "Let it play out", says: "The match goes the way it was going to go." },
+          { n: names(A) + " win" + (A.length > 1 ? "" : "s"), says: "The word goes to the referee. " + names(B) + " will know you called it against them." },
+          { n: names(B) + " win" + (B.length > 1 ? "" : "s"), says: "The word goes to the referee. " + names(A) + " will know you called it against them." }
+        ]
+      };
+    },
+    run: function(S, L2, ev, c) {
+      const M = liveMatch(S, L2, ev.mi);
+      if (!M || !c) return "You leave the finish alone.";
+      const side = c - 1, win = M.c.sides[side], lose = M.c.sides[1 - side];
+      M.m.call = side;
+      win.forEach((w) => L.youRemember(S, w, "audible", "You called the finish on the air and gave them the win.", 3));
+      lose.forEach((w) => L.youRemember(S, w, "audible", "You called the finish on the air, and they took the fall.", -2));
+      return "The referee nods. " + names(win) + " " + (win.length > 1 ? "are" : "is") + " going over.";
+    }
+  };
+  L.LIVE_ORDER.push("callaud");
+  SHOWX.push(function(S, P, show, rep) {
+    if (S.cal || P.id !== S.player || !treeHas(S, "cr_shock") || !S.owner || S.owner.me) return;
+    const n = (rep.segs || []).filter((r) => r && r.booked && L.SEGK[r.booked] && L.SEGK[r.booked].t === "angle").length;
+    if (n) S.owner.trust = clamp(S.owner.trust - 0.75 * n * (n + 1) / 2, 0, 100);
+  });
+  L.PLOT.sweeten = { n: "Sweeten the deal", cost: 3, d: "Wine and dine the network ahead of the next renewal. That deal pays about 8% more, however it goes: stay, move or a bidding war." };
+  function sweetShow(S) {
+    const P = S.promos[S.player];
+    return (P.shows || []).filter((sh) => sh.deal != null && !sh.sweet).sort((a, b) => a.deal - b.deal)[0] || null;
+  }
+  var plotInfo0 = E.plotInfo;
+  E.plotInfo = function(S) {
+    const I = plotInfo0.apply(this, arguments);
+    if (!treeHas(S, "of_sweeten")) I.acts = I.acts.filter((a) => a.id !== "sweeten");
+    else {
+      const sh = sweetShow(S), a = I.acts.find((x) => x.id === "sweeten");
+      if (a) {
+        a.show = sh ? sh.n || sh.name : null;
+        if (!sh) a.can = false;
+      }
+    }
+    return I;
+  };
+  var plotDo0 = E.plotDo;
+  E.plotDo = function(S, id, o) {
+    if (id !== "sweeten") return plotDo0.apply(this, arguments);
+    if (!treeHas(S, "of_sweeten")) return { ok: false, msg: "That is not something booking power buys yet." };
+    const A = L.PLOT.sweeten, sh = sweetShow(S);
+    if (!sh) return { ok: false, msg: "Every network deal is already sweetened." };
+    if (S.bp < A.cost) return { ok: false, msg: A.n + " takes " + A.cost + " booking power. You have " + S.bp + "." };
+    S.bp -= A.cost;
+    sh.sweet = 1;
+    return { ok: true, msg: "The network had a good night on you. " + (sh.n || sh.name || "Your show") + " gets a better rate when its deal is up in week " + sh.deal + "." };
+  };
+  var airSign0 = L.airSign;
+  L.airSign = function(S, P, sh, net, tier, rate) {
+    if (sh && sh.sweet && P.id === S.player) {
+      rate *= 1.08;
+      delete sh.sweet;
+    }
+    return airSign0.call(this, S, P, sh, net, tier, rate);
+  };
+  var PART_WORDS = { open: "the matters already on your desk", clocks: "a clock close to running out", room: "the mood in the locker room", money: "the money", stories: "a story near its peak", wait: "how long it has been quiet" };
+  var dirDesk0 = E.dirDesk;
+  E.dirDesk = function(S) {
+    const D = dirDesk0.apply(this, arguments);
+    if (treeHas(S, "ey_smell")) D.held.forEach((h) => {
+      h.left = Math.max(0, L.dirKeep(S) - (S.week - h.since));
+    });
+    if (treeHas(S, "ey_word")) {
+      const p = E.dirInfo(S).parts;
+      let top = null, v = 0;
+      for (const k in PART_WORDS) if ((p[k] || 0) > v) {
+        v = p[k];
+        top = k;
+      }
+      D.more = top ? "Most of the pressure is " + PART_WORDS[top] + "." : "Nothing much is pressing.";
+    }
+    return D;
+  };
+
   // engine/99-zpodcast.ts
   L.podFirst = podFirst;
   L.podPlain = podPlain;
@@ -37858,9 +38754,9 @@
         return ids.map(function(id) {
           return S.w[id] ? S.w[id].name : "";
         }).join(" and ");
-      }, pn = nameOf(hot[side]), on = nameOf(hot[side === "a" ? "b" : "a"]);
-      say2("a", "pick", { big: c.wom === 4 ? P.name + " " + evName(S, P, cal(wk + 4).month) : nextBigName(S, P), p: pn, o: on }, { k: "face", ids: [hot[side][0], hot[side === "a" ? "b" : "a"][0]] });
-      say2("b", maybe("pd", 0.4) ? "pick_diff" : "pick_same", { p: pn, o: on });
+      }, pn = nameOf(hot[side]), on2 = nameOf(hot[side === "a" ? "b" : "a"]);
+      say2("a", "pick", { big: c.wom === 4 ? P.name + " " + evName(S, P, cal(wk + 4).month) : nextBigName(S, P), p: pn, o: on2 }, { k: "face", ids: [hot[side][0], hot[side === "a" ? "b" : "a"][0]] });
+      say2("b", maybe("pd", 0.4) ? "pick_diff" : "pick_same", { p: pn, o: on2 });
       pod.picks.push({ f: hot.id, s: side, w: wk });
     }
     say2("a", "bye");

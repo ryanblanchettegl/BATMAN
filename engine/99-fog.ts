@@ -40,7 +40,7 @@ export function gasLimit(w){return Math.floor(9+w.stam*0.25);}
 export function fogSkill(S){var b=S.booker;return b?0.12*b.sk.eye+0.01*(b.lvl-1):0;}
 /** The chance the agent on this match reads something nobody has seen yet. */
 export function readP(S,m){var a=agentOf(S,m);return clamp((a?0.4+0.45*agentQ(a):0.25)+fogSkill(S),0.05,0.95);}
-export function reads(S,m,key){return h01(S.seed+':rd:'+S.week+':'+key+':'+(agentOf(S,m)?m.agent:'h'))<readP(S,m);}
+export function reads(S,m,key){return h01(S.seed+':rd:'+S.week+':'+key+':'+(agentOf(S,m)?m.agent:'h'))<Math.min(0.95,readP(S,m)+(($L.treeHas&&$L.treeHas(S,'ey_tape'))?0.1:0));}
 export function agentName(S,m){var a=agentOf(S,m);return a?a.name:S.promos[S.player].staff.agent;}
 /** The agent's comment on one match of a card: {who, lines:[{s, t, src}], more}. src is 'see', 'seen', 'read' or 'none'.
     Null while the match is not filled in. */

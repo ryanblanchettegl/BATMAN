@@ -128,15 +128,16 @@ function QuietPic() {
   </div>;
 }
 function OnDesk() {
-  const S = G.S, open: any[] = S.inbox.filter((e: any) => !e.done), done = S.inbox.length - open.length, A = alerts();
+  const S = G.S, open: any[] = S.inbox.filter((e: any) => !e.done).sort((a: any, b: any) => (b.head ? 1 : 0) - (a.head ? 1 : 0)), done = S.inbox.length - open.length, A = alerts();
+  const DR = (E as any).dirDesk(S);   // the Director's word for the week (99-director.ts)
   const room = open.length ? (open.length === 1 ? 2 : 0) : 2, more = (k: string) => openModal({ kind: 'deskmore', k });
   useFocusAfter();
-  return <Win title={open.length ? 'On your desk: ' + open.length + ' to answer' : 'On your desk'} right={open.length ? '' : (done ? done + ' answered' : '')} tone={open.length ? 'hot' : undefined} cls="ondesk" area="fire" t="fire">
+  return <Win title={open.length ? 'On your desk: ' + open.length + ' to answer' : 'On your desk'} right={DR.word} tone={open.length ? 'hot' : undefined} cls="ondesk" area="fire" t="fire">
     <div class="odp">
     {open.length ? (open.length < 3 ? <MomentPic ev={open[0]} t="desk-pic" /> : null) : <QuietPic />}
     <div class="odr">
     {open.slice(0, 3).map(e => <div class="mat" key={e.id} data-t="matter" data-id={e.id}>
-      <p class={'clamp' + (open.length < 3 ? ' c3' : '')}>{e.night ? <Tag kind="bad">Last night</Tag> : null}<Txt>{e.text}</Txt></p>
+      <p class={'clamp' + (open.length < 3 ? ' c3' : '')}>{e.head ? <Tag kind="gold">Headline</Tag> : null}{e.night ? <Tag kind="bad">Last night</Tag> : null}<Txt>{e.text}</Txt></p>
       <Btn t="ev-open" d={{ id: e.id }} onClick={() => openModal({ kind: 'matter', id: e.id })}>Answer</Btn>
     </div>)}
     {open.length > 3 ? <p class="muted one">And {open.length - 3} more after {open.length - 3 === 1 ? 'that' : 'those'}.</p> : null}
@@ -256,7 +257,18 @@ function Clocks() {
     <p class="muted mt1">Red clocks are trouble building. Green clocks pay out when they fill. Select one to see what moves it.</p>
   </>;
 }
-const MORE: [string, string][] = [['week', 'This week'], ['world', 'Around the world'], ['promises', 'Promises'], ['know', 'Worth knowing'], ['clocks', 'Clocks'], ['news', 'News'], ['answered', 'Answered']];
+const MORE: [string, string][] = [['week', 'This week'], ['world', 'Around the world'], ['promises', 'Promises'], ['know', 'Worth knowing'], ['clocks', 'Clocks'], ['news', 'News'], ['answered', 'Answered'], ['held', 'Also this week']];
+/** What the Director held back this week: read it here, or bring one to the desk now for an action point. */
+function Held() {
+  const S = G.S, D = (E as any).dirDesk(S);
+  const more = D.more ? <p class="muted" data-t="dir-more">{D.more}</p> : null;
+  if (!D.held.length) return <>{more}<Empty>Nothing is waiting. Everything that needs you is on the desk.</Empty></>;
+  return <>{more}<ul class="list" data-t="held-list">{D.held.map((h: any) => <li key={h.id} data-t="held" data-id={h.id}>
+    <span><Tag kind={h.tag === 'chance' ? 'good' : h.tag === 'problem' ? 'bad' : undefined}>{h.tag === 'chance' ? 'A chance' : h.tag === 'problem' ? 'Trouble' : 'Life'}</Tag> <Txt>{h.text}</Txt>{h.left != null ? <span class="muted" data-t="held-left"> {h.left ? 'Waits ' + h.left + ' more ' + (h.left > 1 ? 'weeks' : 'week') + '.' : 'Lapses this week.'}</span> : null}</span>
+    <Btn kind="sm" t="held-pull" d={{ id: h.id }} disabled={S.ap < 1} tip={S.ap < 1 ? 'You have no action points left this week.' : 'Bring it to your desk now. It costs one action point.'}
+      onClick={() => act(() => { const r = (E as any).dirPull(S, h.id); if (r.ok) closeModal(); })}>Pull forward</Btn>
+  </li>)}</ul></>;
+}
 /** The week around the world (src/99-worldweek.js): what every other company did last week, one line each, the rest below it. */
 function WorldWeek() {
   const WK = (E as any).worldWeek(G.S, 2) as any[];
@@ -278,7 +290,7 @@ export function DeskMoreWindow(p: { m: Modal }) {
   return <Window title="The week in full" wide ok="Back to the desk">
     <Tabs label="The week in full" items={MORE.map(x => ({ id: x[0], label: x[1], t: 'more-tab', d: { v: x[0] } }))} value={k} onPick={pick} />
     <div class="dmore" data-t="desk-more-body" data-v={k} onClickCapture={(ev: any) => { if (ev.target && ev.target.closest && ev.target.closest('[data-t="book-show"],[data-t="report"]')) ui.modal = null; }}>
-      {k === 'week' ? <ScheduleList /> : k === 'world' ? <WorldWeek /> : k === 'promises' ? <QuestList /> : k === 'clocks' ? <Clocks /> : k === 'answered' ? <Answered />
+      {k === 'week' ? <ScheduleList /> : k === 'world' ? <WorldWeek /> : k === 'promises' ? <QuestList /> : k === 'clocks' ? <Clocks /> : k === 'answered' ? <Answered /> : k === 'held' ? <Held />
         : k === 'news' ? <><OfficeNews n={7} /><div class="row mt2"><Btn kind="sm" t="tab" d={{ v: 'world' }} onClick={() => { closeModal(); go('world'); }}>All the news</Btn></div></>
         : (A.length ? <ul class="list">{A.map((a, i) => <li key={i}><span>{a}</span></li>)}</ul> : <Empty>Nothing urgent.</Empty>)}
     </div>
