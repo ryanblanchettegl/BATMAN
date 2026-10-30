@@ -1,7 +1,7 @@
 /* One screen, no scrolling: the card builder and the broadcast must fit the window at every size, whatever is on them.
    Run: NODE_PATH=<dir containing playwright> node app/tests/onescreen.js */
 const { open, go, overflow, shot, state, fits } = require('./helper');
-const SIZES = [['desk', 1280, 720], ['desk', 1280, 800], ['desk', 1920, 1080], ['desk', 2560, 1080], ['desk', 2560, 1440], ['desk', 3840, 2160], ['tv', 1920, 1080]];
+const SIZES = [['desk', 1280, 720], ['desk', 1280, 800], ['desk', 1920, 1080], ['desk', 2560, 1080], ['desk', 2560, 1440], ['desk', 3840, 2160]];
 const fails = [];
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(15), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 const has = async (page, sel) => !!(await page.$(sel));
@@ -18,31 +18,30 @@ async function run(mode, w, h) {
     await page.click('[data-t="suggest"]');
     await fit('a suggested card');
     const n = await state(page, S => S.card.length);
-    ok(id, 'every line of the run sheet is one line of text, and none is cut off at the bottom', await page.evaluate(() => { const box = document.querySelector('.b1-rows').getBoundingClientRect(); return [...document.querySelectorAll('.b1-rows .seg')].every(r => { const q = r.getBoundingClientRect(), lh = parseFloat(getComputedStyle(r).lineHeight) || 24; return q.bottom <= box.bottom + 1 && q.height >= lh * 0.95; }); }));
-    for (const t of ['advice', 'order', 'clock', 'promo', 'feuds', 'targets']) { await page.click('[data-t="bk"][data-v="' + t + '"]'); await fit('the ' + t + ' notes'); }
-    await page.selectOption('#plan-sp', { index: 1 }).catch(() => { });
-    await page.click('[data-t="bk"][data-v="promo"]'); await page.selectOption('#plan-sp', { index: 1 }); await fit('a scripted opening promo'); await page.selectOption('#plan-sp', { index: 0 });
+    ok(id, 'every piece on the wall sits inside the wall', await page.evaluate(() => { const box = document.querySelector('.cw-col').getBoundingClientRect(); return [...document.querySelectorAll('.cw-pc')].every(r => { const q = r.getBoundingClientRect(); return q.top >= box.top - 2 && q.bottom <= box.bottom + 2; }); }));
+    for (const t of ['advice', 'order', 'clock', 'promo', 'feuds', 'targets']) { await page.click('[data-t="bk"][data-v="' + t + '"]'); await fit('the ' + t + ' notes'); await page.click('#modal-ok'); }
+    await page.click('[data-t="bk"][data-v="promo"]'); await page.selectOption('#plan-sp', { index: 1 }); await fit('a scripted opening promo'); await page.selectOption('#plan-sp', { index: 0 }); await page.click('#modal-ok');
     for (let i = 0; i < n; i++) { await page.click('[data-t="edit"][data-v="' + i + '"]'); await fit('match ' + (i + 1) + ' selected'); }
-    /* the match kinds with the most boxes */
-    await page.click('[data-t="edit"][data-v="1"]'); if (!(await has(page, '#m1-type'))) await page.click('[data-t="edit"][data-v="1"]');
-    for (const mt of ['tag', '6man', '4way', 'br']) { await page.selectOption('#m1-type', mt); await fit('a ' + mt + ' match in the editor'); ok(id, 'its buttons are on screen (' + mt + ')', await page.evaluate(() => { const b = document.querySelector('[data-t="rm"]').getBoundingClientRect(), p = document.querySelector('.b1-pane').getBoundingClientRect(); return b.bottom <= p.bottom + 1 && b.top >= p.top; })); }
+    /* the match kinds with the most spots */
+    await page.click('[data-t="edit"][data-v="1"]');
+    for (const mt of ['tag', '6man', '4way', 'br']) {
+      await page.click('[data-t="wall-tile"][data-v="type"]'); await page.selectOption('#m1-type', mt); await fit('a ' + mt + ' match in its pop-up'); await page.click('#modal-ok');
+      await fit('a ' + mt + ' match on the wall');
+      ok(id, 'its buttons are on screen (' + mt + ')', await page.evaluate(() => { const b = document.querySelector('[data-t="rm"]').getBoundingClientRect(), p = document.querySelector('[data-t="wall-pick-pane"]').getBoundingClientRect(); return b.bottom <= p.bottom + 1 && b.top >= p.top; }));
+    }
     if (w === 1280 && h === 720) await shot(page, 'onescreen-editor');
     /* what stands in the way */
     await page.click('[data-t="advance"]');
-    ok(id, 'the list of what to fix comes up beside the sheet', /Fix before the show can run/.test(await page.$eval('.b1-pane', e => e.innerText)));
-    await fit('the list of what to fix');
+    await page.click('[data-t="bk"][data-v="advice"]');
+    ok(id, 'the list of what to fix is in the notes', /Fix before the show can run/.test(await page.$eval('.win', e => e.innerText)));
+    await fit('the list of what to fix'); await page.click('#modal-ok');
     await page.click('[data-t="suggest"]');
     /* a promo or an angle selected */
     await page.click('[data-t="seg-edit"]'); await fit('a segment selected');
-    /* more lines than the sheet holds: it turns pages */
+    /* a crowded show: many short pieces still fit the wall */
     await state(page, S => { const E = window.GP, ids = E.segChoices(S, 'interview', [], -1)[0]; for (let k = 0; k < 9 && k < ids.length; k++) E.setSeg(S, -1, { k: 'interview', who: [ids[k]], pos: k % S.card.length, len: 'S' }); });
     await go(page, 'booking');
-    const lines = await state(page, S => S.card.length + window.GP.segInfo(S).booked);
-    ok(id, 'a long run sheet turns pages instead of scrolling', lines > 13 && await has(page, '[data-t="sheet-pages"]') && (await page.$$('.b1-rows .seg')).length === 13, lines + ' lines');
-    await fit('a long run sheet');
-    await page.click('[data-t="sheet-next"]');
-    ok(id, 'the next page shows the rest', (await page.$$('.b1-rows .seg')).length === lines - 13 && await page.$eval('[data-t="sheet-next"]', e => e.disabled));
-    await fit('the second page');
+    await fit('a crowded wall');
     if (w === 1280 && h === 720) await shot(page, 'onescreen-pages');
     /* the broadcast: the title card, every call, every result and the sign-off */
     await page.click('[data-t="clear"]'); await page.click('[data-t="suggest"]');

@@ -13,10 +13,11 @@ import { Btn, Win, Window, Tag, teamName } from '../../kit';
 import { Portrait } from '../../kit/portrait';
 import { Ovr } from '../../shared/ovr';
 import { roleOf } from './Shape';
-import { addPromo, addAngle, hm, CATN } from './Segments';
+import { addPromo, addAngle, hm, CATN, TopTag, openSeg } from './Segments';
+import { SegPic } from '../../shared/moment';
 import { Editor, winWord } from './Editor';
 import { NOTE_TABS, PreShowPane, preNow } from './Side';
-import { Match, onCard, sideText, suggest, addMatch, clearCard, removeMatch, moveMatch, pickMatch, pickSeg, sel, setMatch } from './run';
+import { Match, onCard, sideText, suggest, addMatch, clearCard, removeMatch, moveMatch, pickMatch, pickSeg, sel, setMatch, lockMatch } from './run';
 
 const DOT = ' · ';
 /** The wall's own view state: who is held (pressed, waiting for a spot), the roster's search and filter, the empty spot picked. */
@@ -105,7 +106,7 @@ function RosterWin(p: { u: WallUI; children: ComponentChildren }) {
 }
 
 /* ---------- centre: the wall ---------- */
-interface Piece { key: string; at: number; mins: number; kind: 'match' | 'seg' | 'plan'; i?: number; slot?: number }
+interface Piece { key: string; at: number; mins: number; kind: 'match' | 'seg' | 'plan'; i?: number; slot?: number; top?: number }
 function Name(p: { id: number | null; i: number; s: number; q: number }) {
   const S = G.S, u = wall(), id = p.id;
   const fill = () => { if (u.hold != null) bookInto(u.hold, p.i, p.s, p.q); else view(() => { book().edit = p.i; sel().seg = -1; u.spot = { s: p.s, p: p.q }; }); };
@@ -121,7 +122,7 @@ function MatchBody(p: { i: number; n: number; flags: any[]; thin: boolean; tall:
   const S = G.S, P = me(), m: Match = S.card[p.i], t = m.title ? P.titles.find((x: any) => x.id === m.title) : null;
   const names = <span class="cw-names">{m.sides.map((s: any[], k: number) => <span key={k} class="cw-side">{k ? <span class="cw-vs">{m.mt === 'br' ? '' : 'vs'}</span> : null}{s.map((id, q) => <>{q ? <span class="cw-amp">&amp;</span> : null}<Name key={q} id={id} i={p.i} s={k} q={q} /></>)}</span>)}</span>;
   const role = roleOf(p.i, p.n);
-  const tags = <span class="cw-tags">{E.MT[m.mt].n}{m.stip !== 'std' ? DOT + E.STIP[m.stip].n : ''}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}{p.thin && p.flags.length ? <Tag kind="warn">+{p.flags.length}</Tag> : p.flags.map((f: any, k: number) => <Tag key={k} kind={f.k === 'bad' ? 'bad' : (f.k === 'good' ? 'good' : 'warn')}>{f.t}</Tag>)}</span>;
+  const tags = <span class="cw-tags">{E.MT[m.mt].n}{m.stip !== 'std' ? DOT + E.STIP[m.stip].n : ''}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}{m.lock ? <>{DOT}<span class="warn" data-t="row-lock">Locked</span></> : null}{p.thin && p.flags.length ? <Tag kind="warn">+{p.flags.length}</Tag> : p.flags.map((f: any, k: number) => <Tag key={k} kind={f.k === 'bad' ? 'bad' : (f.k === 'good' ? 'good' : 'warn')}>{f.t}</Tag>)}</span>;
   const say = p.tall ? handsLine(p.i, p.flags) : null;
   return <>{!p.thin && <span class="cw-role">{role || 'Match ' + (p.i + 1)}</span>}{names}{tags}{say ? <span class="cw-hand" data-t="wall-hands">{say}</span> : null}</>;
 }
@@ -147,8 +148,8 @@ function Wall() {
   const FL: any[][] = n ? E.cardFlags(S) : [];
   const P: Piece[] = [];
   ck.items.forEach((x: any) => {
-    if (x.t === 'match') P.push({ key: 'm' + x.i, at: x.at, mins: x.mins, kind: 'match', i: x.i });
-    else if (x.t === 'seg') P.push({ key: 's' + x.slot, at: x.at, mins: x.mins, kind: 'seg', slot: x.slot });
+    if (x.t === 'match') P.push({ key: 'm' + x.i, at: x.at, mins: x.mins, kind: 'match', i: x.i, top: x.top });
+    else if (x.t === 'seg') P.push({ key: 's' + x.slot, at: x.at, mins: x.mins, kind: 'seg', slot: x.slot, top: x.top });
     else if (x.t === 'plan') P.push({ key: 'plan', at: x.at, mins: x.mins, kind: 'plan' });
   });
   // a match with nobody in it yet is not on the clock: it waits at the foot of the wall, as tall as it would run
@@ -162,24 +163,24 @@ function Wall() {
     const thin = x.mins <= 10, past = x.at + x.mins > ck.budget + 5;
     if (x.kind === 'match') {
       const i = x.i!, m = S.card[i], on = b.edit === i, main = i === n - 1;
-      return <div key={x.key} class={'cw-pc match' + (thin ? ' thin' : '') + (on ? ' on' : '') + (main ? ' main' : '') + (past ? ' past' : '') + (E.matchOdds(S, m, i, n) ? '' : ' open')} style={{ top: pct(x.at), height: pct(x.mins) }}
+      return <div key={x.key} class={'cw-pc match' + (thin ? ' thin' : '') + (on ? ' on' : '') + (main ? ' main' : '') + (x.top ? ' top' : '') + (past ? ' past' : '') + (E.matchOdds(S, m, i, n) ? '' : ' open')} style={{ top: pct(x.at), height: pct(x.mins) }}
         data-t="wall-piece" data-v={i} {...{ draggable: !m.lock, onDragStart: (e: DragEvent) => { if ((e.target as HTMLElement).closest('.cw-name')) return; e.dataTransfer?.setData('text/plain', 'm:' + i); } }}
         onDragOver={(e: DragEvent) => e.preventDefault()} onDrop={(e: DragEvent) => { const d = e.dataTransfer?.getData('text/plain') || ''; if (d.indexOf('m:') === 0) { e.preventDefault(); const f = +d.slice(2); if (f !== i) moveMatchTo2(f, i); } else if (d.indexOf('t:') === 0) { e.preventDefault(); view(() => { b.edit = i; }); bookTeam(S.teams.find((t: any) => t.id === +d.slice(2))); } }}>
         <button type="button" class="cw-grip" data-t="edit" data-v={i} aria-label={'Pick match ' + (i + 1)} aria-pressed={on} onClick={() => { pickMatch(i); view(() => { u.spot = on ? null : firstHole(m); }); }}><span class="cw-at">{hm(x.at)}</span><span aria-hidden="true">⠿</span></button>
         <div class="cw-in"><MatchBody i={i} n={n} flags={FL[i] || []} thin={thin} tall={x.mins >= 20} /></div>
-        <span class="cw-min">{x.mins}<small>min</small></span>
+        <span class="cw-min">{x.mins}<small>min</small>{x.top ? <TopTag top={x.top} /> : null}</span>
       </div>;
     }
     if (x.kind === 'seg') {
       const sg = I.list[x.slot!], on = s.seg === x.slot;
-      return <div key={x.key} class={'cw-pc seg' + (thin ? ' thin' : '') + (on ? ' on' : '') + (past ? ' past' : '')} style={{ top: pct(x.at), height: pct(x.mins) }} data-t="wall-seg" data-v={x.slot}>
+      return <div key={x.key} class={'cw-pc seg' + (thin ? ' thin' : '') + (on ? ' on' : '') + (x.top ? ' top' : '') + (past ? ' past' : '')} style={{ top: pct(x.at), height: pct(x.mins) }} data-t="wall-seg" data-v={x.slot}>
         <button type="button" class="cw-grip" data-t="seg-edit" data-v={x.slot} aria-pressed={on} onClick={() => pickSeg(x.slot!)}><span class="cw-at">{hm(x.at)}</span></button>
         <div class="cw-in">{!thin && <span class="cw-role">{sg.t === 'any' ? 'Writers' : CATN[sg.t]}</span>}{sg.k === 'writers' ? <><span class="cw-names">Writers’ pick</span><span class="cw-tags">They choose the promo. Press to pick one yourself.</span></>
           : <><span class="cw-names">{sg.why ? <span class="bad">{sg.why}</span> : (sg.who.length ? sg.who.map((id: number) => S.w[id].name).join(', ') : 'The writers decide')}</span><span class="cw-tags">{E.SEGK[sg.k].n}</span></>}</div>
-        <span class="cw-min">{x.mins}<small>min</small></span>
+        <span class="cw-min">{x.mins}<small>min</small>{x.top ? <TopTag top={x.top} /> : null}</span>
       </div>;
     }
-    return <div key={x.key} class="cw-pc seg thin" style={{ top: pct(x.at), height: pct(x.mins) }}><div class="cw-in"><span class="cw-names">{S.plan && S.w[S.plan.sp] ? S.w[S.plan.sp].name + ' opens the show' : 'The opening'}</span></div><span class="cw-min">{x.mins}<small>min</small></span></div>;
+    return <div key={x.key} class="cw-pc seg thin" style={{ top: pct(x.at), height: pct(x.mins) }}><div class="cw-in"><span class="cw-names">{S.plan && S.w[S.plan.sp] ? S.w[S.plan.sp].name + ' opens the show' : 'The opening'}</span></div><span class="cw-min">{x.mins}<small>min</small>{x.top ? <TopTag top={x.top} /> : null}</span></div>;
   };
   return <Win cls="cw-wall" title={<>Book the show: <span class="hl">{show.name}</span></>} label={'Book the show: ' + show.name} right={'show ' + (S.qi + 1) + ' of ' + S.queue.length} t="book1">
     <h1 class="sr">{show.name}</h1>
@@ -190,8 +191,10 @@ function Wall() {
       <Btn t="add-promo" tip="Book a promo." onClick={addPromo}>+ Promo</Btn>
       <Btn t="add-angle" tip="Book an angle." onClick={addAngle}>+ Angle</Btn>
       {(n > 0 || ck.total > 0) && <Btn kind="less" t="clear" tip="Take everything off the wall and start again." onClick={() => { clearCard(); view(() => { u.sugg = 0; }); }}>Clear</Btn>}
-      <span class={'cw-time ' + (ck.over || ck.short ? 'bad' : (ck.light ? 'warn' : 'good'))} data-t="clock" data-v={ck.over ? 'over' : (ck.short ? 'short' : (ck.light ? 'light' : 'ok'))}>{hm(ck.total)} of {hm(ck.budget)}{DOT}{over > 0 ? over + ' min over' : open + ' min open'}</span>
+      <span class={'cw-time ' + (ck.over || ck.short ? 'bad' : (ck.light ? 'warn' : 'good'))} data-t="clock" data-v={ck.over ? 'over' : (ck.short ? 'short' : (ck.light ? 'light' : 'ok'))}>{hm(ck.total)} of {hm(ck.budget)}{DOT}{!n && !ck.total ? ck.budget / 60 + ' hours to fill' : over > 0 ? over + ' min over' : open + ' min open'}</span>
     </div>
+    <p class="cw-sub"><span data-t="opening" data-v={ck.open.k}>{ck.open.n}</span> <button type="button" class="lnk" data-t="open-guide" onClick={() => openModal({ kind: 'openguide' })}>Ways to open</button>
+      {['match', 'promo', 'angle'].map(k => <span key={k} class="cw-cat" data-t={'cat-' + k}><b>{ck.cats[k].n}</b> {ck.cats[k].n === 1 ? k : (k === 'match' ? 'matches' : k + 's')}</span>)}</p>
     <div class="cw-board">
       <div class="cw-ruler" aria-hidden="true">{ticks.map(t => <span key={t} class={'cw-tick' + (t % 15 ? '' : ' big') + (t + 5 > span ? ' last' : '')} style={{ top: pct(t) }}>{t % 15 ? '' : hm(t)}</span>)}</div>
       <div class="cw-col">
@@ -266,6 +269,7 @@ function Knock(p: { max?: number }) {
 function NoteTabs() {
   const v = G.S.card.length ? E.validate(G.S, G.S.card) : null, bad = !!(v && v.errors.length && book().tried);
   return <div class="cw-notes" role="group" aria-label="Booking notes">{NOTE_TABS.map(t => <button key={t[0]} type="button" class={'cw-nt' + (bad && t[0] === 'advice' ? ' hot' : '')} data-t="bk" data-v={t[0]} onClick={() => openModal({ kind: 'notes', k: t[0] })}>{t[1]}</button>)}
+    {G.S.card.length ? <button type="button" class="cw-nt" data-t="could" onClick={() => openModal({ kind: 'could' })}>Risks</button> : null}
     {E.tournActive(G.S) && E.tournActive(G.S).pend.length ? <button type="button" class="cw-nt" data-t="bk" data-v="tourn" onClick={() => openModal({ kind: 'notes', k: 'tourn' })}>Cup</button> : null}</div>;
 }
 /** Nothing picked: what tonight asks of the booker (rule 7a), before a piece is pressed. */
@@ -292,12 +296,14 @@ function Picked() {
 function PickedPane() {
   const S = G.S, b = book(), n = S.card.length, i = b.edit, m = S.card[i], s = sel();
   if (s.seg >= 0) { const x = E.segInfo(S).list[s.seg]; if (x) return <Win cls="cw-pick" title={x.t === 'any' ? 'The writers' : CATN[x.t]} t="wall-pick-pane">
-    <p class="cw-mn"><b>{E.SEGK[x.k].n}</b></p><p>{x.who.length ? x.who.map((id: number) => S.w[id].name).join(', ') : 'The writers decide who.'}</p><p class="muted">{x.mins} minutes. {E.SEGK[x.k].d}</p>
+    <div data-t="pane" data-v="seg"><p class="cw-mn"><b>{E.SEGK[x.k].n}</b></p><p>{x.who.length ? x.who.map((id: number) => S.w[id].name).join(', ') : 'The writers decide who.'}</p><p class="muted">{x.mins} minutes. {E.SEGK[x.k].d}</p>
     {x.look && x.look.read ? <p class={x.look.read.k === 'good' ? 'good' : (x.look.read.k === 'bad' ? 'bad' : 'muted')} data-t="seg-read">{x.look.read.t}</p> : null}
-    <div class="cw-acts"><Btn kind="danger" t="seg-rm" onClick={() => act(() => { const r = E.setSeg(S, s.seg, null); sel().seg = -1; say(r.msg); })}>Remove</Btn></div><Knock /><NoteTabs /></Win>; }
+    {x.k !== 'writers' && x.who.length ? <SegPic k={x.k} who={x.who} /> : null}</div>
+    <div class="cw-acts"><Btn t="seg-change" onClick={() => openSeg(s.seg)}>Change</Btn><Btn kind="danger" t="seg-rm" onClick={() => act(() => { const r = E.setSeg(S, s.seg, null); sel().seg = -1; say(r.msg); })}>Remove</Btn></div><Knock /><NoteTabs /></Win>; }
   if (!m) return <Win cls="cw-pick" title="Tonight" t="wall-pick-pane"><Tonight /><Knock /><NoteTabs /></Win>;
   return <Win cls="cw-pick" title={roleOf(i, n) || 'Match ' + (i + 1)} right={(i + 1) + ' of ' + n + DOT + E.matchMins(S, m, i, n).now + ' min'} t="wall-pick-pane">
     <Masthead m={m} i={i} />
+    <button type="button" class={'cw-lock' + (m.lock ? ' on' : '')} data-t="wall-lock" aria-pressed={!!m.lock} onClick={() => lockMatch(i)}>{m.lock ? 'Locked in place' : 'Lock this place'}</button>
     <div class="cw-tiles">{TILES.map(t => { const v = tileNow(t[0], m, i, n); return <button key={t[0]} type="button" class="cw-tile" data-t="wall-tile" data-v={t[0]} onClick={() => openModal({ kind: 'wallopt', i, k: t[0] })}><i>{t[1]}</i><b>{v[0]}</b>{v[1] ? <small>{v[1]}</small> : null}</button>; })}</div>
     {firstHole(m) ? <Fits i={i} /> : <Agent i={i} />}
     <Knock max={12} />

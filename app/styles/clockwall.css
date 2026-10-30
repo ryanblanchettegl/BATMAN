@@ -224,3 +224,20 @@
 /* polish after the critic's 9.4 */
 .cw-amp{font-family:var(--hand);font-size:1em;color:var(--ink)}
 .cw-pick .cw-knock,.cw-pick .cw-fits~.cw-knock{flex:0 0 auto;-webkit-mask-image:none;mask-image:none;max-height:none}
+
+/* the lock and the risks button */
+.cw-lock{font:inherit;font-family:var(--marker);font-size:.72em;align-self:flex-end;margin-top:-.3em;border:0;background:none;color:#4a4655;cursor:pointer;text-decoration:underline dotted}
+.cw-lock.on{color:#b0281c;text-decoration:none}
+.cw-notes{grid-template-columns:repeat(4,1fr)}
+
+/* how the show opens, and the three kinds counted: the line over the wall */
+.cw-sub{margin:.1em 0 -1.3em;font-size:.82em;display:flex;gap:.6em;align-items:center;max-width:calc(100% - 11em);white-space:nowrap;overflow:hidden}
+.cw-sub [data-t="opening"]{font-family:var(--marker);color:#8a5a00}
+.cw-cat{color:#4a4655}
+.cw-min .tag{display:block;font-size:.5em;margin-top:.2em;white-space:normal;font-family:var(--hand)}
+.cw-pick [data-t="pane"] canvas{max-width:100%;height:auto}
+
+/* the knock-on card gives way first when the pane is short */
+.cw-pick .cw-knock,.cw-pick .cw-fits~.cw-knock{flex:0 1 auto;min-height:2.6em;overflow:hidden}
+.cw-pick .cw-fits{min-height:5em}
+.cw-pick .cw-agent{flex:0 1 auto;min-height:0;overflow:hidden}

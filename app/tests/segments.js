@@ -23,17 +23,17 @@ async function run(mode) {
     let c = await clock();
     ok(mode, 'a suggested card fills the two hours', c.v === 'ok' && /of 2:00/.test(c.t), c.t);
     ok(mode, 'it comes with promos and angles, and the three kinds are counted', await nSeg() === 2 && await cat('match') >= 4 && await cat('promo') + await cat('angle') === 2);
-    ok(mode, 'every row says when it starts', await page.$$eval('.sheet .seg .at', L => L.length >= 6 && L[0].innerText === '0:00' && L.every(e => /^\d:\d\d$/.test(e.innerText))));
-    ok(mode, 'the item on at the top of each hour is marked', /Opens the show/i.test(await txt(page, '.sheet')) && /Top of hour 2/i.test(await txt(page, '.sheet')) && (await page.$$('.sheet .seg.top')).length === 2);
+    ok(mode, 'every row says when it starts', await page.$$eval('.cw-pc .cw-at', L => L.length >= 6 && L[0].innerText === '0:00' && L.every(e => /^\d:\d\d$/.test(e.innerText))));
+    ok(mode, 'the item on at the top of each hour is marked', /Opens the show/i.test(await txt(page, '.cw-col')) && /Top of hour 2/i.test(await txt(page, '.cw-col')) && (await page.$$('.cw-pc.top')).length === 2);
     await page.click('[data-t="bk"][data-v="clock"]');
-    ok(mode, 'the clock beside the sheet names them too', /The show opens on/.test(await txt(page, '[data-t="tops"]')) && /Hour 2 opens on/.test(await txt(page, '[data-t="tops"]')));
-    ok(mode, 'with a match first, the show goes straight to the ring', await page.$eval('[data-t="opening"]', e => e.getAttribute('data-v')) === 'match');
+    await page.waitForSelector('[data-t="tops"]'); ok(mode, 'the clock beside the sheet names them too', /The show opens on/.test(await txt(page, '[data-t="tops"]')) && /Hour 2 opens on/.test(await txt(page, '[data-t="tops"]')));
+    await page.click('#modal-ok'); ok(mode, 'with a match first, the show goes straight to the ring', await page.$eval('[data-t="opening"]', e => e.getAttribute('data-v')) === 'match');
     /* take both off: the show is short and cannot run */
     for (let k = 0; k < 2; k++) { await page.click('[data-t="seg-edit"]'); ok(mode, 'selecting a promo or an angle shows it beside the sheet', await page.$eval('[data-t="pane"]', e => e.getAttribute('data-v')) === 'seg'); await over('a selected segment'); await page.click('[data-t="seg-rm"]'); }
     c = await clock();
-    ok(mode, 'with them gone the clock says how much is left to fill', await nSeg() === 0 && c.v === 'short' && /\d+ minutes still to fill/.test(c.t), c.t);
+    ok(mode, 'with them gone the clock says how much is left to fill', await nSeg() === 0 && c.v === 'short' && /\d+ min open/.test(c.t), c.t);
     await page.click('[data-t="advance"]');
-    ok(mode, 'and the show will not run until it is filled', /still empty/.test(await txt(page, '.flash.err:not([role])')), await txt(page, '.flash.err:not([role])'));
+    ok(mode, 'and the show will not run until it is filled', /can’t run yet/.test(await flash(page)), await txt(page, '.flash.err:not([role])'));
     /* a promo */
     await page.click('[data-t="add-promo"]');
     await page.waitForSelector('.win');
@@ -53,8 +53,8 @@ async function run(mode) {
     await page.selectOption('#seg-pos', { index: 2 });
     await page.click('[data-t="seg-save"]');
     ok(mode, 'booking it says what was booked and for how long', /Booked: .* calls out .*, 15 minutes/.test(await flash(page)), await flash(page));
-    ok(mode, 'the promo is on the run sheet before its match', await page.evaluate(() => { const rows = [...document.querySelectorAll('.sheet > .seg')]; const i = rows.findIndex(r => r.querySelector('[data-t="seg-edit"]')); return i === 2 && /Call-out/.test(rows[i].innerText) && /15 min/.test(rows[i].innerText); }));
-    ok(mode, 'the row carries the same read, in words', /(No read|should land|do its job|could die out there)/.test(await txt(page, '[data-t="seg-read"]')) && !/[★¼½¾]/.test(await txt(page, '.sheet')) && await page.$eval('[data-t="pane"]', e => e.getAttribute('data-v')) === 'seg', await txt(page, '[data-t="seg-read"]'));
+    ok(mode, 'the promo is on the run sheet before its match', await page.evaluate(() => { const rows = [...document.querySelectorAll('.cw-pc')].sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top); const i = rows.findIndex(r => /Call-out/i.test(r.innerText)); return i >= 1 && /15\s*min/i.test(rows[i].innerText) ? true : rows.map(r => r.innerText.replace(/\s+/g, ' ').slice(0, 60)).join(' | '); }) === true);
+    ok(mode, 'the row carries the same read, in words', /(No read|should land|do its job|could die out there)/.test(await txt(page, '[data-t="seg-read"]')) && !/[★¼½¾]/.test(await txt(page, '.cw-col')) && await page.$eval('[data-t="pane"]', e => e.getAttribute('data-v')) === 'seg', await txt(page, '[data-t="seg-read"]'));
     ok(mode, 'beside the sheet it shows the scene it will play', await page.$eval('[data-t="pane"] [data-t="seg-pic"]', e => e.getAttribute('data-v')).catch(() => '') === 'seg_callout');
     await over('a booked promo with its scene');
     await shot(page, 'seg-scene-' + mode);
@@ -70,7 +70,7 @@ async function run(mode) {
     ok(mode, 'put first, it opens the show', await page.$eval('[data-t="opening"]', e => e.getAttribute('data-v')) === 'writers' && await cat('angle') === 1, await txt(page, '[data-t="opening"]'));
     /* as many as fit: keep adding */
     await page.click('[data-t="bk"][data-v="clock"]');
-    await page.click('[data-t="seg-suggest"]');
+    await page.click('[data-t="seg-suggest"]'); if (await has(page, '#modal-ok')) await page.click('#modal-ok');
     ok(mode, 'a suggested one is added to the ones already there', await nSeg() === 3, await flash(page));
     await over('the run sheet with segments');
     await shot(page, 'segments-' + mode, true);
@@ -91,11 +91,12 @@ async function run(mode) {
     await page.click('[data-t="bk"][data-v="promo"]');
     await page.waitForSelector('#plan-sp');
     ok(mode, 'the scripted opening promo opens its form', await has(page, '#plan-sp'));
+    await page.click('#modal-ok');
     /* the match editor shows what each length costs */
-    await page.click('[data-t="edit"][data-v="1"]');
+    await page.click('[data-t="edit"][data-v="1"]'); await page.click('[data-t="wall-tile"][data-v="length"]');
     ok(mode, 'the match editor gives each length in minutes', /Short · \d+ min/.test(await txt(page, '#m1-len')) && /Long · \d+ min/.test(await txt(page, '#m1-len')), await txt(page, '#m1-len'));
     await over('a selected match');
-    await page.click('[data-t="edit"][data-v="1"]');
+    await page.click('#modal-ok');
     /* fill what is left with booked work, then run */
     await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP; E.fitShow(S, S.card); });
     /* the show runs the booked segment and the report marks it */

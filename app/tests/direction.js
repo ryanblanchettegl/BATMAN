@@ -8,7 +8,7 @@ const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText.replace(/\s+/g, ' ').trim()).catch(() => '');
 /* the notes beside the sheet turn pages when there are many: read every page, then go back to the first */
-const paneAll = async page => { let out = await txt(page, '.b1-pane'), n = 0; for (let i = 0; i < 8; i++) { const nx = await page.$('.b1-pane [data-t="pg-next"]:not([disabled])'); if (!nx) break; await nx.click(); n++; out += ' ' + await txt(page, '.b1-pane'); } for (; n > 0; n--) { const pv = await page.$('.b1-pane [data-t="pg-prev"]:not([disabled])'); if (pv) await pv.click(); } return out; };
+const paneAll = async page => { await page.click('[data-t="bk"][data-v="advice"]'); let out = await txt(page, '.win'); for (let i = 0; i < 8; i++) { const nx = await page.$('.win [data-t="pg-next"]:not([disabled])'); if (!nx) break; await nx.click(); out += ' ' + await txt(page, '.win'); } await page.click('#modal-ok'); return out; };
 const has = async (page, sel) => !!(await page.$(sel));
 /** All of an element's text, including the part of a line that has not typed itself out yet. */
 const whole = (page, sel) => page.$eval(sel, e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');

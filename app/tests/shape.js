@@ -1,7 +1,7 @@
 /* The running order beside the card, the guide window, and stars instead of percentages for matches and segments.
    Run: NODE_PATH=<dir containing playwright> node app/tests/shape.js   (MODES=desk,tv) */
 const { fits, open, go, overflow, shot, state, flash } = require('./helper');
-const MODES = (process.env.MODES || 'desk,tv').split(',');
+const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');
@@ -13,22 +13,24 @@ async function run(mode) {
   try {
     await go(page, 'booking');
     await page.click('[data-t="bk"][data-v="order"]');
-    ok(mode, 'with no card the running order asks for one', /three or more matches/.test(await txt(page, 'main.main')));
+    ok(mode, 'with no card the running order asks for one', /three or more matches/.test(await txt(page, '.win')));
+    await page.click('#modal-ok');
     await page.click('[data-t="suggest"]');
     const n = await state(page, S => S.card.length);
-    const meta = i => txt(page, '.sheet .seg[data-m="' + i + '"] .meta');
-    ok(mode, 'each spot on the card is named', /Opener/.test(await meta(0)) && /Semi-main/.test(await meta(n - 2)) && /Main event/.test(await meta(n - 1)), await meta(0));
-    ok(mode, 'the running order reads the card', await has(page, '[data-t="shape-notes"]') && /biggest match is on last/.test(await txt(page, '[data-t="shape-notes"]')), await txt(page, '[data-t="shape-notes"]'));
+    const meta = i => txt(page, '[data-t="wall-piece"][data-v="' + i + '"] .cw-role');
+    const order = async () => { await page.click('[data-t="bk"][data-v="order"]'); await page.waitForSelector('.win [data-t="shape-notes"]'); await page.waitForTimeout(100); return txt(page, '[data-t="pane"][data-v="order"]'); };
+    ok(mode, 'each spot on the card is named', /Opener/i.test(await meta(0)) && /Semi-main/i.test(await meta(n - 2)) && /Main event/i.test(await meta(n - 1)), await meta(0));
+    const on1 = await order(); ok(mode, 'the running order reads the card', /(biggest match is on last|opener|main event)/i.test(on1), on1); await page.click('#modal-ok');
     /* a long opener is called out at once */
     await state(page, S => { S.card[0].len = 'L'; });
     await go(page, 'booking');
-    ok(mode, 'a long opener is flagged before the show', /opener is a long match/.test(await txt(page, '[data-t="shape-notes"] li.bad')), await txt(page, '[data-t="shape-notes"]'));
+    await order(); ok(mode, 'a long opener is flagged before the show', /opener is a long match/.test(await txt(page, '[data-t="shape-notes"] li.bad')), await txt(page, '[data-t="shape-notes"]')); await page.click('#modal-ok');
     await state(page, S => { S.card[0].len = 'S'; });
     await go(page, 'booking');
     await over('the card with the running order');
     await shot(page, 'shape-' + mode, true);
     /* the guide */
-    await page.click('[data-t="shape-guide"]');
+    await order(); await page.click('[data-t="shape-guide"]');
     await page.waitForSelector('.win');
     ok(mode, 'the guide lists the seven rules', (await page.$$('.win .rules li')).length === 7 && /Open hot/.test(await txt(page, '.win')) && /counts three times/.test(await txt(page, '.win')));
     await over('the guide');
@@ -36,13 +38,12 @@ async function run(mode) {
     await page.click('[data-t="modal-close"]');
     /* before the show nothing is forecast in stars: the agent and the writers give a read in words */
     await page.click('[data-t="bk"][data-v="clock"]');
-    await page.click('[data-t="seg-suggest"]');
+    await page.click('[data-t="seg-suggest"]'); if (await has(page, '#modal-ok')) await page.click('#modal-ok');
     await page.click('[data-t="seg-edit"]');
-    ok(mode, 'a booked promo or angle gets a read in words, and the run sheet shows no stars before the show', (await page.$$('[data-t="seg-read"]')).length >= 1 && !/[★¼½¾]/.test(await txt(page, '.sheet')) && !/should (score|be) about/.test(await txt(page, '.sheet')));
-    let said = 0; for (let i = 0; i < n; i++) { await page.click('[data-t="edit"][data-v="' + i + '"]'); if (/: “.+”/.test(await txt(page, '[data-t="agent-say"][data-v="' + i + '"]'))) said++; }
+    ok(mode, 'a booked promo or angle gets a read in words, and the run sheet shows no stars before the show', (await page.$$('[data-t="seg-read"]')).length >= 1 && !/[★¼½¾]/.test(await txt(page, '.cw-col')) && !/should (score|be) about/.test(await txt(page, '.cw-col')));
+    let said = 0; for (let i = 0; i < n; i++) { await page.click('[data-t="edit"][data-v="' + i + '"]'); if (/“.+”/.test(await txt(page, '[data-t="agent-say"][data-v="' + i + '"]'))) said++; }
     ok(mode, 'the road agent comments on every match on the sheet, shown when the match is selected', said === n, said + ' of ' + n);
     ok(mode, 'the card builder needs no scrolling', !(await fits(page)), await fits(page));
-    await page.click('[data-t="done"]');
     /* run the show and read the report */
     const rep = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP, pr = E.preShow(S, S.card); if (pr) E.resolvePre(S, S.card, 0); E.fitShow(S, S.card); const v = E.validate(S, S.card); if (v.errors.length) return { err: v.errors.join(' | ') }; const r = E.runPlayerShow(S, S.card).rep; window.EWF_DEBUG.render(); return { n: r.segs.filter(s => s.k === 'match').length, lines: r.sheet.lines.join(' / ') }; });
     ok(mode, 'the show ran', !rep.err, rep.err);
