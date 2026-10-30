@@ -2,7 +2,7 @@
 
 The hand-over from the build thread, written 2 October 2026 at version 0.11. Work top to bottom unless Ryan says otherwise. Read `CLAUDE.md` first for how the project works, and `docs/feature-list.md` for the full wording of each feature.
 
-**`NEXT.md` is the work queue.** It turns the tasks below into ordered steps for an unattended run. Start there.
+**`docs/MASTER.md` §7 is the work queue** (30 October). `NEXT.md` and `docs/roadmap.md` are retired to `docs/archive/`.
 
 **`IDEAS.md` is shelved.** Ryan scrapped the "next 100 ideas" direction on 3 October. None of them were built. The work is now fine-tuning the engine, the game loop, its logic and its rewards, one step at a time.
 
@@ -20,7 +20,7 @@ Two more lists sit beside this one, both finished:
 
 ## Ryan's decisions (do not reopen these)
 
-### From the master document (Ryan's other workspace, decided 26 and 27 October; saved as `docs/MASTER.md`, merged 29 October)
+### From the master document (Ryan's other workspace, decided 26 and 27 October; saved as `docs/archive/MASTER-2026-10-28.md`, merged 29 October)
 
 - D1, popularity: per region (the road's areas). Not built yet.
 - D2, relationship types: now, with full screens (family, personal, romantic on top of the matrix); to confirm with Bill against the feature pause. Not built yet.
@@ -29,13 +29,15 @@ Two more lists sit beside this one, both finished:
 - D5, the Steam default world: public domain, the parody world opt-in; to confirm with Bill and the lawyer. Today the parody world is the default (16 October); this reverses it when confirmed.
 - D6, morale and backstage: two modules.
 - D7, health: four pools (head, body, arms, legs); any at zero ends a career. Not built yet.
-- The booking screen: the Clock Wall (critic 8.6; `docs/plans/booking-clock-wall.md` in the other workspace, summarised in `docs/MASTER.md` section 9). Not built yet.
-- The wrestler look: G, the paper doll, after Ryan's reference picture (critic 9.3; plan summarised in `docs/MASTER.md` section 9). Not built yet.
+- The booking screen: the Clock Wall (critic 8.6; `docs/plans/booking-clock-wall.md` in the other workspace, summarised in `docs/archive/MASTER-2026-10-28.md` section 9). Not built yet.
+- The wrestler look: G, the paper doll, after Ryan's reference picture (critic 9.3; plan summarised in `docs/archive/MASTER-2026-10-28.md` section 9). Not built yet.
 - Layout, game-wide: every main page is three windows, 22 / 56 / 22 (list, centre wall, picked pane). See rule 5f.
 - Gimmicks drive acting, dialogue and relationships only, never looks or match ratings (27 October). Today `GFX` in `engine/99-gimmicks.ts` changes match crowd reactions; its fate needs a rule 9d decision.
 
 | Topic | Decision |
 | --- | --- |
+| The spine, 30 Oct | All 13 vault questions answered (`docs/plans/spine.md` §8); go-ahead "Go, after L1": the cause log first, then the spine. Non-default picks: early pay also costs a little crowd reaction; a year with no promises costs owner trust. |
+| Golden rules, 30 Oct | Three golden rules in `docs/MASTER.md` §1, read first every session: great not good, every addition critic-scored and only 8.5 or higher passes (replaces 9j's over 8); art direction is always three concepts that each passed a critic run; every session spends fewer tokens and logs the saving. CLAUDE.md is now a short core that imports the master (0av). |
 | The match screen, 22 Oct | Fewer kick-outs. When there is no match picture for the moment, the picture cuts to the commentators. The animation never loops while the commentary catches up; it flows. Build: an instant replay of the finish, a big referee count on near falls, paper-flip cuts between pictures, a finisher close-up with the move's name, cinema mode (the picture fills the screen), the winner celebrating after the bell, big moments for each match rule (ladder, cage, tables), run-ins drawn as their own pictures. The night's highlights go on After the show. The feed is livelier and each poster has a personality of their own; the company's sign-off post comes once, after the main event, not after every match. |
 | Blueprint, questions, approval, 23 Oct | A core rule for any new game mode, system or major feature: first a complete blueprint (states, data, screens, money and balance), then a list of probing questions for Ryan, and no code until he has read both, answered and said go ahead (CLAUDE.md rule 9d). |
 | Sound effects, 23 Oct | "It sounds terrible." All sound effects are off; the game is quiet except the soundtrack. The redo does not need to match the papercraft look: it should sit well with the classical music and feel good. It goes through rule 9d, and every sound is approved by ear. The office sounds are piano, not harp ("harp is wrong piano is right"). The blueprint and every pick so far are in `docs/plans/sound.md`. The broadcast sounds are in the game (step 2); the office piano is next; boos and the tweener reaction wait on a source. |
@@ -138,6 +140,19 @@ Two more lists sit beside this one, both finished:
 
 ## Tasks
 
+### Q. The queue in MASTER §7 (30 October; rows and gates there)
+
+- [ ] L1: structured causal log for five meters (`meterAdd`), at least 95% explained by named causes, golden games identical.
+- [ ] L2: two bots on one model nightly, `tools/bots/report.js`, baseline recorded in MASTER §7.
+- [ ] L3: five bots plus the exploit bot, failing gates on 3-seed medians.
+- [ ] 1: the spine, rule 9d (`docs/plans/spine.md`): gate 1 written, gate 2 answered 30 October (13 questions); gate 3: Ryan's go-ahead, 30 October: "Go, after L1".
+- [ ] 2: first hour (0ac).
+- [ ] 3: art bible and look freeze.
+- [ ] 4: broadcast weight (0au).
+- [ ] 5: merges.
+- [ ] 6: ship.
+- [ ] 7: outside proof.
+
 ### 0an2. The engine in TypeScript modules (Ryan, 23 October: "do it")
 
 Phase A, Foundation: rebuild the simulation from one shared ES5 closure into TypeScript modules with a typed state and one command layer, kept identical in play by golden masters and every test. Blueprint: `docs/plans/typescript-engine.md`.
@@ -234,7 +249,7 @@ The diorama renderer (`app/src/kit/paper.ts`, `puppet.ts`, `scene.ts`, `diorama3
 
 ### 0av. A short CLAUDE.md core (rule 9i)
 
-- [ ] Split `CLAUDE.md` into a short core (rules, commands, where things are) and linked area notes in `docs/notes/`.
+- [x] Split `CLAUDE.md` into a short core (rules, commands, where things are) and linked area notes in `docs/notes/` (30 October: `docs/MASTER.md` first, then `docs/notes/rules.md`, `code-map.md`, `commands.md`).
 - [ ] Recurring procedures as skills in `.claude/skills/`: `/blueprint`, `/vault`, `/audition`, `/publish-live`, `/balance`.
 
 ### 0aw. You as the booker: levels and a skill tree (Ryan, 28 October: "We need to build a level up system that works with the booker points you use throughout the game. We also have to build the skill tree without breaking the game.")
