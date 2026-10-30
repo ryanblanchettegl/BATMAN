@@ -98,17 +98,20 @@ function draw(cv: HTMLCanvasElement, R: any, p: number, dpr: number, font: strin
    green card cut by hand from its real outline (E.road's `shape`, from src/91-shapes.js), its paler core showing along
    the cut, lying on a sheet of blue paper with a soft shadow under it. Its name is written on a slip of paper, and every
    stop of the road that falls inside it has a pin and a label. ---------- */
-function drawShape(cv: HTMLCanvasElement, R: any, cw: number, ch: number, dpr: number, font: string) {
+/** `fit` is the part of the sheet the outline is fitted into (fractions of it, left, top, right, bottom), so a map that
+    fills a board can keep clear of what is pinned on it; `tags` is a word after a stop's name ("last time: B"). */
+interface Fit { l: number; t: number; r: number; b: number }
+function drawShape(cv: HTMLCanvasElement, R: any, cw: number, ch: number, dpr: number, font: string, fit?: Fit, tags?: Record<string, string>) {
   const Z = R.shape, W = Math.round(cw * dpr), H = Math.round(ch * dpr);
   cv.width = W; cv.height = H; cv.style.width = (W / dpr) + 'px'; cv.style.height = (H / dpr) + 'px';
   const x = cv.getContext('2d'); if (!x) return;
-  const u = dpr * Math.max(1, Math.min(W, H) / dpr / 180);   // one unit of line and type, grown with the box
+  const u = dpr * Math.max(1, Math.min(fit ? 2 : 9, Math.min(W * (fit ? fit.r - fit.l : 1), H * (fit ? fit.b - fit.t : 1)) / dpr / (fit ? 130 : 180)));   // one unit of line and type, grown with the box (on a board, only so far)
   // the sheet: blue construction paper, blotchy, with flecks of fibre
   x.fillStyle = '#7fa6cf'; x.fillRect(0, 0, W, H);
   for (let i = 0; i < 26; i++) { const g = x.createRadialGradient(hh(i, 1) * W, hh(i, 2) * H, 0, hh(i, 1) * W, hh(i, 2) * H, (0.12 + hh(i, 3) * 0.25) * Math.max(W, H)); g.addColorStop(0, hh(i, 4) < .5 ? 'rgba(255,255,255,.07)' : 'rgba(20,40,80,.07)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H); }
   for (let i = 0; i < W * H / (900 * dpr); i++) { x.fillStyle = hh(i, 7) < .5 ? 'rgba(255,255,255,.18)' : 'rgba(20,40,80,.16)'; const fx = hh(i, 8) * W, fy = hh(i, 9) * H, a = hh(i, 10) * 6.3, l = (2 + hh(i, 11) * 6) * dpr; x.save(); x.translate(fx, fy); x.rotate(a); x.fillRect(0, 0, l, Math.max(1, dpr * .6)); x.restore(); }
   // the outline, fitted to the sheet with room for the labels, and cut by hand: each edge in short pieces, a touch off the line
-  const m = 0.1, k = Math.min(W * (1 - 2 * m) / Z.w, H * (1 - 2 * m) / Z.h), ox = (W - Z.w * k) / 2, oy = (H - Z.h * k) / 2;
+  const F = fit || { l: 0, t: 0, r: 1, b: 1 }, fw = W * (F.r - F.l), fh = H * (F.b - F.t), m = 0.1, k = Math.min(fw * (1 - 2 * m) / Z.w, fh * (1 - 2 * m) / Z.h), ox = W * F.l + (fw - Z.w * k) / 2, oy = H * F.t + (fh - Z.h * k) / 2;
   const at = (px: number, py: number): [number, number] => [ox + px * k, oy + py * k];
   const loops: [number, number][][] = (Z.p as string[]).map(str => { const pts: [number, number][] = []; for (let i = 0; i + 1 < str.length; i += 2) pts.push(at(str.charCodeAt(i) - 40, str.charCodeAt(i + 1) - 40)); return pts; });
   const cut = (L: [number, number][], seed: number) => { const out: [number, number][] = [], step = 5 * dpr;
@@ -130,10 +133,13 @@ function drawShape(cv: HTMLCanvasElement, R: any, cw: number, ch: number, dpr: n
   const nm = String(Z.n).replace(/^the /, 'The '), px = Math.round(12 * u);
   x.font = '400 ' + px + "px 'Craft Marker', " + font; x.textBaseline = 'middle';
   const tw = x.measureText(nm).width, sw = tw + 12 * u, sh = px * 1.5;
-  x.save(); x.translate(8 * u, 8 * u); x.rotate(-0.04);
+  const pinAt = (Z.pins as any[]).map(q => at(q.x, q.y)), corners: [number, number][] = [[W * F.l + 8 * u, H * F.t + 8 * u], [W * F.l + 8 * u, H * F.b - sh - 11 * u], [W * F.r - sw - 10 * u, H * F.b - sh - 11 * u], [W * F.r - sw - 10 * u, H * F.t + 8 * u]];
+  const clear = (c: [number, number]) => !pinAt.some(q => q[0] > c[0] - 40 * u && q[0] < c[0] + sw + 40 * u && q[1] > c[1] - 24 * u && q[1] < c[1] + sh + 24 * u);
+  const [nx, ny] = corners.find(clear) || corners[0];
+  x.save(); x.translate(nx, ny); x.rotate(-0.04);
   x.fillStyle = 'rgba(0,0,0,.3)'; x.fillRect(2 * u, 3 * u, sw, sh); x.fillStyle = '#26314f'; x.fillRect(0, 0, sw, sh);
   x.fillStyle = '#ffe48a'; x.fillText(nm, 6 * u, sh / 2 + u * .5); x.restore();
-  const boxes: number[][] = [[8 * u, 8 * u, 8 * u + sw, 8 * u + sh + 3 * u]];
+  const boxes: number[][] = [[nx, ny, nx + sw, ny + sh + 3 * u]];
   // the pins and their labels, this week's first
   const pins = (Z.pins as any[]).map(q => ({ k: q.k, city: q.city, P: at(q.x, q.y) })).sort((a, b) => rank(a.k) - rank(b.k));
   pins.slice().reverse().forEach(st => { const P = st.P, big = st.k === 'now', r = (big ? 7 : 5) * u, hx = P[0] - r * .5, hy = P[1] - r * 1.6;
@@ -143,17 +149,17 @@ function drawShape(cv: HTMLCanvasElement, R: any, cw: number, ch: number, dpr: n
     x.lineWidth = Math.max(1, u); x.strokeStyle = '#17171b'; x.stroke();
     x.beginPath(); x.arc(hx - r * .35, hy - r * .35, r * .32, 0, 7); x.fillStyle = 'rgba(255,255,255,.7)'; x.fill();
     boxes.push([hx - r - 2, hy - r - 2, P[0] + r + 2, P[1] + r + 2]); });
-  pins.forEach(st => { const P = st.P, big = st.k === 'now', fs = Math.round((big ? 13 : 11) * u), text = st.city;
+  pins.forEach(st => { const P = st.P, big = st.k === 'now', fs = Math.round((big ? 13 : 11) * u), text = st.city + (!big && tags && tags[st.city] ? ', last time: ' + tags[st.city] : '');
     x.font = (big ? '700 ' : '400 ') + fs + "px 'Craft Hand', " + font;
     const tw2 = x.measureText(text).width, pad = 5 * u, w = tw2 + pad * 2, h = fs * 1.4, g = (big ? 11 : 8) * u;
     const tries: [number, number][] = [[P[0] + g, P[1] - g - h], [P[0] + g, P[1] + g * .4], [P[0] - g - w, P[1] + g * .4], [P[0] - g - w, P[1] - g - h], [P[0] - w / 2, P[1] + g], [P[0] - w / 2, P[1] - g * 2 - h]];
     let best = tries[0], bs = 1e9;
     tries.forEach((t, i) => { const b = [t[0], t[1], t[0] + w, t[1] + h]; let sc = i * .01;
-      if (b[0] < 2 || b[1] < 2 || b[2] > W - 2 || b[3] > H - 2) sc += 50;
+      if (b[0] < W * F.l + 2 || b[1] < H * F.t + 2 || b[2] > W * F.r - 2 || b[3] > H * F.b - 2) sc += 50;
       boxes.forEach(q => { if (b[0] < q[2] && b[2] > q[0] && b[1] < q[3] && b[3] > q[1]) sc += 10; });
       if (sc < bs) { bs = sc; best = t; } });
     if (bs >= 10 && !big) return;
-    const tx = Math.max(2, Math.min(W - w - 2, best[0])), ty = Math.max(2, Math.min(H - h - 2, best[1]));
+    const tx = Math.max(W * F.l + 2, Math.min(W * F.r - w - 2, best[0])), ty = Math.max(H * F.t + 2, Math.min(H * F.b - h - 2, best[1]));
     boxes.push([tx, ty, tx + w, ty + h]);
     x.save(); x.translate(tx + w / 2, ty + h / 2); x.rotate((hh(tx | 0, ty | 0) - .5) * .06);
     x.fillStyle = 'rgba(0,0,0,.32)'; x.fillRect(-w / 2 + 1.5 * u, -h / 2 + 2 * u, w, h);
@@ -164,17 +170,19 @@ function drawShape(cv: HTMLCanvasElement, R: any, cw: number, ch: number, dpr: n
 function rank(k: string): number { return k === 'now' ? 0 : (k === 'next' ? 1 : (k === 'past' ? 2 : 3)); }
 
 /** The map for the road window. `road` is what E.road(S) returns. It fills its box, as large as whole dots allow. */
-export function RoadMap(p: { road: any; t?: string }) {
+export function RoadMap(p: { road: any; t?: string; fit?: Fit | ((box: HTMLElement) => Fit); tags?: Record<string, string> }) {
   const box = useRef<HTMLDivElement>(null), ref = useRef<HTMLCanvasElement>(null), R = p.road;
   const label = R.shape ? 'A map of ' + R.shape.n + '. This week: ' + R.now.city + '.' : R.map ? 'A map of ' + R.mapName + '. This week: ' + R.now.city + (R.now.land ? ', ' + R.now.land : '') + '.' + R.stops.filter((s: any) => s.k === 'next').map((s: any) => ' Next: ' + s.city + '.').join('') : 'No map for ' + R.now.city + '.';
   const check = () => {
     const cv = ref.current, bx = box.current; if (!cv || !bx || !R.map) return;
     if (R.shape) {   // the state, cut from paper: as tall as the box and no more than 45% of the window wide
-      const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, cw = Math.floor(Math.min((host ? host.clientWidth : bx.clientWidth) * 0.45 - 4, (bx.clientHeight - 4) * 1.5)), ch = Math.floor(bx.clientHeight - 4);
+      // a map that fills a board (p.fit) takes the whole box; otherwise as tall as the box and no more than 45% of the window wide
+      const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, cw = Math.floor(p.fit ? bx.clientWidth : Math.min((host ? host.clientWidth : bx.clientWidth) * 0.45 - 4, (bx.clientHeight - 4) * 1.5)), ch = Math.floor(bx.clientHeight - (p.fit ? 0 : 4));
       if (cw < 40 || ch < 40) return;
-      const sig = JSON.stringify([R.map, R.shape.n, R.shape.pins]) + '@' + cw + 'x' + ch + '@' + dpr;
+      const fit = typeof p.fit === 'function' ? p.fit(bx) : p.fit;
+      const sig = JSON.stringify([R.map, R.shape.n, R.shape.pins, fit, p.tags]) + '@' + cw + 'x' + ch + '@' + dpr;
       if (cv.getAttribute('data-sig') === sig) return;
-      try { drawShape(cv, R, cw, ch, dpr, getComputedStyle(cv).fontFamily || 'sans-serif'); cv.setAttribute('data-sig', sig); cv.setAttribute('data-map', R.map); cv.setAttribute('data-shape', R.shape.n); } catch (e) { /* a map that cannot be drawn is not worth a crash */ }
+      try { drawShape(cv, R, cw, ch, dpr, getComputedStyle(cv).fontFamily || 'sans-serif', fit, p.tags); cv.setAttribute('data-sig', sig); cv.setAttribute('data-map', R.map); cv.setAttribute('data-shape', R.shape.n); } catch (e) { /* a map that cannot be drawn is not worth a crash */ }
       return;
     }
     const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, w = (host ? host.clientWidth : bx.clientWidth) * 0.38 - 4, h = bx.clientHeight - 4;   // as tall as the box, and no more than 38% of the window's width; the frame is two pixels a side

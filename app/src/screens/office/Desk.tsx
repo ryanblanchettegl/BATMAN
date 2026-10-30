@@ -1,24 +1,21 @@
-/* The desk, the hub of the game, as four windows on one screen (docs/mockups/final/final-1-desk.png).
-   The road runs across the top: the map, this week's city and building, the crowd, and the stops behind and ahead.
-   Under it: what needs an answer, this week's tasks, and the next show. Everything else the old desk held (the week's
-   shows, promises, what is worth knowing, the clocks, the news, what has been answered) is one button away, in the
-   pop-up "The week in full". Cash, popularity and booking power are on the bottom line. */
+/* The desk, the hub of the game: the Map Board (docs/plans/desk-map-board.md; the page itself is Board.tsx).
+   Here are its pop-ups: a matter from the inbox, the month in review, the schedule, and "The week in full", which keeps
+   everything else the desk holds (the week's shows, promises, what is worth knowing, the clocks, the news, what has
+   been answered, what the Director held back). Cash, popularity and booking power are on the bottom line. */
 import { ComponentChildren } from 'preact';
 import { useLayoutEffect } from 'preact/hooks';
 import { E, W } from '../../engine';
 import { G, ui, me, act, openModal, closeModal, plural, view, Modal } from '../../store';
-import { go, weekDone, pending } from '../../nav';
-import { book, endWeek } from '../../flow';
-import { Btn, Meter, Name, CheckLine, Empty, Dial, dataAttrs, Txt, Tag, Tabs, Window, Desktop, Win, Group, Line, RoadMap, LightText, LightPic, brandName } from '../../kit';
-import { Portrait } from '../../kit/portrait';
-import { MomentPic, PosterPic } from '../../shared/moment';
+import { go, pending } from '../../nav';
+import { book } from '../../flow';
+import { Btn, Name, CheckLine, Empty, Dial, dataAttrs, Txt, Tag, Tabs, Window, Desktop } from '../../kit';
+import { MomentPic } from '../../shared/moment';
 import { ScheduleList, QuestList } from '../../shared/week';
-import { openNight } from '../booking/run';
 import { Board } from './Board';
-import { office, useFocusAfter } from './util';
+import { office } from './util';
+import { openVoices } from './Windows';
 
 const num = (v: number) => Math.round(v).toLocaleString('en-US');
-const weeks = (n: number) => n <= 0 ? 'this week' : (n === 1 ? 'a week ago' : n + ' weeks ago');
 
 /** Things the player should know about before booking: money trouble, injuries, contracts, strain. */
 function alerts(): ComponentChildren[] {
@@ -29,67 +26,11 @@ function alerts(): ComponentChildren[] {
   R.filter(w => w.con <= 8).sort(byOvr).slice(0, 5).forEach(w => out.push(<><Name w={w} />{'’'}s contract ends in {Math.max(0, w.con)} {w.con === 1 ? 'week' : 'weeks'}.</>));
   R.filter(w => (w.stress || 0) >= 60).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is under strain (stress {Math.round(w.stress)}).</>));
   R.filter(w => w.morale < 40).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is unhappy (morale {Math.round(w.morale)}).</>));
-  { const M = E.monthReview(S); if (M && M.unread) out.unshift(<button type="button" class="lnk" data-t="pm-open" onClick={() => { act(() => { E.readMonth(S); }); openModal({ kind: 'pmmonth' }); }}><span data-t="pm-line">{M.r.label} in review: what went well, what went badly, and why.</span></button>); }
   // the secrets come first among what is worth knowing: they change quietly and nothing else says so
   { const K = E.kayfabe(S); if (K.kept.length || K.prot < 60) out.unshift(<span class={K.prot < 40 ? 'bad' : undefined} data-t="kf-line">Secrets: {K.line}</span>); }
   return out;
 }
 
-/* ---------- the road ---------- */
-const CHIP: Record<string, string> = { past: '#ff5555', now: '#ffff55', next: '#ff55ff', far: '#ffffff' };
-/** The line of lights under the map: the city, the show, the building and the tickets, as much as there is room for. */
-function ticker(N: any): [string, string][] {
-  const room = document.documentElement.getAttribute('data-screen') === 'tablet' ? 46 : 66, sep: [string, string] = [' · ', '#777777'];
-  const bits: [string, string][] = [[N.city, '#55ffff'], [N.show, '#ffff55'], [num(N.sold) + ' sold', '#55ff55'], [String(N.venue).split(',')[0], '#ffffff'], ...(N.sold >= N.cap ? [['Sold out ★', '#ffff55'] as [string, string]] : [[num(N.cap - N.sold) + ' to a sell-out', '#ff5555'] as [string, string]])];
-  const out: [string, string][] = []; let n = 0;
-  for (const b of bits) { const add = b[0].length + (out.length ? 3 : 0); if (out.length && n + add > room) continue; if (out.length) out.push(sep); out.push([b[0].slice(0, room), b[1]]); n += add; }
-  return out;
-}
-function Road() {
-  const S = G.S, R = E.road(S), date = E.cal(S.week).label;
-  if (!R) return <Win title="The road" right={date} cls="road" area="road" t="road"><Empty>No show is on the road yet.</Empty></Win>;
-  // a tablet's window is shorter: one hometown name and one stop fewer
-  const tab = document.documentElement.getAttribute('data-screen') === 'tablet', N = R.now, h = Math.min(tab ? 1 : 2, N.home.length), past: any[] = R.stops.filter((s: any) => s.k === 'past').slice(h === 2 ? -2 : -3), ahead: any[] = R.stops.filter((s: any) => s.k !== 'past').slice(0, Math.min(4, (h === 2 ? 5 : 6) - past.length - (tab ? 1 : 0)));
-  const offMap = (s: any) => R.map && s.x == null ? <span class="muted"> {'·'} off this map</span> : null;
-  const bw = (() => { const B = E.buildingWords(G.S); return B && B.short !== 'nothing special' ? String(B.short) : ''; })();
-  return <Win title={R.mapName ? 'The road: ' + R.mapName : 'The road'} right={date} cls="road" area="road" t="road">
-    <div class="r3">
-      <RoadMap road={R} t="road-map" />
-      <div class="rmid">
-        <p class="bl big one" data-t="road-city">{N.city.toUpperCase()}{N.land ? ', ' + N.land.toUpperCase() : ''}</p>
-        <p class="one" data-t="road-show"><b>{N.venue}</b>{N.big ? <> <Tag kind="gold">{N.kind || 'Big event'}</Tag></> : null} <span class="muted">{'·'} {N.later ? 'next week. Every show this week has run.' : (N.left > 1 ? 'the first of ' + N.left + ' shows left this week' : 'the last show this week')}</span></p>
-        <Group title={(G.S.soRun || 0) >= 2 ? 'The building: ' + G.S.soRun + ' sell-outs running' : 'The building'} t="road-building">
-          {bw ? <Line label="Inside" w={12}><span data-t="road-quirk">{bw[0].toUpperCase() + bw.slice(1)}.</span></Line> : null}
-          <Line label="Sold" w={12}><b class="bl">{num(N.sold)}</b> of {num(N.cap)} <Meter v={N.sold / N.cap * 100} n={8} kind={N.sold >= N.cap ? 'au' : 'cool'} />{N.sold >= N.cap ? <b class="good"> Sold out</b> : null}</Line>
-          <Line label="This week" w={12}>{N.wk > 0 ? <span class="good">{'▲'} {num(N.wk)} sold</span> : <span class="muted">Nothing sold yet</span>}</Line>
-          <Line label="Gate so far" w={12}>${num(N.gate)} <span class="muted">at ${num(N.seat)} a seat</span></Line>
-        </Group>
-        <Group title="The crowd" t="road-crowd">
-          <Line label="Market" w={12}><b class={N.mktK >= 50 ? 'good' : (N.mktK < 30 ? 'bad' : undefined)} data-t="road-mkt">{N.mkt.w}.</b> <span class="muted">They like {N.taste}{N.tour ? ', on tour in ' + N.tour : ''}.</span></Line>
-          <Line label="Last here" w={12}>{N.last ? <>{weeks(N.last.ago).replace(/^a/, 'A')}, {/^[AF]/.test(N.last.grade) ? 'an' : 'a'} <b class={/^[AB]/.test(N.last.grade) ? 'good' : 'bad'}>{N.last.grade}</b>{N.last.so ? ', sold out' : ', ' + num(N.last.att) + ' in'}</> : <span class="muted">No night here on record</span>}</Line>
-          <Line label="In town" w={12}>{N.rival ? <span class="bad">{N.rival.by} had a great night here {weeks(N.rival.ago)}</span> : <span class="muted">Nobody else lately</span>}</Line>
-        </Group>
-      </div>
-      <div class="rright">
-        <Group title="Hometown" t="road-home">
-          {N.home.length ? N.home.slice(0, h).map((x: any) => <p class="one hm" key={x.id}><Portrait w={S.w[x.id]} /><Name w={S.w[x.id]} /> <span class={x.hurt ? 'bad' : 'muted'}>{x.hurt ? (x.near ? 'is hurt. From ' + x.town + ', up the road.' : 'is hurt, and from here.') : (x.near ? 'From ' + x.town + ', up the road.' : 'The crowd is theirs.')}</span></p>)
-            : <p class="muted one">Nobody on the roster is from here.</p>}
-        </Group>
-        <Group title="The road" t="road-list">
-          {past.map((s, i) => <p class="one" key={'p' + i}><i class="chip" style={{ background: CHIP.past }} />{s.city} <b class={/^[AB]/.test(s.grade) ? 'good' : 'bad'}>{s.grade}</b> <span class="muted">{'·'} {s.so ? 'sold out' : num(s.att)}</span></p>)}
-          {ahead.map((s, i) => <p class="one" key={'a' + i}><i class="chip" style={{ background: CHIP[s.k] }} />{s.k === 'now' ? <b>{'►'} {s.city}, {N.later ? 'next week' : 'this week'}</b> : <span class="bl">{s.city}{s.k === 'next' ? ' next' : ''}{s.big ? ' · the big event' : ''}</span>}{s.k === 'now' ? null : <span class="muted"> {'·'} {s.on ? num(s.sold) + ' sold' : 'on sale in ' + s.opens + (s.opens === 1 ? ' week' : ' weeks')}</span>}{offMap(s)}</p>)}
-          <p class="one muted"><i class="chip" style={{ background: '#55ff55' }} />Where you tour</p>
-        </Group>
-      </div>
-    </div>
-    <div class="rfoot">
-      <span class="tick"><LightText text={ticker(N)} dot={2} t="road-ticker" /></span>
-      <Btn t="road-year" tip="The stops ahead: when, which show, where, and how many tickets are sold." onClick={() => openModal({ kind: 'roadyear' })}>Schedule</Btn>
-      <Btn kind="sm" t="road-tix" tip="Set what a seat costs. Higher prices make more per ticket and sell fewer." onClick={() => openModal({ kind: 'mng', k: 'manage', v: 'tix' })}>Tickets</Btn>
-    </div>
-  </Win>;
-}
-/** The stops ahead, in a pop-up: when, which show, where, and how big a building it is. */
 /** The month in review (post-mortems): what went well, what went badly, and why. Read once, it leaves the desk. */
 export function ReviewBody(p: { r: any }) {
   const r = p.r, part = (h: string, L: any[], k: string) => <div class="mt1"><p class="eyebrow">{h}</p>{L.slice(0, 4).map((x: any, i: number) => <p key={i} class={'clamp ' + k}><Txt>{x.t + (x.why ? '. ' + x.why : '')}</Txt></p>)}</div>;
@@ -104,6 +45,7 @@ export function MonthWindow(_p: { m: Modal }) {
   if (!M) return <Window title="The month in review"><Empty>The first month is not over yet.</Empty></Window>;
   return <Window title={M.r.label + ' in review'} wide ok="Done"><ReviewBody r={M.r} /></Window>;
 }
+/** The stops ahead, in a pop-up: when, which show, where, and how big a building it is. */
 export function RoadYearWindow() {
   const S = G.S, L: any[] = E.roadAhead(S, 16), R: string[] = E.roadRoute(S);
   return <Window title="The schedule" wide ok="Done">
@@ -114,42 +56,6 @@ export function RoadYearWindow() {
   </Window>;
 }
 
-/* ---------- on your desk: what needs an answer ---------- */
-/** A quiet desk is not an empty one: somebody on the roster has been posting. Their picture, and what they said
-    (the Net's feed, src/94-net.js), or the champion in the building when nobody has posted yet. */
-function QuietPic() {
-  const S = G.S, P = me(), mine = (id: number | null) => id != null && S.w[id] && S.w[id].promo === P.id;
-  const post: any = (S.feed || []).find((f: any) => f.k === 'w' && mine((S.w as any[]).findIndex(w => w && w.name === f.n)));
-  const wid = post ? (S.w as any[]).findIndex(w => w && w.name === post.n) : (() => { const t = P.titles.find((t: any) => t.holders.length && S.w[t.holders[0]]); return t ? t.holders[0] : (E.rosterOf(S, P.id)[0] || {}).id; })();
-  if (wid == null || !S.w[wid]) return null;
-  return <div class="quiet" data-t="desk-quiet">
-    <MomentPic ev={{ type: post ? 'cheer' : 'meeting', w: wid, id: wid }} t="desk-pic" />
-    {post ? <p class="qpost"><b>{post.n}</b> <span class="muted">{post.u}</span><br />{post.t}</p> : <p class="qpost muted">{S.w[wid].name} is in the building.</p>}
-  </div>;
-}
-function OnDesk() {
-  const S = G.S, open: any[] = S.inbox.filter((e: any) => !e.done).sort((a: any, b: any) => (b.head ? 1 : 0) - (a.head ? 1 : 0)), done = S.inbox.length - open.length, A = alerts();
-  const DR = (E as any).dirDesk(S);   // the Director's word for the week (99-director.ts)
-  const room = open.length ? (open.length === 1 ? 2 : 0) : 2, more = (k: string) => openModal({ kind: 'deskmore', k });
-  useFocusAfter();
-  return <Win title={open.length ? 'On your desk: ' + open.length + ' to answer' : 'On your desk'} right={DR.word} tone={open.length ? 'hot' : undefined} cls="ondesk" area="fire" t="fire">
-    <div class="odp">
-    {open.length ? (open.length < 3 ? <MomentPic ev={open[0]} t="desk-pic" /> : null) : <QuietPic />}
-    <div class="odr">
-    {open.slice(0, 3).map(e => <div class="mat" key={e.id} data-t="matter" data-id={e.id}>
-      <p class={'clamp' + (open.length < 3 ? ' c3' : '')}>{e.head ? <Tag kind="gold">Headline</Tag> : null}{e.night ? <Tag kind="bad">Last night</Tag> : null}<Txt>{e.text}</Txt></p>
-      <Btn t="ev-open" d={{ id: e.id }} onClick={() => openModal({ kind: 'matter', id: e.id })}>Answer</Btn>
-    </div>)}
-    {open.length > 3 ? <p class="muted one">And {open.length - 3} more after {open.length - 3 === 1 ? 'that' : 'those'}.</p> : null}
-    {!open.length && !A.length ? <p class="good">Nothing is waiting for an answer.</p> : null}
-    {room && A.length ? <div class="know" data-t="know">
-      <p class={open.length ? 'hd' : 'good'}>{open.length ? 'Worth knowing' : 'Nothing needs an answer. Worth knowing:'}</p>
-      {A.slice(0, room).map((a, i) => <p class="one" key={i}>{a}</p>)}
-      {A.length > room ? <p class="one"><Btn kind="sm" t="know-more" onClick={() => more('know')}>{A.length - room} more</Btn></p> : null}
-    </div> : null}
-    </div></div>
-  </Win>;
-}
 /** One matter from the inbox, in a pop-up: the whole of it, the chance of each attempt, and a button for each answer.
     Once it is answered the same window says what happened, and offers the next one. */
 /** The answers' colours, card on card as on the desk: the first green, the last (often leaving it) navy, the rest blue. */
@@ -181,46 +87,6 @@ export function MatterWindow(p: { m: Modal }) {
       </div>
     </div>
   </Window>;
-}
-
-/* ---------- the next show ---------- */
-/** The nearest countdown, so there is always something about to pay off. It goes to its page. */
-function ComingUp() {
-  // a big event this week is already on the banner above: the countdown says the next thing instead
-  const U: any[] = E.comingUp(G.S).filter((x: any) => !(x.k === 'big' && x.n <= 0)); if (!U.length) return null; const u = U[0];
-  return <span class="coming" data-t="coming">{u.when ? u.when + ': ' : 'Coming up: '}<button type="button" class="lnk" data-t="coming-go" data-v={u.k} onClick={() => go(u.to)}>{u.when ? u.what : u.t}</button></span>;
-}
-function NextShow() {
-  const S = G.S, sh = S.queue[S.qi], left = S.queue.length - S.qi, gate = E.taskGate(S, 'book'), B = E.backstage(S), N = E.people(S), done = weekDone();
-  const x = done ? null : E.expectWords(S), n = pending(), wk = E.taskGate(S, 'week'), recap = E.afterShow(S);
-  const nc = S.court ? S.court.length : 0;
-  return <Win title={done ? 'The week is booked' : 'Next show'} right={done ? '' : (gate.ok ? (left > 1 ? left + ' left this week' : 'the last this week') : <span data-t="book-wait">tasks first: {gate.left.length} to do</span>)} cls="nextwin" area="next" t="next">
-    <div class="nxp">
-      {done ? <LightPic name="bell" dot={1} t="next-pic" /> : (PosterPic({}) || <LightPic name="ring" dot={1} t="next-pic" />)}
-      <div class="nxr">
-        {done ? <p class="lh"><LightText text="Week booked" color="#55ff55" dot={2} /></p> : <p class="lh"><LightText text={String(sh.name).slice(0, 26)} dot={String(sh.name).length > 15 ? 1 : 2} label={sh.name} t="next-name" /></p>}
-        {done ? <p>Every show this week has run.</p> : <p data-t="next-expect">{sh.brand ? <Tag>{brandName(me(), sh.brand)}</Tag> : null}The crowd expects <b>{x ? x.a : 'a show'}</b>{x ? <>: matches of <b>{x.bar}</b> or better.</> : '.'}{x && x.first ? <> <span class="good">{x.first}</span></> : null}</p>}
-        {done && (n || !wk.ok) ? <p class="bad one">{n ? 'Answer what is on your desk first.' : 'Finish this week’s tasks first.'}</p> : <p class="muted cu"><ComingUp /></p>}
-      </div>
-    </div>
-    <p class="bsl one" data-t="bs-line"><Btn t="to-backstage" tip="Who is in the building and why. Spend an action point on a person." onClick={() => go('backstage')}>Backstage</Btn><span class="num">{B.ap} of {B.max}</span> {plural(B.max, 'point')}{N.count ? <span class="bad"> {'·'} {N.count} waiting</span> : null}{nc ? <span class="bad"> {'·'} {nc} in court</span> : null}</p>
-    <div class="nbtn">
-      {done ? <Btn kind="go" t="endweek" tip="End the week: the money comes in, the world moves on, and next week opens." disabled={!!n || !wk.ok} onClick={endWeek}>End week</Btn>
-        : <Btn kind="go" t="book-next" d={{ home: '' }} tip="Build the card for the next show: matches, promos and angles." disabled={!gate.ok} onClick={() => go('booking')}>Book show</Btn>}
-      {recap ? <Btn kind="less" t="night-recap" onClick={openNight} label="After the show recap">Recap</Btn> : null}
-      <Btn kind="less" t="desk-more" onClick={() => openModal({ kind: 'deskmore', k: (office() as any).more || 'week' })} label="The week in full">The week</Btn>
-    </div>
-  </Win>;
-}
-
-/* ---------- your assistant: a placeholder (Ryan, 22 October): a tip that is true this week, and the house shows it will book ---------- */
-function Assistant() {
-  const A = E.assistantDesk(G.S);
-  return <Win title="Your assistant" cls="asstwin" area="asst" t="desk-asst">
-    <p class="muted" data-t="asst-word">{A.word}</p>
-    <p data-t="asst-tip"><b>Tip:</b> {A.tip}</p>
-    <p class="muted mt1" data-t="asst-house">{A.house}</p>
-  </Win>;
 }
 
 /* ---------- the week in full: everything else the desk keeps, in one pop-up ---------- */
@@ -287,7 +153,9 @@ function WorldWeek() {
 export function DeskMoreWindow(p: { m: Modal }) {
   const st = office() as any, k: string = MORE.some(x => x[0] === p.m.k) ? p.m.k : 'week', A = k === 'know' ? alerts() : [];
   const pick = (id: string) => view(() => { st.more = id; p.m.k = id; });
-  return <Window title="The week in full" wide ok="Back to the desk">
+  // who calls your shows and the owner's letter live here, the one place on the desk for them (D-031)
+  const foot = <><Btn kind="sm" t="open-voices" tip="Who calls your shows: the play-by-play voice and the colour voice." onClick={() => openVoices()}>Commentary</Btn><Btn kind="sm" t="open-letter" tip="Read the owner's letter again: what they want from you this year." onClick={() => openModal({ kind: 'welcome', again: 1 })}>Owner's letter</Btn></>;
+  return <Window title="The week in full" wide ok="Back to the desk" footer={foot}>
     <Tabs label="The week in full" items={MORE.map(x => ({ id: x[0], label: x[1], t: 'more-tab', d: { v: x[0] } }))} value={k} onPick={pick} />
     <div class="dmore" data-t="desk-more-body" data-v={k} onClickCapture={(ev: any) => { if (ev.target && ev.target.closest && ev.target.closest('[data-t="book-show"],[data-t="report"]')) ui.modal = null; }}>
       {k === 'week' ? <ScheduleList /> : k === 'world' ? <WorldWeek /> : k === 'promises' ? <QuestList /> : k === 'clocks' ? <Clocks /> : k === 'answered' ? <Answered /> : k === 'held' ? <Held />
