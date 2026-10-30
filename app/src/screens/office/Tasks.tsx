@@ -10,7 +10,7 @@ import { openVoices, openFace } from './Windows';
 
 const TAG: Record<string, [string, 'warn' | 'good' | 'bad' | undefined]> = { todo: ['Must do', 'warn'], optional: ['Worth doing', undefined], waved: ['Not this week', undefined], done: ['Done', 'good'] };
 
-function open(t: any) {
+export function open(t: any) {
   if (t.id === 'ap') { go('backstage'); return; }
   if (t.id === 'desk-pbp' || t.id === 'desk-col') { openVoices(t.id === 'desk-col' ? 'col' : 'pbp'); return; }   // answered in a pop-up, without leaving the Office
   if (t.id === 'face') { openFace(); return; }

@@ -51,6 +51,7 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
   const lk=pieces(lkDir)
     +[['marker','Craft Marker'],['hand','Craft Hand'],['typed','Craft Typed'],['kalam','Craft Kalam'],['gochi','Craft Gochi']].map(x=>{const f=path.join(appDir,'fonts','hand',x[0]+'.woff2');return fs.existsSync(f)?"@font-face{font-family:'"+x[1]+"';font-display:swap;src:url(data:font/woff2;base64,"+fs.readFileSync(f).toString('base64')+") format('woff2')}\n":'';}).join('')
     +fs.readFileSync(path.join(appDir,'styles','craft.css'),'utf8').replace(/(^|[^\w.#-])(-?\d*\.?\d+)ch\b/g,(m,pre,n)=>pre+'calc('+n+'*var(--ch))')
+    +fs.readFileSync(path.join(appDir,'styles','clockwall.css'),'utf8')   // the Clock Wall booking screen, in the craft look
     +(look&&look!=='a'?pieces(path.join(uiDir,look))
       +fs.readFileSync(path.join(appDir,'styles','looks',look+'.css'),'utf8').replace(/(^|[^\w.#-])(-?\d*\.?\d+)ch\b/g,(m,pre,n)=>pre+'calc('+n+'*var(--ch))'):'');
   // the one typeface is embedded, so the game fetches nothing at all (VT323, SIL Open Font License 1.1)

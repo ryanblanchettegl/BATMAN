@@ -14,7 +14,7 @@ import { Portrait } from '../../kit/portrait';
 import { MomentPic, PosterPic } from '../../shared/moment';
 import { ScheduleList, QuestList } from '../../shared/week';
 import { openNight } from '../booking/run';
-import { Tasks } from './Tasks';
+import { Board } from './Board';
 import { office, useFocusAfter } from './util';
 
 const num = (v: number) => Math.round(v).toLocaleString('en-US');
@@ -290,12 +290,8 @@ export function Desk() {
   book().night = false;   // After the show is behind us once the Office is open; its button brings it back
   return <div class="onescreen">
     <h1 class="vh">Office - Week {S.week}</h1>
-    <Desktop cls="deskpage" t="desk">
-      <Road />
-      <OnDesk />
-      <Win title={'This week’s tasks'} right={(() => { const T = E.tasks(S); return T.todo ? T.todo + ' to do' : 'all done'; })()} cls="taskwin" area="tasks" t="task-win"><Tasks /></Win>
-      <NextShow />
-      <Assistant />
+    <Desktop cls="deskpage mapboard" t="desk">
+      <Board />
     </Desktop>
   </div>;
 }
