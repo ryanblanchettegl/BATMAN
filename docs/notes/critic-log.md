@@ -26,3 +26,5 @@
 | 30 Oct | cause log (L1) | 1 | 6.8 (7.2 / 6.4) | changes outside frames lost; test could not fail; show booked as decision |
 | 30 Oct | cause log | 2 | 7.7 (7.8 / 7.6) | engine's own E calls booked as decisions; 16 µs a frame |
 | 30 Oct | cause log | 3 | 8.6 (8.6 / 8.6) | PASSED; follow-ups: copy on gap, S.w append-only note, roster mix in trace share |
+| 30 Oct | bot lab (L2) | 1 | 7.3 | booking counted as consequence vs MASTER's definition; partial seasons; desk-words proxy |
+| 30 Oct | bot lab (L2) | 2 | 8.6 | PASSED; follow-ups: low-n flag, report shape test |

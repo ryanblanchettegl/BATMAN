@@ -119,11 +119,10 @@ No new system starts until rows 1–3 meet their gates. Every gate is a number a
 
 | # | epic | tier | measurable gate |
 |---|---|---|---|
-| L1 | ✅ **Done 30 Oct: the cause log** (`engine/99-zzcause.ts`, `docs/plans/cause-log.md`, `test-cause.js`): frames instead of a write funnel; `E.causeInfo(S)` gives each meter's change by cause and which causes are decisions | L | met: golden identical, other ≤ 0.1%, untracked 0% |
-| L2 | **Two bots, one model, nightly** (`tools/bots/`: Suggest-only and thoughtful, from `test-balance.js`'s bookers), writing a JSON report; then **record the baseline** into this row | M | report in CI; **trace share** = Σ\|delta\| of entries caused by a player decision (today: matter answers, booking, action points, people actions; after row 1: ledger lines) ÷ Σ\|delta\| of all entries (including `other`), per meter per season, median of 3 seeds, computed by `tools/bots/report.js`; baseline written: trace share __, week 1–3 grade __, week-1 desk words __ |
+| L1–L2 | ✅ Done 30 Oct: the cause log (`docs/plans/cause-log.md`) and two nightly bots (`tools/bots/`). **Baseline** (lta, 3 seeds, 2 seasons; full table in `docs/notes/bot-baseline.md`): direct trace share pop ≈ 4%, trust 1.6–4.5%, morale 18–24%, cash ≈ 1% (money settles in the weekly books, so cash is not gated); weeks 1–3: thoughtful B, Suggest C- (fired on all 3 seeds) | — | met |
 | L3 | **Grow the lab**: greedy, story-first, chaos and an **exploit bot** that searches one-action loops; report fails if one repeated action causes > 25% of the season's grade, popularity or cash gain, or a meter never changes an outcome in 2 seasons; every bot gate is the median of 3 seeds | M | nightly report green or names the exploit |
-| 1 | **The spine** (its blueprint and question vault start now, beside L1–L3, so Ryan's answers are ready when the lab is): one blueprint merging the promise ledger, preview before consequence and three clocks (0ao moves 2–4); Director (built) is its gate | L | `docs/plans/spine.md` (approved 30 Oct: "Go, after L1"); ledger-line trace share ≥ 0.80 for the thoughtful bot, defined in `docs/plans/spine.md` §7 (Σ\|delta\| with `decision` = a line id ÷ Σ\|delta\| of all `meterAdd` entries, per meter, per season, median of 3 seeds; the bar is absolute since lines do not exist before row 1) and total decision share ≥ L2 baseline + 10 points; Book the show and After the show carry a `data-t="ledger"` line in every browser run: the most urgent open promise, or "No promises open: make one" with a button (a browser assertion) |
-| 2 | **First hour**: 0ac the last booker's mess as the default new game | L | thoughtful bot's median grade over weeks 1–3, 3 seeds, ≥ B (today's year median: B- to B+; Suggest C, from `test-balance.js`); week-1 desk ≤ 3 tasks and ≤ half the baseline words (browser test); 5 outside players then reorder this queue (`design:research-synthesis`) |
+| 1 | **The spine** (its blueprint and question vault start now, beside L1–L3, so Ryan's answers are ready when the lab is): one blueprint merging the promise ledger, preview before consequence and three clocks (0ao moves 2–4); Director (built) is its gate | L | `docs/plans/spine.md` (approved 30 Oct: "Go, after L1"); ledger-line trace share ≥ 0.80 for the thoughtful bot, defined in `docs/plans/spine.md` §7 (Σ\|delta\| with `decision` = a line id ÷ Σ\|delta\| of all `meterAdd` entries, per meter, per season, median of 3 seeds; the bar is absolute since lines do not exist before row 1) and the **direct** decision share (not booked) ≥ L2 baseline + 10 points on pop and trust; Book the show and After the show carry a `data-t="ledger"` line in every browser run: the most urgent open promise, or "No promises open: make one" with a button (a browser assertion) |
+| 2 | **First hour**: 0ac the last booker's mess as the default new game | L | thoughtful bot's median grade over weeks 1–3, 3 seeds, ≥ B (today's year median: B- to B+; Suggest C, from `test-balance.js`); week-1 desk ≤ 3 tasks and ≤ half the baseline words (browser test; record the browser baseline first, the L2 headless count is task+matter words only); 5 outside players then reorder this queue (`design:research-synthesis`) |
 | 3 | **Art bible and look freeze**: finish wrestler style C, page chrome, motion language; then freeze until launch and convert every page to craft + 22/56/22 | Art | Ryan approves a baseline screenshot per page first; then lint: no page uses the old window CSS tokens; nightly screenshot diff at 1080p/1440p/4K against approved baselines; vision critic (rubric in `critic-review`) ≥ 8.5 per page |
 | 4 | **Broadcast weight** (0au): poses on twos, hit-stop by weight, TV-director camera, crowd density, boos | Art + M | p95 frame time ≤ 16.7 ms on the CI reference profile; Ryan watches a big event without skipping |
 | 5 | **Merges**: press + podcast + Web + magazine → one media voice; booking demands (0aq) + writers' room → rows in the ledger under the Director | L | fewer screens and fewer desk words than today (counted by test); bots show no lost depth |
@@ -132,21 +131,13 @@ No new system starts until rows 1–3 meet their gates. Every gate is a number a
 | After | Clock Wall (approved 8.6), 0ap loops, 0at desk list, D1 regions, D2 relationship types, D7 health pools, 0ar, 0as, traits, careers, owner mode | — | each re-scoped as a ledger row or parked |
 | Always | strict TS module by module, wraps → hook lists (`engine-next`) | S | `test-golden.js` identical |
 
-### Risk register
-| risk | trigger | answer |
-|---|---|---|
-| Art pivots again | a new look proposed after row 3 freezes | refuse; log it for after launch |
-| Scope creep | a new system before rows 1–3 meet gates | goes to "After" |
-| Critic inflation or loops | a score rises with no code change, or round 4 | median of two critics; Ryan decides |
-| D5 lawyer / parody | no answer by row 6 | ship the original world only |
-| Steam untested | row 6 slips | installer + app 480 test in a spare session early |
-| Perf on modest PC | p95 > 16.7 ms | quality setting lowers crowd density first |
+Risk register: `docs/notes/risks.md` (art pivots, scope creep, critic loops, D5 lawyer, Steam untested, performance).
 
 ## 8. Counters
 
 | key | value |
 |---|---|
-| impl_count | 1 (cause log) · next `efficiency-review` at 5 |
+| impl_count | 2 (cause log, bot lab) · next `efficiency-review` at 5 |
 | critic bar | 8.5 |
 | last game review | 30 Oct 2026: **68 / 100** (see `docs/reviews/2026-10-30-game-review.md`) |
 
@@ -166,7 +157,7 @@ Standing habits: grep before read; read with offset/limit; `| tail`/`| head` lon
 | date | saving |
 |---|---|
 | 30 Oct | `CLAUDE.md` 95 KB → ~1.5 KB core that imports this file; code map, rules, commands moved verbatim to `docs/notes/` and read on demand (≈ 22k tokens less per session). Old master archived. |
-| target | Always-loaded text (CLAUDE.md + MASTER) ≤ 18 KB, measured each session with `wc -c CLAUDE.md docs/MASTER.md` and written here when it moves. Promote a lesson to MASTER or a skill when it appears twice. |
+| target | Always-loaded text (CLAUDE.md + MASTER) ≤ 18 KB (30 Oct after L2: 20.0 KB; next trim: "Things that bite" to a note), measured each session with `wc -c CLAUDE.md docs/MASTER.md` and written here when it moves. Promote a lesson to MASTER or a skill when it appears twice. |
 | next | Archive done items in `TASKS.md` (233 open boxes, 1,090 lines) to `docs/archive/`; untrack `dist/` + `engine.js` (−85 MB, CI builds); parallel headless runner. |
 
 ## 11. Where things live
@@ -176,7 +167,7 @@ Standing habits: grep before read; read with offset/limit; `| tail`/`| head` lon
 | `docs/MASTER.md` | this: boot, golden rules, pipeline, queue, counters |
 | `docs/notes/rules.md` · `code-map.md` · `commands.md` | full rules · per-area code notes + things that bite · every command |
 | `TASKS.md` | Ryan's decisions (do not reopen) and task boxes |
-| `docs/LESSONS.md`, `docs/notes/critic-log.md` | what sessions learned; every critic score |
+| `docs/LESSONS.md`, `docs/notes/critic-log.md`, `bot-baseline.md`, `risks.md` | lessons; critic scores; the bot baseline; risks |
 | `docs/archive/NEXT.md`, `docs/archive/roadmap.md` | retired queues (superseded by §7) |
 | `docs/plans/*.md` | blueprints (rule 9d) |
 | `docs/research/` | Bill's reviews (`plans/*.md` text copies), TEW IX research, genre lessons, UI study |
