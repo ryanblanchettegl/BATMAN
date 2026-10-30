@@ -58,6 +58,7 @@ Common to all: engine first (`engine/NN-name.ts`, `E.*`, headless test 60 weeks 
 | 9g | Every new system names its Director tag (problem/chance/colour), what it hands the next phase, what it replaces. |
 | 9h | Ryan plays an hour at every milestone; his notes become the next plan (`design:research-synthesis`). |
 | 10/10a | Small commits; tick `TASKS.md` in the same commit. `VER` (`app/src/store.ts`) moves after ≥ 5 changes. |
+| 10b | **Always rebuild before you commit** (Ryan: "always update dist"): a change to `engine/`, `app/` or `universes/`, or a merge from main, runs `node build.js` and commits `engine.js` and `dist/` with it. CI fails when they do not match the source. |
 | Never | `Math.random` or the clock in the engine (use `rnd(S)`; flavour via `h01()`). No `rnd(S)` at all in: Director, relations, net, podcast, sound. Never omit keys on Preact lists. No model IDs in game text, source or PR bodies (the commit attribution line is fine). |
 
 ### Things that bite (full list: end of `docs/notes/code-map.md`)

@@ -18,6 +18,8 @@ jobs:
         run: cd app && npm ci
       - name: Build
         run: node build.js
+      - name: The built game is up to date (rule 10b; the build is repeatable, so a difference means somebody did not rebuild)
+        run: git diff --exit-code --stat -- engine.js dist/index.html dist/gorilla-position.html || (echo "::error::engine.js or dist/ does not match the source. Run node build.js and commit the result." && exit 1)
       - name: Type-check the interface and the engine
         run: cd app && node_modules/.bin/tsc --noEmit -p . && node_modules/.bin/tsc -p ../engine
       - name: Lint (no clock in the engine, no screen writes to the state)
