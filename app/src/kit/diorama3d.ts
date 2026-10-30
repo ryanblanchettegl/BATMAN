@@ -28,6 +28,12 @@ const VENUE: Record<string, string> = { ballroom: 'ballroom', gym: 'gym', bigsta
 const RIG: Record<string, string> = { cage: 'cage', cell: 'cell', inferno: 'inferno', ladder: 'ladder' };
 export const DEPTH = 0.9;      // a layer step, in feet of depth
 const CARD = 0.035;     // how thick a piece of card is
+/** A person's pieces: the step between two pieces in painting order, and how thick each is (thinner than the step, so
+    no piece pokes through the one painted over it). At ring distance the depth buffer resolves about 0.0001. */
+const FIG_STEP = 0.0002, FIG_CARD = 0.0001;
+/* Far from the camera the depth buffer cannot tell two steps apart, so a person's pieces are also drawn in painting
+   order (renderOrder): where two of their pieces tie in depth, the one painted later wins, at any distance. Nothing is
+   pulled forward, so a person stays as thin as their stack and never shows through somebody standing in front. */
 
 /* ---------- card: a matte colour with the grain of construction paper ---------- */
 let grainTex: THREE.Texture | null = null;
@@ -72,11 +78,11 @@ function flatCard(col: string, fin?: string): THREE.Material[] {
   return m;
 }
 /** A cut piece as a slab of card standing at depth `d`. A wrestler's (`clean`) casts its shadow on the set but takes none. */
-function slab(p: Piece, d: number, clean = false): THREE.Mesh | null {
+function slab(p: Piece, d: number, clean = false, depth = CARD, rank = -1): THREE.Mesh | null {
   if (p.pts.length < 3) return null;
   const sh = new THREE.Shape(p.pts.map(q => new THREE.Vector2(q[0], q[1] - FOOT)));
-  const g = new THREE.ExtrudeGeometry(sh, { depth: CARD, bevelEnabled: false, steps: 1 });
-  const m = new THREE.Mesh(g, clean ? flatCard(p.col, p.fin) : card(p.col, p.fin)); m.position.z = d; m.castShadow = true; m.receiveShadow = !clean; return m;
+  const g = new THREE.ExtrudeGeometry(sh, { depth, bevelEnabled: false, steps: 1 });
+  const m = new THREE.Mesh(g, clean ? flatCard(p.col, p.fin) : card(p.col, p.fin)); m.position.z = d; if (rank >= 0) m.renderOrder = rank; m.castShadow = true; m.receiveShadow = !clean; return m;
 }
 /** The white margin a paper doll is cut out with: the piece grown a little all round, in cream card, just behind it.
     All a figure's margins together make the cut-out's border, so a person reads as cut card standing in the set. */
@@ -85,17 +91,17 @@ function margin(p: Piece, d: number): THREE.Mesh | null {
   if (p.pts.length < 3) return null;
   let cx = 0, cy = 0; for (const q of p.pts) { cx += q[0]; cy += q[1]; } cx /= p.pts.length; cy /= p.pts.length;
   const sh = new THREE.Shape(p.pts.map(q => { const dx = q[0] - cx, dy = q[1] - cy, l = Math.hypot(dx, dy) || 1; return new THREE.Vector2(q[0] + dx / l * MARGIN, q[1] + dy / l * MARGIN - FOOT); }));
-  const g = new THREE.ExtrudeGeometry(sh, { depth: CARD, bevelEnabled: false, steps: 1 });
-  const m = new THREE.Mesh(g, flatCard('#efe5cc')); m.position.z = d - 0.03; m.castShadow = false; m.receiveShadow = false; return m;
+  const g = new THREE.ExtrudeGeometry(sh, { depth: FIG_CARD, bevelEnabled: false, steps: 1 });
+  const m = new THREE.Mesh(g, flatCard('#efe5cc')); m.position.z = d - FIG_STEP * 2; m.castShadow = false; m.receiveShadow = false; return m;   // just behind the first piece, never through it
 }
 /** Words (a burst, a sign) as a flat card with the lettering printed on it. */
-function words(p: Piece, d: number): THREE.Mesh | null {
+function words(p: Piece, d: number, rank = -1): THREE.Mesh | null {
   const t = p.txt; if (!t) return null;
   const c = document.createElement('canvas'), px = 64, w = Math.max(1, Math.ceil(t.s.length * 0.8 * t.size * px)), h = Math.ceil(t.size * px * 1.3);
   c.width = w; c.height = h; const x = c.getContext('2d')!; x.fillStyle = t.col; x.font = Math.round(t.size * px * 0.8) + "px 'Craft Marker', 'EWF Sans', sans-serif"; x.textAlign = 'center'; x.textBaseline = 'middle'; if (t.edge) { x.lineWidth = Math.max(3, t.size * px * 0.09); x.lineJoin = 'round'; x.strokeStyle = t.edge; x.strokeText(t.s, w / 2, h / 2); } x.fillText(t.s, w / 2, h / 2);
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w / px, h / px), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
-  m.position.set(t.x, t.y - FOOT, d + CARD + 0.01); return m;
+  m.position.set(t.x, t.y - FOOT, d + (rank >= 0 ? FIG_CARD : CARD + 0.01)); if (rank >= 0) m.renderOrder = rank; return m;
 }
 
 /* ---------- the arena: a ring of card and steel, a barricade, tiered stands of cardboard fans ---------- */
@@ -633,9 +639,14 @@ export class Diorama3D {
       let px = 0, n = 0; if (f) px = f.x; else { for (const p of ps) for (const q of p.pts) { px += q[0]; n++; } px = n ? px / n : (ps[0].txt ? ps[0].txt.x : 0); }
       const base = f ? f.z : Math.min(...ps.map(p => p.z)), g = new THREE.Group(); g.position.set(px, 0, base * DEPTH);
       g.userData = { who: id, prop: kind === 'p' };
-      const minD = Math.min(...ps.map(q => (q.z - base) * 0.06));   // a figure's margins all lie behind it
+      // A person is many small pieces painted in order (skin, shading, pads, lettering), most of them a hair apart in z.
+      // Stacked by z alone they share one depth and the depth test flickers between them, so parts vanish. A person's
+      // pieces are stacked in their painting order instead, a fixed small step apart, each one thinner than the step.
+      const rank = new Map<Piece, number>(); if (kind === 'f') ps.map((p, i) => ({ p, i })).sort((a, b) => (a.p.z - b.p.z) || (a.i - b.i)).forEach((x, r) => rank.set(x.p, r));
+      const depthOf = (p: Piece) => kind === 'f' ? (rank.get(p) || 0) * FIG_STEP : (p.z - base) * 0.06;
+      const minD = Math.min(...ps.map(depthOf));   // a figure's margins all lie behind it
       for (const p of ps) {
-        const d = (p.z - base) * 0.06, m = p.txt ? words(p, d) : slab(p, d, kind === 'f'); if (!m) continue;
+        const d = depthOf(p), m = p.txt ? words(p, d, kind === 'f' ? (rank.get(p) || 0) + 1 : -1) : slab(p, d, kind === 'f', kind === 'f' ? FIG_CARD : CARD, kind === 'f' ? (rank.get(p) || 0) + 1 : -1); if (!m) continue;
         if (kind === 'f' && !p.txt) { const mg = margin(p, minD); if (mg) { mg.position.x -= px; mg.userData = { who: kind === 'f' && p.own != null ? p.own : id, joint: p.joint }; g.add(mg); } }
         const pw = kind === 'f' && p.own != null ? p.own : id;   // a held person is cut on the card of the one holding them
         m.position.x -= px; m.userData = { who: pw, joint: p.joint, prop: kind === 'p' };

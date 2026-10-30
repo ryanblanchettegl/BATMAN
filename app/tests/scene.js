@@ -37,6 +37,15 @@ async function studio(mode) {
     await openScene(page, 'lockup'); await page.waitForTimeout(2500);
     ok(mode, 'Create a Scene opens full screen on the 3D stage', await has(page, '[data-t="scene-stage"]') && !!(await page.evaluate(() => window.EWF_DEBUG.three && window.EWF_DEBUG.three())));
     ok(mode, 'the studio fits one screen', !(await fits(page)), await fits(page));
+    // a person on the 3D stage is paper thin (so two people standing close never cut into each other) and their pieces
+    // are drawn in painting order (so a tie in depth never flickers, at any distance); nothing is pulled forward by an offset
+    { const r = await page.evaluate(() => { const e = window.EWF_DEBUG.three(), out = { span: 0, unordered: 0, offset: 0 };
+        (e.groups || []).forEach(g => { if (!g.userData || g.userData.prop) return; let lo = 1e9, hi = -1e9;
+          g.traverse(o => { if (!o.isMesh) return; const M = Array.isArray(o.material) ? o.material[0] : o.material; if (M.polygonOffset) out.offset++;
+            const cream = M.color && M.color.getHexString() === 'efe5cc'; lo = Math.min(lo, o.position.z); hi = Math.max(hi, o.position.z); if (!cream && !(o.renderOrder > 0)) out.unordered++; });
+          if (hi > lo) out.span = Math.max(out.span, hi - lo); });
+        return out; });
+      ok(mode, 'a person on the 3D stage is paper thin and drawn in painting order (depth ' + r.span.toFixed(3) + ', out of order ' + r.unordered + ', offset ' + r.offset + ')', r.span < 0.04 && r.unordered === 0 && r.offset === 0); }
     if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-studio');
     // a new scene starts from a setup; ten people at most
     await pick(page, 'scene-tab', 'file');
