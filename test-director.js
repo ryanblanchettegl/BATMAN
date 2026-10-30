@@ -85,13 +85,13 @@ E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
   ok(w.morale < m0 || (S.rmY && JSON.stringify(S.rmY).indexOf('never got to it') >= 0), 'a lapsed problem costs the person in it, and they remember it'); }
 // step 4, the styles: picked at the start, each with its own rhythm; changing costs trust after week one; locked in iron man
 { const per = {};
-  for (const st of ['promoter', 'carny', 'purist']) { const S = E.newGame('ewe', 3, { name: 'R', dir: st }); let mx = 0, tot = 0, wks = 0; const seen = new Set();
+  for (const st of ['promoter', 'carny', 'purist']) for (const seed of [3, 5, 8]) { const S = E.newGame('ewe', seed, { name: 'R', dir: st }); let mx = 0, tot = 0, wks = 0; const seen = new Set();
     ok(S.dir == null || S.dir.st === st, st + ': the game starts with the style picked');
     for (let wk = 1; wk <= 30 && !S.over; wk++) { let n = 0; const t = () => S.inbox.filter(e => !seen.has(e.id) && e.choices && e.dir && E.dirTag(e) !== 'forced').forEach(e => { seen.add(e.id); n++; });
       t(); S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 1)); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
       while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); t(); S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 1)); }
       E.endWeek(S); mx = Math.max(mx, n); tot += n; wks++; }
-    per[st] = { avg: tot / wks, max: mx }; ok(S.dir.st === st, st + ': the style holds through the game'); }
+    const q = per[st] || (per[st] = { avg: 0, max: 0, tot: 0, wks: 0 }); q.max += mx; q.tot += tot; q.wks += wks; q.avg = q.tot / q.wks; ok(S.dir.st === st, st + ': the style holds through the game'); }   // summed over three games, so one seed cannot decide it
   ok(per.carny.max > per.promoter.max, 'The Carny piles things up more than The Promoter (' + per.carny.max + ' against ' + per.promoter.max + ')');
   ok(per.purist.avg < per.promoter.avg, 'The Purist brings fewer matters than The Promoter (' + per.purist.avg.toFixed(2) + ' against ' + per.promoter.avg.toFixed(2) + ')');
   const S = E.newGame('ewe', 4, { name: 'R' }); E.dirInfo(S); const free = E.dirSetStyle(S, 'carny'); ok(free.ok && !free.cost && S.dir.st === 'carny', 'changing in the first week is free');

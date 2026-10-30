@@ -6198,11 +6198,10 @@
     open_A: ["{a} and {b} feel each other out before {a} takes control.", "{a} out-wrestles {b} in the opening minutes.", "A cautious start, and {a} finds the first opening.", "{a} gets the better of the early exchanges."],
     open_multi: ["It is every wrestler for themselves, and {a} is the first to find a target in {b}.", "The bell rings and the ring fills with bodies. {a} goes straight for {b}.", "No partners, no friends, and the referee has their hands full. {a} starts with {b}.", "Everyone is a rival here. {a} and {b} collide first while the others circle."],
     open_six: ["Three against three, and the corner is a crowded place. {a} starts for their side against {b}.", "A six-man tag: {a} and {b} start it, and the other four lean on the ropes.", "Six bodies, two corners, one referee. {a} and {b} get things going.", "{a} tags in, {b} tags out, and the crowd cannot keep track of who is legal."],
-    mid_multi: ["The ring turns into a pile-up and {b} is lost in the middle of it.", "Two of them spill to the floor while {a} and {b} trade near-falls, and a third breaks up the cover.", "Alliances flip every thirty seconds. {b} thinks about trusting {a}, then thinks better of it.", "Nobody can stay on one opponent for long. {a} is pulled off {b} twice in a minute."],
+    mid_multi: ["The ring turns into a pile-up and {b} is lost in the middle of it.", "Two of them spill to the floor while {a} and {b} trade big moves in the ring.", "Alliances flip every thirty seconds. {b} thinks about trusting {a}, then thinks better of it.", "Nobody can stay on one opponent for long. {a} is pulled off {b} twice in a minute."],
     mid_six: ["The hot tag brings the crowd up. {b} cannot reach the corner while {a} cuts the ring in half.", "{a} is cut off from the corner, and the other side takes turns.", "Chaos in the corner: the referee has three wrestlers on the apron and no idea who is legal.", "{b} makes the tag and the whole building rises with them."],
     limb: ["arm", "leg", "knee", "shoulder", "neck"],
     mid: ["{b} fights back and the two trade near-falls.", "{b} cuts {a} off and slows the pace.", "{b} rallies, and the momentum swings back and forth.", "{b} survives a close call and fires up.", "{b} catches {a} coming in and turns the tide.", "Back and forth they go. Neither can keep the advantage.", "{b} finds a second wind out of nowhere."],
-    near: ["Cover by {b}! One, two... no! {a} kicks out!", "{b} hooks the leg! One, two... {a} gets the shoulder up!", "{a} goes for the finish, but {b} slips out the back!", "#bigmove# from {b}! That has to be it... only a two count!", "{a} thought that was three. So did I, {c}!", "Shoulder up at two and nine-tenths!"],
     bigmove: ["A huge clothesline", "A spinning kick", "A suplex out of nowhere", "A dive to the floor", "A knee to the jaw", "A slam in the centre of the ring", "A counter in mid-air"],
     late: ["We are past the {mark}-minute mark and neither one will stay down.", "{mark} minutes gone, and they are still throwing everything they have.", "They have been at it for over {mark} minutes. Somebody has to break."],
     q_great: ["This is a classic in the making.", "Remember where you were when you saw this one.", "I have not seen many better than this, {p}.", "They are going to be talking about this match for years."],
@@ -6238,7 +6237,6 @@
     br_final: ["{l} charges, {w} ducks, and {l} goes over the top! {w} wins it!", "{w} clotheslines {l} over the top rope! It is over!", "{l} is teetering on the apron... and {w} knocks {l} to the floor! {w} has done it!"],
     mid2: ["{a} takes over again and goes to work.", "{b} is hanging on, and {a} smells it.", "{a} slows it down and makes {b} pay for every inch.", "Now it is {a} with the upper hand, and the crowd does not know who to believe."],
     tease: ["{a} signals for the finish... {b} blocks it!", "{a} sets up for the big one, and {b} wriggles free!", "{b} sees it coming and rolls to the floor. Not yet!", "{a} goes for it, and {b} counters at the last second!"],
-    near2: ["Another cover! One, two... NO! How did {a} kick out of that?", "Everything they have got! One, two... and {a} is still alive!", "{b} cannot believe it. Neither can I, {c}. Two and a half!", "That should have been it! The referee\u2019s hand was coming down!"],
     chant: ["They are chanting both names now, {p}.", "Listen to that. Half the building for {a}, half for {b}.", "The whole place is standing. Nobody wants to sit down for this.", "Stomping in the stands. You can feel it up here."],
     chantF: ["\u201C{n}! {n}!\u201D The whole building is chanting it.", "Listen to them, {p}. They are chanting for {n} before the bell.", "You cannot hear yourself think in here. Every voice is for {n}."],
     chantH: ["The crowd has a chant for {n}, and it is not a kind one.", "Every seat in the house is letting {n} have it.", "{n} cups an ear and the boos only get louder."],
@@ -6432,21 +6430,17 @@
     if (shp && shp.intro) bc.push({ t: "col", x: shp.intro.charAt(0).toUpperCase() + shp.intro.slice(1) });
     if (mem[1]) raw("pbp", mem[1]);
     if (L.STIPLINE[x.stip]) raw("pbp", sayPick(S, L.STIPLINE[x.stip]));
-    if (x.mins > 8) {
-      pbp(mk ? "mid_" + mk : "mid");
-      pbp("near", 1);
-    }
+    if (x.mins > 8) pbp(mk ? "mid_" + mk : "mid");
     if (shp && shp.spot) bc.push({ t: "pbp", x: shp.spot.charAt(0).toUpperCase() + shp.spot.slice(1) });
     if (x.mins >= 14 && !mk) hp("pbp", "mid2");
     if (x.mins >= 12 && x.CR >= 75) hp("col", "chant");
     if (x.mins >= 14 && !mk) hp("pbp", "tease");
     if (x.mins >= 20) pbp("late");
-    if (x.mins >= 18 && x.MQ >= 70) hp("pbp", "near2", 1);
     if (shp && shp.late) bc.push({ t: "pbp", x: shp.late.charAt(0).toUpperCase() + shp.late.slice(1), h: 1 });
     if (x.fko) {
-      bc.push({ t: "pbp", x: (x.fko.again ? x.fko.who + " hits " + x.fko.f + "! This is it! One, two... " : "Out of nowhere, " + x.fko.who + " hits " + x.fko.f + "! One, two... ") + x.fko.by + " KICKS OUT!", h: 1 });
+      bc.push({ t: "pbp", x: (x.fko.again ? x.fko.who + " hits " + x.fko.f + "! This is it! One, two... " : "Out of nowhere, " + x.fko.who + " hits " + x.fko.f + "! One, two... ") + x.fko.by + " KICKS OUT!", h: 1, fk: 1 });
       raw("col", x.fko.huge ? "Nobody kicks out of that, {p}! Nobody! I have never seen that!" : "{p}, I have seen that move finish bigger names than this. Not tonight!");
-    } else if (!x.fm && x.win >= 0 && x.lfin && (x.main || x.big) && x.mins >= 18 && h01(hk + "fko") < 0.3) bc.push({ t: "pbp", x: x.lname + " hits " + (/^the /i.test(x.lfin) ? "" : "the ") + x.lfin + "! One, two... " + o.w + " kicks out!", h: 1 });
+    } else if (!x.fm && x.win >= 0 && x.lfin && (x.main || x.big) && x.mins >= 18 && h01(hk + "fko") < 0.3) bc.push({ t: "pbp", x: x.lname + " hits " + (/^the /i.test(x.lfin) ? "" : "the ") + x.lfin + "! One, two... " + o.w + " kicks out!", h: 1, fk: 1 });
     col(x.bad ? "q_off" : x.MQ >= 88 ? "q_great" : x.MQ >= 75 ? "q_good" : x.MQ >= 60 ? "q_ok" : x.MQ >= 45 ? "q_poor" : "q_bad");
     if (x.mins >= 14 && x.CR >= 82) col("c_hot");
     var mf = (x.fx || []).filter(function(q) {
@@ -12125,9 +12119,10 @@
       { t: "{w} has been on the defensive all match, but here comes the comeback!", if: function(c) {
         return c.k === "comeback";
       } },
-      { t: "{a} hits the {fa}... and {b} kicks out! Nobody kicks out of that!", if: function(c) {
+      { t: "{a} hits the {fa}, but {b} rolls to the floor before the cover!", if: function(c) {
         return !!c.fa && c.hot;
       } },
+      // no cover: near falls only come from a finisher the engine saw kicked out of
       { t: "{b} goes for the {fb}, but {a} slips out of it!", if: function(c) {
         return !!c.fb;
       } },
@@ -32282,7 +32277,7 @@
         var ids = s.ids || [], nsd = (s.sidesN || []).length || 2, per = Math.max(1, Math.floor(ids.length / nsd)), A = s.sidesN && s.sidesN[0] || nm(ids[0]), B = s.sidesN && s.sidesN[1] || nm(ids[per]);
         var f = ids.length >= 2 ? feudOf(S, ids[0], ids[per]) : null;
         fanPost(k + "s", s.title ? L.LF.title : f && f.heat >= 50 ? L.LF.feud : L.LF.start, { a: A, b: B, t: s.title, show }, s.title ? 260 : 120, mins);
-        for (var j = 0; j < upto; j++) if (bc[j].h === 1 && h01(k + "n" + j) < 0.75) {
+        for (var j = 0; j < upto; j++) if (bc[j].h === 1 && bc[j].fk && h01(k + "n" + j) < 0.75) {
           var x = "";
           ids.forEach(function(id) {
             var w = S.w[id];
@@ -37201,7 +37196,6 @@
     cut: ["{b} tries to fight back, but {a} cuts it off with {m}.", "{b} goes for a comeback and runs straight into {m}.", "Not so fast: {a} stops {b} cold with {m}."],
     swing: ["{a} reverses it and hits {m}!", "Out of nowhere, {a} turns it round with {m}!", "{a} counters and lands {m}!", "{a} fights out of it and connects with {m}!"],
     sig: ["{a} hits {s}! The crowd knows what that is!", "{a} goes to the well: {s}!", "That is {s}, {a}\u2019s signature, and it lands clean!"],
-    near: ["Cover! One, two... {b} kicks out!", "{a} hooks the leg! One, two... no! {b} gets a shoulder up!", "One, two... so close! {b} is still in this!"],
     col: ["{p}, {b} is fighting from underneath, but you can never count them out.", "These two know each other, {p}. Every move is answered.", "The crowd is right in this one, {p}.", "{a} is controlling the tempo, {p}. Smart wrestling.", "Listen to this place, {p}! They are hanging on every move.", "You can feel the momentum going back and forth, {p}."]
   };
   L.RW_LINES = RW_LINES;
@@ -37265,7 +37259,6 @@
           sigUsed[A.id + s.n] = 1;
           ctx.s = s.n;
           out.push({ t: "pbp", x: fill(pick2(L.RW_LINES.sig), ctx), h: 1 });
-          if (h() < 0.6) out.push({ t: "pbp", x: fill(pick2(L.RW_LINES.near), ctx), h: 1 });
           continue;
         }
         ctx.m = pick2(M.filter(function(m) {
@@ -37273,8 +37266,7 @@
         })).n;
         kind = j === 0 ? "open" : swap ? "swing" : h() < 0.35 ? "cut" : "press";
         out.push({ t: "pbp", x: cap(fill(pick2(L.RW_LINES[kind]), ctx)) });
-        if (late && h() < 0.25) out.push({ t: "pbp", x: fill(pick2(L.RW_LINES.near), ctx), h: 1 });
-        else if (h() < 0.22) out.push({ t: "col", x: cap(fill(pick2(L.RW_LINES.col), ctx)) });
+        if (h() < 0.22) out.push({ t: "col", x: cap(fill(pick2(L.RW_LINES.col), ctx)) });
       }
       bc.splice.apply(bc, [at + 1, 0].concat(out));
       return bc;

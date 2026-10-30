@@ -105,7 +105,8 @@ if (found.titlecall) { const F = found.titlecall, P0 = F.S.promos[F.S.player], m
   ok('tc4', 'a call that costs more booking power than is in hand is not taken', !no.ok && /booking power/.test(no.msg) && !poor.live.ev.done);
   ok('tc5', 'the answer is on the broadcast and on the segment', swap.seg.bc.some(b => b.t === 'call' && /Your call: Call the title change/.test(b.x)) && swap.seg.calls.length === 1);
 }
-if (found.runin) { const F = found.runin, p = F.ev.other, r = F.ev.who, f0 = F.S.feuds.find(f => f.id === F.ev.feud).heat;
+if (found.runin) { const F = found.runin, p = F.ev.other, r = F.ev.who, fd = F.S.feuds.find(f => f.id === F.ev.feud); if (fd.heat >= 95) fd.heat = 80;   // room to heat up, whatever the seed
+  const f0 = fd.heat;
   const back = answer('runin', 0), cost = answer('runin', 1), strong = answer('runin', 2), heat = R => R.S.feuds.find(f => f.id === F.ev.feud).heat;
   ok('ri1', 'send the rival out to cost them the match: they lose, and the feud gets hotter', !cost.seg.wi.includes(p) && heat(cost) > f0 && heat(cost) > heat(back) && cost.S.bp === F.S.bp - 1, 'heat ' + f0 + ' to ' + heat(cost) + ', kept back ' + heat(back));
   ok('ri2', 'send the rival out and they fight them off: they win', strong.seg.wi.includes(p) && lean(strong.S, p) > lean(F.S, p));
@@ -321,5 +322,14 @@ if (found.network) { const F = found.network, net = S => { E.clocks(S); return S
   ok('stp2', 'a steel cell match goes on the air under its name', segs.some(x => x.stip === 'Steel cell'), segs.map(x => x.stip).join(','));
   ok('stp3', 'a ring of fire match goes on the air under its name', segs.some(x => x.stip === 'Ring of fire'), segs.map(x => x.stip).join(','));
   ok('stp4', 'no number in the report is broken', !JSON.stringify(rep).includes('NaN')); }
+// Ryan, 29 October: a near fall is only a finisher kicked out of; no cover after a signature or an ordinary move
+{ const fs = require('fs'); E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8'))); const S = E.newGame('ewe', 9, { name: 'R' }); let near = 0, bad = [], kick = 0;
+  for (let wk = 0; wk < 24; wk++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1)); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
+    while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
+    (S.reports[0] && S.reports[0].segs || []).filter(x => x.k === 'match').forEach(m => (m.bc || []).forEach(b => {
+      if (/one, two|two count|shoulder up|kicks out[!.]/i.test(b.x || '') && b.t === 'pbp') { near++; if (!b.fk && !/three/i.test(b.x)) bad.push(b.x.slice(0, 140)); }
+      if (b.fk) kick++; }));
+    E.endWeek(S); if (S.over) { S.over = null; S.owner.trust = 60; } }
+  ok('near1', 'every cover line on the broadcast comes from a finisher kicked out of (' + near + ' cover lines, ' + kick + ' of them finisher kick-outs, ' + bad.length + ' from anything else)', !bad.length, bad.slice(0, 3).join(' | ')); }
 if (fails.length) { console.log('\nFAILED: ' + fails.length + '\n' + fails.join('\n')); process.exit(1); }
 console.log('test-live: all passed');

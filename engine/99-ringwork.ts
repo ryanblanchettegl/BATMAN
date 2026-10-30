@@ -27,7 +27,6 @@ export var RW_LINES={
   cut:['{b} tries to fight back, but {a} cuts it off with {m}.','{b} goes for a comeback and runs straight into {m}.','Not so fast: {a} stops {b} cold with {m}.'],
   swing:['{a} reverses it and hits {m}!','Out of nowhere, {a} turns it round with {m}!','{a} counters and lands {m}!','{a} fights out of it and connects with {m}!'],
   sig:['{a} hits {s}! The crowd knows what that is!','{a} goes to the well: {s}!','That is {s}, {a}’s signature, and it lands clean!'],
-  near:['Cover! One, two... {b} kicks out!','{a} hooks the leg! One, two... no! {b} gets a shoulder up!','One, two... so close! {b} is still in this!'],
   col:['{p}, {b} is fighting from underneath, but you can never count them out.','These two know each other, {p}. Every move is answered.','The crowd is right in this one, {p}.','{a} is controlling the tempo, {p}. Smart wrestling.','Listen to this place, {p}! They are hanging on every move.','You can feel the momentum going back and forth, {p}.']
 };
 $L.RW_LINES = RW_LINES;
@@ -60,13 +59,12 @@ export function rwMoves(S,w){
       if(swap)side=other(side);
       var A=lead(x.sides[side]),B=lead(x.sides[other(side)]),M=rwMoves(S,A),sigs=M.filter(function(m){return m.sig&&!sigUsed[A.id+m.n];});
       var ctx: any={a:A.name,b:B.name,p:p},kind;
-      if(late&&sigs.length&&h()<0.45){var s=pick(sigs);sigUsed[A.id+s.n]=1;ctx.s=s.n;out.push({t:'pbp',x:fill(pick($L.RW_LINES.sig),ctx),h:1});
-        if(h()<0.6)out.push({t:'pbp',x:fill(pick($L.RW_LINES.near),ctx),h:1});continue;}
+      if(late&&sigs.length&&h()<0.45){var s=pick(sigs);sigUsed[A.id+s.n]=1;ctx.s=s.n;out.push({t:'pbp',x:fill(pick($L.RW_LINES.sig),ctx),h:1});continue;}   // a signature is never followed by a cover (Ryan, 29 October)
       ctx.m=pick(M.filter(function(m){return !m.sig;})).n;
       kind=j===0?'open':(swap?'swing':(h()<0.35?'cut':'press'));
       out.push({t:'pbp',x:cap(fill(pick($L.RW_LINES[kind]),ctx))});
-      if(late&&h()<0.25)out.push({t:'pbp',x:fill(pick($L.RW_LINES.near),ctx),h:1});
-      else if(h()<0.22)out.push({t:'col',x:cap(fill(pick($L.RW_LINES.col),ctx))});
+      // no near fall after an ordinary move: near falls only come from a finisher kicked out of (callMatch)
+      if(h()<0.22)out.push({t:'col',x:cap(fill(pick($L.RW_LINES.col),ctx))});
     }
     bc.splice.apply(bc,[at+1,0].concat(out));
     return bc;

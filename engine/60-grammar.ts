@@ -217,7 +217,7 @@ export var GR_SHAPE={
   s_war:['They spill out to the floor and fight into the crowd.','{a} sends {b} into the steel steps.','The referee is losing control of this one.'],
   late:[
     {t:'{w} has been on the defensive all match, but here comes the comeback!',if:function(c){return c.k==='comeback';}},
-    {t:'{a} hits the {fa}... and {b} kicks out! Nobody kicks out of that!',if:function(c){return !!c.fa&&c.hot;}},
+    {t:'{a} hits the {fa}, but {b} rolls to the floor before the cover!',if:function(c){return !!c.fa&&c.hot;}},   // no cover: near falls only come from a finisher the engine saw kicked out of
     {t:'{b} goes for the {fb}, but {a} slips out of it!',if:function(c){return !!c.fb;}},
     {t:'Both of them are down, {p}. The referee starts to count.',if:function(c){return c.hot;}}
   ]
