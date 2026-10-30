@@ -18,7 +18,7 @@ async function run(mode, weeks) {
         await fit('sign-off w' + w); await page.click('[data-t="advance"]'); await fit('after the show w' + w); continue;
       }
       if (await has('[data-t="closeReport"]')) { await page.click('[data-t="closeReport"]'); continue; }
-      if (await has('[data-t="after-screen"]')) { await fit('after the show w' + w); await page.click('[data-t="after-look"] >> nth=1'); await page.click('[data-t="advance"]'); await fit('the office after the show w' + w); if (await has('[data-t="book-next"]:not([disabled])')) { await page.click('[data-t="book-next"]'); continue; } break; }
+      if (await has('[data-t="after-screen"]')) { await fit('after the show w' + w); await page.click('[data-t="after-look"] >> nth=1'); await page.click('[data-t="advance"]'); await fit('the office after the show w' + w); if (await has('[data-t="book-next"]:not([disabled])')) { await page.click('[data-t="advance"]'); continue; } break; }
       if (await has('[data-t="pre"]')) { await page.click('[data-t="pre"]'); continue; }
       if (await has('[data-t="suggest"]')) { await page.click('[data-t="suggest"]'); await fit('card w' + w); await page.click('[data-t="advance"]'); continue; }
       break;
@@ -26,8 +26,8 @@ async function run(mode, weeks) {
     await go(page, 'desk');
     for (let g = 0; g < 12 && await click('[data-t="ev-open"]'); g++) { await click('.win [data-t="ev"]'); await page.keyboard.press('Escape'); await page.waitForTimeout(40); }
     await fit('desk w' + w);
-    if (!(await has('[data-t="endweek"]:not([disabled])'))) { bad.push('week ' + w + ' could not be closed: ' + (await page.$eval('.main', e => e.innerText.slice(0, 200).replace(/\n/g, ' ')))); break; }
-    await page.click('[data-t="endweek"]');
+    if (!(await has('[data-t="advance"][data-v="week"]'))) { bad.push('week ' + w + ' could not be closed: ' + (await page.$eval('.main', e => e.innerText.slice(0, 200).replace(/\n/g, ' ')))); break; }
+    await page.click('[data-t="advance"][data-v="week"]');
     if (await has('.win')) { await fit('week closed w' + w); await page.keyboard.press('Escape'); }
     if (w === 1) for (const p of PAGES) { await go(page, p); await fit(p); if (['desk', 'roster', 'manage', 'house', 'deals', 'overview', 'finances', 'storylines', 'sheet', 'boards', 'world', 'career', 'locker'].includes(p) && (mode === 'desk' || mode === 'phone' || mode === 'tv')) await shot(page, 'j-' + mode + '-' + p); if (p === 'roster') { await page.click('tbody tr.pick'); await fit('profile'); await shot(page, 'j-' + mode + '-profile'); await page.keyboard.press('Escape'); } }
   }

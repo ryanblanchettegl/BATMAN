@@ -268,12 +268,12 @@ async function section(mode) {
   /* done with After the show: the Office, with Before the show first and a button that comes back */
   await page.click('[data-t="advance"]');
   ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && await has(page, '.deskpage [data-t="road"]') && await has(page, '.deskpage [data-t="next"]') && !(await has(page, '[data-t="after-show"]')), mode + ': then the Office, with the road and the next show');
-  ok((await page.$eval('[data-t="night-recap"]', e => e.getAttribute('aria-label'))) === 'After the show recap', mode + ': the Office has a button back to After the show');
+  ok(/Open the recap/.test(await page.$eval('[data-t="night-recap"]', e => e.getAttribute('aria-label'))), mode + ': the Office has a button back to After the show');
   await page.click('[data-t="night-recap"]');
   ok(await has(page, '[data-t="after-screen"]') && await txt(page, '.head h1') === shows[0], mode + ': and it goes back there');
   await page.click('[data-t="advance"]');
   ok(/^BOOK SHOW$/i.test(await advWord(page)), mode + ': from the desk the big button leads to the next show: ' + await advWord(page));
-  await page.click('[data-t="book-next"]');
+  await page.click('[data-t="advance"]');
   ok(await txt(page, '[data-t="book1"] h1') === shows[1] && /\d+ min open/i.test(await txt(page, '[data-t="wall-open"]')), mode + ': the next show’s card is one press from the desk');
   await check('close the report');
 
@@ -286,7 +286,7 @@ async function section(mode) {
   await page.keyboard.press('Escape');                                      // Back closes the report
   ok(await has(page, '[data-t="after-screen"]') && await txt(page, '.head h1') === shows[1], mode + ': Back closes the last report to After the show');
   await page.click('[data-t="advance"]');
-  ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && await has(page, '[data-t="endweek"]'), mode + ': and the Office offers the end of the week');
+  ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && /The week is booked/i.test(await txt(page, '[data-t="next"] .ttl')), mode + ': and the Office says the week is booked, with the end of the week next');
   await go(page, 'booking');
   ok(await txt(page, '.head h1') === 'Week booked' && await count(page, '[data-t="report"]') === 2, mode + ': Week booked');
   await check('week booked');

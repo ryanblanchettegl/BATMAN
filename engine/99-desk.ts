@@ -30,10 +30,11 @@ E.deskBoard=function(S){
   else if(me&&lead&&!lead.mine&&lead.share-me.share<=4)owner='We are '+(Math.round((lead.share-me.share)*10)/10)+' points behind '+lead.name+'. Close it and we talk about a bigger building.';
   else if(mv&&mv.cash.dir<0&&mv.cash.d<-(P.cash*0.05))owner='The money went the wrong way. I noticed.';
   var nb=E.nextBig(S),bigStop=(E.roadAhead?E.roadAhead(S,16):[]).filter(function(a){return a.big;})[0];
-  // the last show of yours: the grade and its word, the house, your share against the company nearest above you, the match of the night
+  // the last show of yours, all of it from its own report: the grade and the verdict, the house, the head to head that
+  // night if there was one, and the match of the night
   var r=S.reports.find(function(x){return x.promo===S.player;}),last=null;
-  if(r){var v=E.showVerdict(r.rating,r.exp),best=(r.segs||[]).filter(function(g){return g.k==='match';}).sort(function(a,b){return b.ov-a.ov;})[0],near=mine>0?A.table[mine-1]:A.table[1];
-    last={name:r.name,city:r.city,grade:E.repGrade(r),word:v.word.w,att:r.att,share:me?me.share:0,rival:near?{name:near.name,share:near.share}:null,motn:best?{label:best.label,stars:starG(best.ov)}:null};}
+  if(r){var v=E.showVerdict(r.rating,r.exp),best=(r.segs||[]).filter(function(g){return g.k==='match';}).sort(function(a,b){return b.ov-a.ov;})[0];
+    last={name:r.name,city:r.city,grade:E.repGrade(r),word:v.word.w,line:v.line,att:r.att,h2h:r.h2h?{co:r.h2h.co,won:!!r.h2h.won}:null,motn:best?{label:best.label,stars:starG(best.ov)}:null};}
   // the grade the last night in each city got, for the labels on the map
   var grades={};Object.keys(S.rdv||{}).forEach(function(c){grades[c]=E.grade(S.rdv[c].cs);});
   var sh=S.queue[S.qi],day=sh?nightOf(sh):'';

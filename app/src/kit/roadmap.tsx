@@ -101,7 +101,7 @@ function draw(cv: HTMLCanvasElement, R: any, p: number, dpr: number, font: strin
 /** `fit` is the part of the sheet the outline is fitted into (fractions of it, left, top, right, bottom), so a map that
     fills a board can keep clear of what is pinned on it; `tags` is a word after a stop's name ("last time: B"). */
 interface Fit { l: number; t: number; r: number; b: number }
-function drawShape(cv: HTMLCanvasElement, R: any, cw: number, ch: number, dpr: number, font: string, fit?: Fit, tags?: Record<string, string>) {
+function drawShape(cv: HTMLCanvasElement, R: any, cw: number, ch: number, dpr: number, font: string, fit?: Fit, tags?: Record<string, string>, away?: string) {
   const Z = R.shape, W = Math.round(cw * dpr), H = Math.round(ch * dpr);
   cv.width = W; cv.height = H; cv.style.width = (W / dpr) + 'px'; cv.style.height = (H / dpr) + 'px';
   const x = cv.getContext('2d'); if (!x) return;
@@ -111,7 +111,7 @@ function drawShape(cv: HTMLCanvasElement, R: any, cw: number, ch: number, dpr: n
   for (let i = 0; i < 26; i++) { const g = x.createRadialGradient(hh(i, 1) * W, hh(i, 2) * H, 0, hh(i, 1) * W, hh(i, 2) * H, (0.12 + hh(i, 3) * 0.25) * Math.max(W, H)); g.addColorStop(0, hh(i, 4) < .5 ? 'rgba(255,255,255,.07)' : 'rgba(20,40,80,.07)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H); }
   for (let i = 0; i < W * H / (900 * dpr); i++) { x.fillStyle = hh(i, 7) < .5 ? 'rgba(255,255,255,.18)' : 'rgba(20,40,80,.16)'; const fx = hh(i, 8) * W, fy = hh(i, 9) * H, a = hh(i, 10) * 6.3, l = (2 + hh(i, 11) * 6) * dpr; x.save(); x.translate(fx, fy); x.rotate(a); x.fillRect(0, 0, l, Math.max(1, dpr * .6)); x.restore(); }
   // the outline, fitted to the sheet with room for the labels, and cut by hand: each edge in short pieces, a touch off the line
-  const F = fit || { l: 0, t: 0, r: 1, b: 1 }, fw = W * (F.r - F.l), fh = H * (F.b - F.t), m = 0.1, k = Math.min(fw * (1 - 2 * m) / Z.w, fh * (1 - 2 * m) / Z.h), ox = W * F.l + (fw - Z.w * k) / 2, oy = H * F.t + (fh - Z.h * k) / 2;
+  const F = fit || { l: 0, t: 0, r: 1, b: 1 }, fw = W * (F.r - F.l), fh = H * (F.b - F.t), m = fit ? 0.05 : 0.1, k = Math.min(fw * (1 - 2 * m) / Z.w, fh * (1 - 2 * m) / Z.h), ox = W * F.l + (fw - Z.w * k) / 2, oy = H * F.t + (fh - Z.h * k) / 2;
   const at = (px: number, py: number): [number, number] => [ox + px * k, oy + py * k];
   const loops: [number, number][][] = (Z.p as string[]).map(str => { const pts: [number, number][] = []; for (let i = 0; i + 1 < str.length; i += 2) pts.push(at(str.charCodeAt(i) - 40, str.charCodeAt(i + 1) - 40)); return pts; });
   const cut = (L: [number, number][], seed: number) => { const out: [number, number][] = [], step = 5 * dpr;
@@ -165,12 +165,15 @@ function drawShape(cv: HTMLCanvasElement, R: any, cw: number, ch: number, dpr: n
     x.fillStyle = 'rgba(0,0,0,.32)'; x.fillRect(-w / 2 + 1.5 * u, -h / 2 + 2 * u, w, h);
     x.fillStyle = big ? '#fff6c4' : '#fbf8ee'; x.fillRect(-w / 2, -h / 2, w, h);
     x.fillStyle = '#17171b'; x.textBaseline = 'middle'; x.fillText(text, -w / 2 + pad, u * .5); x.restore(); });
+  // the next stop when it is off this map: a slip at the bottom right of the board, its arrow pointing on
+  if (away) { const fs = Math.round(11 * u); x.font = '400 ' + fs + "px 'Craft Hand', " + font; const w = x.measureText(away).width + 10 * u, h = fs * 1.4, tx = W * F.r - w - 8 * u, ty = H * F.b - h - 8 * u;
+    x.fillStyle = 'rgba(0,0,0,.32)'; x.fillRect(tx + 1.5 * u, ty + 2 * u, w, h); x.fillStyle = '#fbf8ee'; x.fillRect(tx, ty, w, h); x.fillStyle = '#17171b'; x.textBaseline = 'middle'; x.fillText(away, tx + 5 * u, ty + h / 2 + u * .5); }
   mapDraws++;
 }
 function rank(k: string): number { return k === 'now' ? 0 : (k === 'next' ? 1 : (k === 'past' ? 2 : 3)); }
 
 /** The map for the road window. `road` is what E.road(S) returns. It fills its box, as large as whole dots allow. */
-export function RoadMap(p: { road: any; t?: string; fit?: Fit | ((box: HTMLElement) => Fit); tags?: Record<string, string> }) {
+export function RoadMap(p: { road: any; t?: string; fit?: Fit | ((box: HTMLElement) => Fit); tags?: Record<string, string>; away?: string }) {
   const box = useRef<HTMLDivElement>(null), ref = useRef<HTMLCanvasElement>(null), R = p.road;
   const label = R.shape ? 'A map of ' + R.shape.n + '. This week: ' + R.now.city + '.' : R.map ? 'A map of ' + R.mapName + '. This week: ' + R.now.city + (R.now.land ? ', ' + R.now.land : '') + '.' + R.stops.filter((s: any) => s.k === 'next').map((s: any) => ' Next: ' + s.city + '.').join('') : 'No map for ' + R.now.city + '.';
   const check = () => {
@@ -180,9 +183,9 @@ export function RoadMap(p: { road: any; t?: string; fit?: Fit | ((box: HTMLEleme
       const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, cw = Math.floor(p.fit ? bx.clientWidth : Math.min((host ? host.clientWidth : bx.clientWidth) * 0.45 - 4, (bx.clientHeight - 4) * 1.5)), ch = Math.floor(bx.clientHeight - (p.fit ? 0 : 4));
       if (cw < 40 || ch < 40) return;
       const fit = typeof p.fit === 'function' ? p.fit(bx) : p.fit;
-      const sig = JSON.stringify([R.map, R.shape.n, R.shape.pins, fit, p.tags]) + '@' + cw + 'x' + ch + '@' + dpr;
+      const sig = JSON.stringify([R.map, R.shape.n, R.shape.pins, fit, p.tags, p.away]) + '@' + cw + 'x' + ch + '@' + dpr;
       if (cv.getAttribute('data-sig') === sig) return;
-      try { drawShape(cv, R, cw, ch, dpr, getComputedStyle(cv).fontFamily || 'sans-serif', fit, p.tags); cv.setAttribute('data-sig', sig); cv.setAttribute('data-map', R.map); cv.setAttribute('data-shape', R.shape.n); } catch (e) { /* a map that cannot be drawn is not worth a crash */ }
+      try { drawShape(cv, R, cw, ch, dpr, getComputedStyle(cv).fontFamily || 'sans-serif', fit, p.tags, p.away); cv.setAttribute('data-sig', sig); cv.setAttribute('data-map', R.map); cv.setAttribute('data-shape', R.shape.n); } catch (e) { /* a map that cannot be drawn is not worth a crash */ }
       return;
     }
     const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, w = (host ? host.clientWidth : bx.clientWidth) * 0.38 - 4, h = bx.clientHeight - 4;   // as tall as the box, and no more than 38% of the window's width; the frame is two pixels a side

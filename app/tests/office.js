@@ -32,7 +32,7 @@ async function run(mode) {
   /* ---- the desk, week 1 ---- */
   ok(/Office - Week 1/.test(await txt('h1')), 'desk heading');
   ok(await count('.gp') === 0 && await count('.gauge') === 0, 'no gauges on the desk: they are on Company');
-  ok((await page.$$eval('.deskpage > .wn', L => L.map(e => e.getAttribute('data-t')).join())) === 'road,fire,task-win,next,desk-asst' && await count('[data-t="next"] [data-t="book-next"]') === 1, 'the desk is five windows: the road, what needs an answer, the tasks, the next show with its booking button, and your assistant');
+  ok((await page.$$eval('.deskpage > .wn', L => L.map(e => e.getAttribute('data-t')).join())) === 'desk-co,next,fire' && await count('[data-t="book-next"]') === 0, 'the desk is the Map Board: your company, the next show and the to-do list, with no Book show button (SPACE books)');
   ok(await count('.main .panel') === 0 && await count('[data-t="endweek"]') === 0, 'no old panels on the desk, and no end-week button yet');
   /* everything else the desk keeps is in one pop-up */
   const moreTab = async id => { if (!(await page.$('[data-t="more-tab"]'))) { await page.click('[data-t="desk-more"]'); await page.waitForSelector('[data-t="more-tab"]'); } await page.click('[data-t="more-tab"][data-v="' + id + '"]'); };
@@ -42,8 +42,8 @@ async function run(mode) {
   await moreTab('news'); ok(await count('.win .onews li') >= 1, 'office news has a memo');
   await step('the week in full', 'week');
   await page.keyboard.press('Escape');
-  ok(/Backstage/.test(await txt('[data-t="bs-line"]')) && /\d of \d point/.test(await txt('[data-t="bs-line"]')) && await count('.pre .room') === 0 && await count('[data-t="ppl-who"]') === 0, 'the desk has one line about backstage and a button, not the rooms');
-  await page.click('[data-t="book-next"]'); ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'booking', 'Book the next show opens Booking'); await go(page, 'desk');
+  ok(await count('.pre .room') === 0 && await count('[data-t="ppl-who"]') === 0, 'the desk has no rooms of backstage on it');
+  await page.click('[data-t="advance"]'); ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'booking', 'the SPACE key books the next show'); await go(page, 'desk');
 
   /* ---- a clock window: open, read, close with the button; open again, close with Esc ---- */
   await moreTab('clocks');
@@ -59,7 +59,7 @@ async function run(mode) {
   await step('clock closed');
 
   /* ---- backstage: the trainer's room ---- */
-  await page.click('[data-t="to-backstage"]');
+  await page.click('[data-t="page"][data-v="backstage"]');
   ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'backstage' && (await page.$$eval('[data-t="page"]', a => a.map(e => e.innerText.trim()))).join('|') === 'The desk|Backstage|Storylines|Career', 'Backstage is its own page in the Office, between the desk and Storylines: ' + (await page.$$eval('[data-t="page"]', a => a.map(e => e.innerText.trim()))).join('|'));
   /* backstage is the board: everybody in the building for a reason, a line each with a face, and the picked one's file beside it */
   ok(await count('.bspage > .wn') === 5 && await count('[data-t="ppl-who"]') >= 1 && await count('[data-t="ppl-who"] canvas') === await count('[data-t="ppl-who"]') && await count('[data-t="ppl-who"].sel') === 1, 'backstage is one screen: the board with a face for everybody, things to do, your door, the room and a file');
@@ -157,7 +157,7 @@ async function run(mode) {
   ok(await state(page, runShows), 'shows ran');
   await state(page, S => { S.inbox.filter(e => !e.done).forEach(e => window.GP.resolveEvent(S, e.id, e.choices.length - 1)); });   // a show can leave a matter that holds the week: one for the night, or one of its own (a chant the crowd started)
   await go(page, 'desk');
-  await page.click('[data-t="endweek"]'); await page.waitForSelector('.win');
+  await page.click('[data-t="advance"][data-v="week"]'); await page.waitForSelector('.win');
   ok(/Week closed/.test(await txt('.win .wt')) && /Net for the week/.test(await txt('.win .wb')) && await count('.win .colchart') === 1 && /It is now/.test(await txt('.win .wb')), 'week-closed window content');
   await step('week closed');
   await page.click('#modal-ok');
@@ -168,16 +168,16 @@ async function run(mode) {
   while (weeks++ < 14 && !(await state(page, S => S.over || S.inbox.some(e => !e.done)))) await state(page, playWeek);
   await redraw(page);
   let open0 = await state(page, S => S.inbox.filter(e => !e.done).length);
-  ok(open0 > 0 && await count('[data-t="ev-open"]') >= 1 && /to answer/.test(await txt('[data-t="fire"] .ttl')) && await page.$eval('[data-t="fire"]', e => e.classList.contains('hot')), 'an inbox matter on the desk, in a red window, by week ' + await state(page, S => S.week));
+  ok(open0 > 0 && await count('[data-t="ev-open"]') >= 1 && await count('.dk-todo .dk-row.first[data-t="matter"]') === 1, 'an inbox matter heads the to-do list with the red edge, by week ' + await state(page, S => S.week));
   ok(/\((\d+)\)/.test(await txt('.menu [data-v="office"]')), 'menu badge counts the inbox');
-  ok(await page.evaluate(() => { const f = document.querySelector('[data-t="fire"]'), t = document.querySelector('.tasks'); return !!f && !!t && f.getBoundingClientRect().left < t.getBoundingClientRect().left && f.querySelectorAll('[data-t="ev-open"]').length >= 1; }), 'what needs an answer is first on the desk, above the tasks, with its answers');
+  ok(await page.evaluate(() => { const r = [...document.querySelectorAll('.dk-todo .dk-row')]; return r.length > 0 && r[0].getAttribute('data-t') === 'matter'; }), 'what needs an answer comes first on the to-do list');
   await page.click('[data-t="ev-open"]'); await page.waitForSelector('.win [data-t="ev"]');
   ok(await count('.win [data-t="ev"]') >= 2 && (await txt('.win [data-t="ev-text"]')).length > 20, 'Answer opens the matter in a pop-up with a button for each answer');
   await step('inbox waiting', 'inbox');
   await page.keyboard.press('Escape');
   await state(page, runShows); await redraw(page);
   open0 = await state(page, S => S.inbox.filter(e => !e.done).length);   // a show can leave one more matter
-  ok(await page.$eval('[data-t="endweek"]', e => e.disabled) && /Answer what is on your desk first/.test(await txt('[data-t="next"]')) && await count('[data-t="book-next"]') === 0, 'cannot end the week with the inbox open');
+  ok(await page.$eval('[data-t="advance"]', e => e.getAttribute('data-v')) !== 'week' && /to-do list is done/.test(await txt('[data-t="book-wait"]')), 'cannot end the week with the inbox open');
   while (open0 > 0) {
     if (!(await page.$('.win [data-t="ev"]'))) await page.click('[data-t="ev-open"]');
     await page.click('.win [data-t="ev"]');
@@ -187,7 +187,7 @@ async function run(mode) {
   }
   ok(await count('[data-t="ev"]') === 0 && await state(page, S => S.inbox.some(e => e.done && e.result)), 'answered events show a result');
   await step('inbox answered', 'answered');
-  await page.click('[data-t="endweek"]'); await page.waitForSelector('.win');
+  await page.click('[data-t="advance"][data-v="week"]'); await page.waitForSelector('.win');
   ok(await page.$eval('.win .colchart', e => e.querySelectorAll('svg rect').length >= 3), 'chart has bars for several weeks');
   await step('week closed again', 'weekclosed');
   await page.click('#modal-ok');
@@ -224,8 +224,8 @@ async function remote() {
   // inside one frame leave it on the old control
   for (const id of ['desk', 'backstage', 'career']) { await go(page, id); await settle(); const o = await overflow(page); ok(o === '', 'tv ' + id + ': ' + o); }
   await go(page, 'desk'); await settle();
-  ok(await focus() === 'book-next', 'the desk starts on Book the next show: ' + await focus());
-  await key('ArrowLeft'); ok(await page.evaluate(() => !!document.activeElement.closest('[data-t="task-win"]')), 'left from the button reaches this week’s tasks: ' + await focus());
+  ok(await page.evaluate(() => !!document.activeElement && document.activeElement.hasAttribute('data-home') && !!document.activeElement.closest('[data-t="fire"]')), 'the desk starts on the first thing to do: ' + await focus());
+  await key('ArrowLeft'); ok(await page.evaluate(() => !!document.activeElement.closest('[data-t="next"]')), 'left from the to-do list reaches the next show: ' + await focus());
   await go(page, 'backstage'); await settle();
   await press('[data-t="bs-act"][data-k="trainer"][data-v="treat"]');
   ok(await page.$$eval('.win', L => L.length) === 1 && /^(bs|modal-close|bs-do)/.test(await focus()), 'OK on a thing to do opens its pop-up and the highlight goes in: ' + await focus());
@@ -238,7 +238,7 @@ async function remote() {
   ok(await state(page, S => S.court.length) === 0 && await focus() !== 'nothing', 'after a ruling, the highlight is not lost: ' + await focus());
   let weeks = 0; while (weeks++ < 14 && !(await state(page, S => S.over || S.inbox.some(e => !e.done)))) await state(page, playWeek);
   await go(page, 'career'); await settle(); await go(page, 'desk'); await redraw(page); await settle();   // arriving from another page
-  ok(await focus() === 'book-next', 'the desk starts on Book the next show, not on an answer: ' + await focus());
+  ok(await focus() === 'ev-open', 'the desk starts on the first thing to do, the matter to answer: ' + await focus());
   let left = await page.$$eval('[data-t="ev-open"]', L => L.length); ok(left > 0, 'tv: an inbox matter to answer');
   await press('[data-t="ev-open"]'); ok(await focus() === 'modal-close', 'the matter opens with the highlight on Not now, never on an answer: ' + await focus());
   while (left > 0) { await press('.win [data-t="ev"]'); left = await state(page, S => S.inbox.filter(e => !e.done).length); ok(await focus() === (left ? 'ev-next' : 'modal-close'), 'after an answer the highlight moves on: ' + await focus()); if (left) { await press('[data-t="ev-next"]'); await settle(); } }
