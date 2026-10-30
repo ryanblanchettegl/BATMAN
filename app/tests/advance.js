@@ -90,7 +90,7 @@ async function run(mode) {
     ok(mode, 'on an empty card it says how to start', /Suggest/.test(await flash(page)), await flash(page));
     await page.click('[data-t="suggest"]');
     a = await adv(page);
-    ok(mode, 'with a card that can run, it says Run show, in green', a.k === 'run' && /^RUN SHOW$/i.test(a.t) && toned(a, 'air') && /Run Wednesday Night Folio/.test(a.tip), JSON.stringify(a));
+    ok(mode, 'with a card that can run, it says Ring bell, in green', a.k === 'run' && /^RING BELL$/i.test(a.t) && toned(a, 'air') && /Ring the bell for Wednesday Night Folio/.test(a.tip), JSON.stringify(a));
     await over('the card');
     await go(page, 'roster');
     ok(mode, 'away from the card it offers to open it', /^OPEN CARD$/i.test((await adv(page)).t), (await adv(page)).t);

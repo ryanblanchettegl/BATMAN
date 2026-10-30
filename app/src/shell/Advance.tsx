@@ -28,6 +28,8 @@ export function advanceNow(): { short: string; label: string; day: string; k: st
   if (A.k !== 'over' && nightOpen()) return book().report != null ? { short: 'Recap', label: 'Back to After the show', day: 'After the show', k: 'desk', tone: 'home', why: [] }
     : { short: 'Office', label: 'On to the Office. Before the show is the first thing on your desk.', day: 'After the show', k: 'desk', tone: 'home', why: [] };
   if (A.k === 'run' && ui.page !== 'booking') return { short: 'Open card', label: 'The card for ' + sh.name + ' is ready. Open it, then run the show.', day: A.day, k: 'book', tone: 'go', why: [] };
+  // on the Clock Wall an empty card is all open time (Research/docs/plans/booking-clock-wall.md, section 2)
+  if (A.k === 'book' && ui.page === 'booking' && !S.card.length) { const ck = E.clock(S); return { short: 'Fill ' + (ck.budget - ck.total) + ' min', label: A.label, day: A.day, k: A.k, tone: 'go', why: A.why }; }
   return { short: A.short, label: A.label, day: A.day, k: A.k, tone: (A.tone || 'go') as Tone, why: A.why };
 }
 /** Go to the desk and point at this week's tasks: the list comes into view, the ones that cannot be skipped flash,
