@@ -1,6 +1,6 @@
 # The spine: promises, previews and three clocks (blueprint)
 
-Status: rule 9d gate 1 written 30 October 2026; gate 2 (the vault) seeded below; no code until Ryan answers and says go. Merges TASKS.md 0ao moves 2, 3 and 4. MASTER §7 row 1. Director tag: problem and chance (a promise coming due is both). Replaces: `S.quests` promises (recount with `grep -rho "S.quests" engine | wc -l`; 56 to 59 depending on the pattern), open threads (`E.openThreads`), promised-win flags on the run sheet, booking demands 0aq (become ledger kinds).
+Status: gate 1 written and gate 2 answered by Ryan, 30 October 2026 (all 13 questions); gate 3, Ryan's go-ahead: "Go, after L1"; no code until Ryan answers and says go. Merges TASKS.md 0ao moves 2, 3 and 4. MASTER §7 row 1. Director tag: problem and chance (a promise coming due is both). Replaces: `S.quests` promises (recount with `grep -rho "S.quests" engine | wc -l`; 56 to 59 depending on the pattern), open threads (`E.openThreads`), promised-win flags on the run sheet, booking demands 0aq (become ledger kinds).
 
 ## 1. Aim
 One readable line from every choice to every result. Every promise the game makes is a ledger line with a payoff window. The card is the act of paying them off. The week, the month and the era each end on a ceremony that reads the ledger. "One more turn" lives in a line that is always about to come due.
@@ -38,7 +38,7 @@ Paid inside `ripening` pays most; paid early (only for kinds whose ripe week is 
 |---|---|---|
 | week | after each show | the grade arrives as a stamp beside the lines paid and broken |
 | month | the big event | **The magazine** (0af): a cover and three stories, each a line paid or broken this month in words; the player picks the cover story (one of three): that act gets next month's crowd lean, and the two left off the cover lose 2 morale each only if they are jealous of the cover act (`jealOf()` in `engine/66-relations.ts`; shown on the choice before it is made), never the same act two months running; hands on: one new line from the cover act |
-| era | the flagship | **The year's verdict**: kept and broken by kind, the arc's payoff, the owner's judgment in a letter; the player answers one question from the owner (a goal for next year, three choices), which opens next year's first stake-3 line |
+| era | the flagship | **The year's verdict** (a year with no promises made costs owner trust −3, Ryan Q10): kept and broken by kind, the arc's payoff, the owner's judgment in a letter; the player answers one question from the owner (a goal for next year, three choices), which opens next year's first stake-3 line |
 
 ## 6. Balance
 **Weights.** Stake 2 is today's quest weights (`engine/40-week.ts`: a broken title shot −18 morale, a broken win −12 and momentum −2). Kept wins pay +4 to +8 morale across today's sites (e.g. `engine/34-night.ts` +4 and +6); stake 2 takes +6, the middle, and `test-balance.js` decides if it moves. Stake 1 is half, stake 3 is one and a half.
@@ -46,7 +46,7 @@ Paid inside `ripening` pays most; paid early (only for kinds whose ripe week is 
 | outcome | morale (each in `who`) | momentum `w.mom` | owner trust `S.trust` | popularity `P.image` |
 |---|---|---|---|---|
 | paid while ripening | +6 × s/2 | +1 × s/2 | +1 × s/2 | +0.3 × s/2 (crowd lines only) |
-| paid early | +3 × s/2 | 0 | 0 | 0 |
+| paid early | +3 × s/2 | 0 | 0 | 0, and the show's crowd score −0.5 (Ryan, Q6) |
 | broken | −12 × s/2 (title shot −18) | −2 × s/2 (shot and win alike, as today) | −2 × s/2 | −0.3 × s/2 (crowd lines only) |
 | expired | 0 | 0 | 0 | 0 |
 
@@ -79,19 +79,19 @@ Side effects that move too: the release filter (`engine/40-week.ts:20`, drops a 
 
 ## 8. Question vault (gate 2, asked one at a time, in this order)
 **Feel**
-1. Should a broken promise ever be forgiven without a cost (a good reason, a hurt wrestler), or is every break remembered? *Default: forgiven only for injury or a rival's signing (it expires).*
-2. When a broken promise comes back on a big night (the star walks out), should the player get a warning a week ahead? *Default: yes, one line on the desk the week before.*
+1. Should a broken promise ever be forgiven without a cost (a good reason, a hurt wrestler), or is every break remembered? *Default: forgiven only for injury or a rival's signing (it expires).* **Ryan, 30 Oct: Only injury or a rival's signing (default).**
+2. When a broken promise comes back on a big night (the star walks out), should the player get a warning a week ahead? *Default: yes, one line on the desk the week before.* **Ryan, 30 Oct: A week ahead (default).**
 **Limits and exploits**
-3. How many open lines at most before the game stops offering new ones: five, eight, or no cap? *Default: eight shown to the player; at most 40 kept in the save (§7).*
-4. Can one card pay several lines at once (one match paying a win and a feud ending), and should that pay more or the same? *Default if unanswered: yes, each pays its own weight, no bonus.*
-5. Two lines that conflict (paying one breaks another): show the clash on the card in advance, or let the player find it? *Default: shown as a pencil mark (preview before consequence).*
-6. Paying early is worth less. Should it also annoy the crowd, so it is never the safe move? *Default: no crowd cost; the lower pay is enough.*
-7. Expired lines cost nothing. Could a player release a wrestler to escape a promise? Should that count as broken? *Default: a release by the booker counts as broken; only injury, retirement or a rival's signing expire.*
+3. How many open lines at most before the game stops offering new ones: five, eight, or no cap? *Default: eight shown to the player; at most 40 kept in the save (§7).* **Ryan, 30 Oct: Eight (default).**
+4. Can one card pay several lines at once (one match paying a win and a feud ending), and should that pay more or the same? *Default if unanswered: yes, each pays its own weight, no bonus.* **Ryan, 30 Oct: Each pays its own, no bonus (default).**
+5. Two lines that conflict (paying one breaks another): show the clash on the card in advance, or let the player find it? *Default: shown as a pencil mark (preview before consequence).* **Ryan, 30 Oct: Show it on the card (default).**
+6. Paying early is worth less. Should it also annoy the crowd, so it is never the safe move? *Default: no crowd cost; the lower pay is enough.* **Ryan, 30 Oct: Small crowd cost: a rushed payoff also dents the show's crowd reaction a little.**
+7. Expired lines cost nothing. Could a player release a wrestler to escape a promise? Should that count as broken? *Default: a release by the booker counts as broken; only injury, retirement or a rival's signing expire.* **Ryan, 30 Oct: Counts as broken (default).**
 **Edges**
-8. A line whose wrestler turns, is hurt, or leaves mid-window: expire it, move it, or let the player choose? *Default: hurt or left expires; a turn keeps the line.*
-9. Can a line open in the middle of a show (a call on the air promising a rematch)? *Default: yes; it shows on After the show.*
-10. The year's verdict with no lines kept or broken at all: a neutral year, or a warning from the owner? *Default: a neutral year with the owner's warning letter.*
-13. Should leaving an act off the magazine cover ever cost morale? *Default: only for acts jealous of the cover act, shown before the pick.*
+8. A line whose wrestler turns, is hurt, or leaves mid-window: expire it, move it, or let the player choose? *Default: hurt or left expires; a turn keeps the line.* **Ryan, 30 Oct: Hurt or left expires; a turn keeps it (default).**
+9. Can a line open in the middle of a show (a call on the air promising a rematch)? *Default: yes; it shows on After the show.* **Ryan, 30 Oct: Yes, shown on After the show (default).**
+10. The year's verdict with no lines kept or broken at all: a neutral year, or a warning from the owner? *Default: a neutral year with the owner's warning letter.* **Ryan, 30 Oct: Counts against you: a year with no promises costs owner trust.**
+13. Should leaving an act off the magazine cover ever cost morale? *Default: only for acts jealous of the cover act, shown before the pick.* **Ryan, 30 Oct: Only acts jealous of the cover act, shown before the pick (default).**
 **The world**
-11. Should rival bookers keep ledgers the player can see on the Web, with their broken promises as news? *Default: not in the first build; later on the Web.*
-12. Should wrestlers with good memory (traits later) remember a broken promise longer than others? *Default: not until traits (0ah) exist.*
+11. Should rival bookers keep ledgers the player can see on the Web, with their broken promises as news? *Default: not in the first build; later on the Web.* **Ryan, 30 Oct: Later, on the Web (default).**
+12. Should wrestlers with good memory (traits later) remember a broken promise longer than others? *Default: not until traits (0ah) exist.* **Ryan, 30 Oct: After traits exist (default).**
