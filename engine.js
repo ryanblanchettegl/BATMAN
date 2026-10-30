@@ -12119,11 +12119,11 @@
       { t: "{w} has been on the defensive all match, but here comes the comeback!", if: function(c) {
         return c.k === "comeback";
       } },
-      { t: "{a} hits the {fa}, but {b} rolls to the floor before the cover!", if: function(c) {
+      { t: "{a} hits {fa}, but {b} rolls to the floor before the cover!", if: function(c) {
         return !!c.fa && c.hot;
       } },
       // no cover: near falls only come from a finisher the engine saw kicked out of
-      { t: "{b} goes for the {fb}, but {a} slips out of it!", if: function(c) {
+      { t: "{b} goes for {fb}, but {a} slips out of it!", if: function(c) {
         return !!c.fb;
       } },
       { t: "Both of them are down, {p}. The referee starts to count.", if: function(c) {
@@ -12161,8 +12161,8 @@
       small: srt[1].name,
       am: pk(L.MOVES[A.style] || L.MOVES.A, "am"),
       bm: pk(L.MOVES[B.style] || L.MOVES.A, "bm"),
-      fa: A.fin || null,
-      fb: B.fin || null,
+      fa: A.fin ? /^the /i.test(A.fin) ? A.fin : "the " + A.fin : null,
+      fb: B.fin ? /^the /i.test(B.fin) ? B.fin : "the " + B.fin : null,
       hot: x.MQ >= 72 && x.mins >= 12
     };
     return { k, intro: gram(L.GR_SHAPE, "intro", c, hk + "i"), spot: x.mins > 8 && k !== "squash" ? gram(L.GR_SHAPE, "spot", c, hk + "s") : null, late: x.mins >= 12 && k !== "squash" ? gram(L.GR_SHAPE, "late", c, hk + "l") : null };
