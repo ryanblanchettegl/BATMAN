@@ -39,9 +39,12 @@ export function settle(S,P){
 E.endWeek=function(S){
   if(S.over)return;
   var PL=S.promos[S.player];
+  $L.czMark(S,'week:rival shows');
   S.order.forEach(function(pid){if(pid===S.player)return;var P=S.promos[pid];weekShows(S,P).forEach(function(sh){var card=autoBook(S,P,sh);if(card.length>=3)runShow(S,P,sh,card);});});
+  $L.czMark(S,'week:books');
   S.order.forEach(function(pid){var P=S.promos[pid],row=settle(S,P);if(pid===S.player)S.fin=row;P.mer=row.merch;P.neg=P.cash<0?(P.neg||0)+1:0;});
   // roster upkeep
+  $L.czMark(S,'week:roster upkeep');
   var top={};S.order.forEach(function(pid){var o=rosterOf(S,pid).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;});top[pid]=o[Math.floor(o.length/3)]||0;});
   S.w.forEach(function(w){
     if(w.promo==='FA')return;var P=S.promos[w.promo],mine=w.promo===S.player;
@@ -61,12 +64,14 @@ E.endWeek=function(S){
     }
   });
   // feuds cool off if you leave them alone
+  $L.czMark(S,'week:feuds');
   activeFeuds(S).forEach(function(f){
     if(f.last<S.week)f.heat=Math.max(0,f.heat-3);
     feudFizzle(S,f);   // no heat for three weeks, or left on the shelf too long (src/21-living.js)
   });
   var done=S.feuds.filter(function(f){return f.res;});if(done.length>12){var drop=done.slice(0,done.length-12);S.feuds=S.feuds.filter(function(f){return drop.indexOf(f)<0;});}
   // promises come due
+  $L.czMark(S,'week:promises');
   S.quests.slice().forEach(function(q){
     if(q.due>S.week)return;
     if(QEND[q.type])QEND[q.type](S,q);
@@ -74,6 +79,7 @@ E.endWeek=function(S){
     dropQuest(S,q);
   });
   // rivals pick up free agents
+  $L.czMark(S,'week:rival hiring');
   S.order.forEach(function(pid){
     if(pid===S.player)return;var P=S.promos[pid],n=rosterOf(S,pid).length,short=(P.size0||n)-n;
     if(!chance(S,short>=3?0.6:0.2))return;
@@ -82,13 +88,16 @@ E.endWeek=function(S){
     var fa=S.w.filter(function(w){return w.promo==='FA'&&!w.rt&&!w.nw&&(!M.gender||w.g===M.gender)&&!(w.cut&&w.cut.from===pid&&S.week-w.cut.w<52)&&w.ovr<=P.image+(M.reach?M.reach-15:10)&&(short>=3||w.ovr>=P.image-45||(w.age<=24&&w.pot>=80));}).sort(function(a,b){return sc(b)-sc(a);});
     for(var k=0;k<(short>=8?2:1)&&k<fa.length;k++){joinCompany(S,fa[k],P);if(fa[k].ovr>=50)$L.news(S,'contract',P.name+' signed free agent '+fa[k].name+'.');}
   });
+  $L.czEndPhases(S);
   WEEKX.forEach(function(fn){fn(S);});
+  $L.czMark(S,'week:next week');
   var k,keys=Object.keys(S.recent);if(keys.length>4000)for(k=0;k<keys.length;k++)if(S.week-S.recent[keys[k]]>12)delete S.recent[keys[k]];
   if(S.week>=48)award(S,'ACH_YEAR');
   if(PL.image>=PL.image0+5)award(S,'ACH_IMAGE_UP');
   if(S.order.every(function(pid){return pid===S.player||S.promos[pid].image<PL.image;}))award(S,'ACH_NO1');
   if(PL.neg>=6){S.over={why:'bankrupt',week:S.week};award(S,'ACH_BROKE');$L.news(S,'world',PL.name+' has run out of money.');return;}
   S.week++;startWeek(S);
+  $L.czEndPhases(S);
 };
 
 /* ---------- the office: events with choices ---------- */

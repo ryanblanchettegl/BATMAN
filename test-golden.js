@@ -14,7 +14,7 @@ function run(id, seed) {
     if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
     while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
     E.endWeek(S);
-    if (wk % 10 === 0 || S.over) marks.push(wk + ':' + sha(JSON.stringify(S, (k, v) => k === 'dir' ? undefined : v)));   // the Director's reading (step 1) is left out until it changes play
+    if (wk % 10 === 0 || S.over) marks.push(wk + ':' + sha(JSON.stringify(S, (k, v) => k === 'dir' || k === 'cz' ? undefined : v)));   // the Director's reading and the cause log (S.cz) only read the game, so they are left out
   }
   return marks;
 }

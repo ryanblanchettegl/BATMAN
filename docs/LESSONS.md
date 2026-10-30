@@ -10,3 +10,5 @@ Format: date · what went wrong or was wasted · the rule or skill that prevents
 - 30 Oct · calibration set included the plan being judged · calibrate only on frozen, finished code changes.
 - 30 Oct · sized a refactor by guess ("about 8 modules"); real was 22 files and 40 writes · count write sites with grep before sizing any refactor.
 - 30 Oct · a plan claimed Suggest never pays promises; the engine already does · read the current code path before stating how a system behaves.
+- 30 Oct · a coverage test read 100% because the instrument covered everything by construction · every measurement test needs a case that must fail (inject a change outside the instrument).
+- 30 Oct · a cleanup `pkill -f <pattern>` matched its own shell and killed the run · never pkill by a pattern that appears in the same command line; use the background task id.

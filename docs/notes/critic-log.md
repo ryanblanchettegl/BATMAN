@@ -23,3 +23,6 @@
 | 30 Oct | the plan | 9 (critic A) | 8.5 | Suggest books shots; early pay per kind; cover cap; 3-line tie-break |
 | 30 Oct | the plan | 9 (critic B) | 8.6 | stake rules; debut/demand windows; cover cost tied to ego |
 | 30 Oct | the plan | 9 median | 8.55 | PASSED; fixes folded in |
+| 30 Oct | cause log (L1) | 1 | 6.8 (7.2 / 6.4) | changes outside frames lost; test could not fail; show booked as decision |
+| 30 Oct | cause log | 2 | 7.7 (7.8 / 7.6) | engine's own E calls booked as decisions; 16 µs a frame |
+| 30 Oct | cause log | 3 | 8.6 (8.6 / 8.6) | PASSED; follow-ups: copy on gap, S.w append-only note, roster mix in trace share |
