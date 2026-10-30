@@ -30,7 +30,8 @@ export function showPool(S,P,show){return eligible(S,P,show).filter(function(w){
 /* the advertised card sells the tickets: star power in the main event, the hottest feud, advertising, anything
    done this week to talk the show up, and the face of the company on the card. The desk's ticket sales use it too. */
 export function cardHype(S,P,show,card,isPl){
-  var n=card.length,key=show.big?'big':show.id,star=n?avg($L.flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0;
+  // an empty spot on a card still being booked (the Clock Wall reads the road while you build) counts for nothing
+  var n=card.length,key=show.big?'big':show.id,top=n?$L.flat(card[n-1].sides).filter(function(id){return id!=null&&S.w[id];}):[],star=top.length?avg(top.map(function(id){return S.w[id].ovr;})):50,heat=0;
   card.forEach(function(m){var ids=$L.flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
   return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl&&show.big&&P.evHype?P.evHype:0)+(isPl?$L.faceHype(S,P,card)+$L.homeHype(S,P,$L.flat(card.map(function(m){return $L.flat(m.sides);}))):0),0.8,1.4)*(isPl&&show.big&&$L.evAfterDark(S,P)?1.08:1);
 }

@@ -8,10 +8,10 @@ import { onBack, onKey } from '../../input';
 import { book } from '../../flow';
 import { ScheduleList, EndWeekBtn } from '../../shared/week';
 import { Head, Panel } from '../../kit';
-import { Card } from './Card';
+import { ClockWall, WallOptWindow, ThreadsWindow } from './Wall';
 import { SegWindow, OpenGuide } from './Segments';
 import { ShapeGuide } from './Shape';
-import { MatchWindow, CouldWindow } from './Side';
+import { MatchWindow, CouldWindow, NotesWindow } from './Side';
 import { Live } from './Live';
 import { After } from './After';
 import { Report, Ladder } from './Report';
@@ -28,7 +28,7 @@ function Booking() {
   if (S.live) return <Live r={S.live.st.rep} />;   // a show on the air comes before everything
   if (r) return b.live && r.venue ? <Live r={r} /> : <Report r={r} />;
   if (b.night && E.afterShow(S)) return <After />;   // where a show ends
-  return weekDone() ? <WeekBooked /> : <Card />;
+  return weekDone() ? <WeekBooked /> : <ClockWall />;
 }
 
 /* ---------- keys and Back ---------- */
@@ -56,4 +56,4 @@ onBack(() => {
 onLeavePage(() => { autoStop(); typer.finish(); const b = book(); b.report = null; if (!(G.S && G.S.live)) b.live = null; });
 
 export const pages: Record<string, () => ComponentChildren> = { booking: Booking };
-export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { matchwin: MatchWindow, could: CouldWindow, segwin: SegWindow, shapeguide: ShapeGuide, openguide: OpenGuide, ladder: Ladder };
+export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { matchwin: MatchWindow, could: CouldWindow, segwin: SegWindow, shapeguide: ShapeGuide, openguide: OpenGuide, ladder: Ladder, wallopt: WallOptWindow, threads: ThreadsWindow, notes: NotesWindow };

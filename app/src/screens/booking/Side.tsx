@@ -8,7 +8,7 @@ import { G, act, say, view, slice, openModal, closeModal, Modal } from '../../st
 import { book } from '../../flow';
 import { go } from '../../nav';
 import { Window, Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Btn, Txt, Opt, Group, LightPic } from '../../kit';
-import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run, lockMatch } from './run';
+import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run, lockMatch, onCard } from './run';
 import { Shape } from './Shape';
 import { Editor } from './Editor';
 import { hm, openSeg, CATN, TopTag } from './Segments';
@@ -217,4 +217,15 @@ export function Side(p: { on: OnCard; ck: any }) {
         : <Notes />}
     </div>
   </div>;
+}
+
+/* The Clock Wall keeps the booking notes as small buttons on the right, each opening its pop-up (Ryan's answer 1). */
+export const NOTE_TABS: [string, string][] = [['advice', 'Notes'], ['order', 'Order'], ['clock', 'Clock'], ['promo', 'Promo'], ['feuds', 'Stories'], ['targets', 'Targets']];
+export function preNow(): any { const S = G.S, show = S.queue[S.qi]; return show && S.pre && !S.pre.done && S.pre.key === S.week + ':' + show.id ? S.pre : null; }
+export function PreShowPane() { const pre = preNow(); return pre ? <PreShow pre={pre} /> : null; }
+export function NotesWindow(p: { m: Modal }) {
+  const k = p.m.k as string, on = onCard(), ck = E.clock(G.S), T = E.tournActive(G.S), n = (NOTE_TABS.find(x => x[0] === k) || [k, 'Cup'])[1];
+  return <Window title={n} wide ok="Close"><div data-t="pane" data-v={k}>
+    {k === 'promo' ? <Promo /> : k === 'order' ? <Shape /> : k === 'clock' ? <Clock ck={ck} /> : k === 'feuds' ? <Feuds on={on} per={6} /> : k === 'targets' ? <Targets /> : k === 'tourn' && T ? <TournOwed on={on} /> : <Notes />}
+  </div></Window>;
 }
