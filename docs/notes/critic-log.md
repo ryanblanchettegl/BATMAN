@@ -28,3 +28,5 @@
 | 30 Oct | cause log | 3 | 8.6 (8.6 / 8.6) | PASSED; follow-ups: copy on gap, S.w append-only note, roster mix in trace share |
 | 30 Oct | bot lab (L2) | 1 | 7.3 | booking counted as consequence vs MASTER's definition; partial seasons; desk-words proxy |
 | 30 Oct | bot lab (L2) | 2 | 8.6 | PASSED; follow-ups: low-n flag, report shape test |
+| 31 Oct | bot lab (L3) | 1 | 7.6 | baseline spent no AP; cash gate empty; asGood too broad; answers not swept |
+| 31 Oct | bot lab (L3) | 2 | 8.6 | PASSED; follow-ups: weak loops flagged; outcome test for dead meters still open |
