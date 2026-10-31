@@ -34,7 +34,7 @@ E.deskBoard=function(S){
   // night if there was one, and the match of the night
   var r=S.reports.find(function(x){return x.promo===S.player;}),last=null;
   if(r){var v=E.showVerdict(r.rating,r.exp),best=(r.segs||[]).filter(function(g){return g.k==='match';}).sort(function(a,b){return b.ov-a.ov;})[0];
-    last={name:r.name,city:r.city,grade:E.repGrade(r),word:v.word.w,line:v.line,att:r.att,h2h:r.h2h?{co:r.h2h.co,won:!!r.h2h.won}:null,motn:best?{label:best.label,stars:starG(best.ov)}:null};}
+    last={name:r.name,city:r.city,grade:E.repGrade(r),word:v.word.w,line:v.line,att:r.att,h2h:r.h2h?{co:r.h2h.co,n:r.h2h.n,won:!!r.h2h.won,us:r.h2h.us,them:r.h2h.them}:null,motn:best?{label:best.label,stars:starG(best.ov)}:null};}
   // the grade the last night in each city got, for the labels on the map
   var grades={};Object.keys(S.rdv||{}).forEach(function(c){grades[c]=E.grade(S.rdv[c].cs);});
   var sh=S.queue[S.qi],day=sh?nightOf(sh):'';
@@ -48,5 +48,16 @@ E.deskBoard=function(S){
   return {lv:S.booker?S.booker.lvl:1,rank:A.rank,of:A.of,table:table,mood:room?room.mood.w:'',
     stars:stars.map(function(w){return {id:w.id,ovr:ovr(w),word:word(w),hurt:w.inj>0};}),
     watch:watch.map(function(w){return {id:w.id,ovr:ovr(w),dev:DEV[w.dev||0]};}),
-    owner:owner,big:{name:nb.name,in:nb.week-S.week,label:nb.label,city:bigStop&&bigStop.w===nb.week?bigStop.city:''},last:last,grades:grades,day:day,poster:poster,face:mid?mid.id:null,card:card,week:cal(S.week).label};
+    owner:owner,big:{name:nb.name,in:nb.week-S.week,label:nb.label,city:bigStop&&bigStop.w===nb.week?bigStop.city:'',away:!!(bigStop&&bigStop.w===nb.week&&E.road(S)&&E.road(S).now.city!==bigStop.city)},last:last,grades:grades,day:day,poster:poster,face:mid?mid.id:null,card:card,week:cal(S.week).label};
+};
+
+/* The desk's to-do list, in order: the matters on your desk (a headline first), then the tasks that must be done, then
+   the ones that can wait, then the ones left for another week. Each task has a kind for its button's colour (Bill's
+   answer 4): answer, money or assign. `left` is what must still be done, the number on the list's title. */
+E.deskTodo=function(S){
+  var open=S.inbox.filter(function(e){return !e.done;}).sort(function(a,b){return (b.head?1:0)-(a.head?1:0);}),T=E.tasks(S);
+  var kind=function(t){return t.id==='inbox'?'answer':(t.id==='sponsors'||/^con-/.test(t.id)?'money':'assign');};
+  var L=T.list.filter(function(t){return !(t.id==='inbox'&&open.length);}).map(function(t){return Object.assign({kind:kind(t)},t);});
+  var must=L.filter(function(t){return t.state==='todo';});
+  return {matters:open,must:must,can:L.filter(function(t){return t.state==='optional';}),waved:L.filter(function(t){return t.state==='waved';}),left:open.length+must.length};
 };

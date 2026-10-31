@@ -106,10 +106,20 @@ function drawShape(cv: HTMLCanvasElement, R: any, cw: number, ch: number, dpr: n
   cv.width = W; cv.height = H; cv.style.width = (W / dpr) + 'px'; cv.style.height = (H / dpr) + 'px';
   const x = cv.getContext('2d'); if (!x) return;
   const u = dpr * Math.max(1, Math.min(fit ? 2 : 9, Math.min(W * (fit ? fit.r - fit.l : 1), H * (fit ? fit.b - fit.t : 1)) / dpr / (fit ? 130 : 180)));   // one unit of line and type, grown with the box (on a board, only so far)
-  // the sheet: blue construction paper, blotchy, with flecks of fibre
+  // the sheet: blue construction paper, blotchy, with flecks of fibre. On a board (fit) it is a torn piece from beside the
+  // poster to the edge (the night card is pinned over it), pinned on the board with a shadow under it; the rest of the canvas is left clear.
+  x.save();
+  if (fit) { const sx = W * fit.l + 3 * u, sy = 3 * u, sw2 = W * (1 - fit.l) - 6 * u, sh2 = H - 6 * u, edge: [number, number][] = [], n = 40;
+    for (let i = 0; i < n; i++) edge.push([sx + sw2 * i / n, sy + (hh(i, 41) - .5) * 3 * u]);
+    for (let i = 0; i < n; i++) edge.push([sx + sw2 + (hh(i, 42) - .5) * 3 * u, sy + sh2 * i / n]);
+    for (let i = 0; i < n; i++) edge.push([sx + sw2 * (1 - i / n), sy + sh2 + (hh(i, 43) - .5) * 3 * u]);
+    for (let i = 0; i < n; i++) edge.push([sx + (hh(i, 44) - .5) * 3 * u, sy + sh2 * (1 - i / n)]);
+    x.beginPath(); edge.forEach((q, i) => i ? x.lineTo(q[0], q[1]) : x.moveTo(q[0], q[1])); x.closePath();
+    x.save(); x.shadowColor = 'rgba(0,0,0,.55)'; x.shadowBlur = 8 * dpr; x.shadowOffsetX = 3 * dpr; x.shadowOffsetY = 4 * dpr; x.fillStyle = '#7fa6cf'; x.fill(); x.restore(); x.clip(); }
   x.fillStyle = '#7fa6cf'; x.fillRect(0, 0, W, H);
   for (let i = 0; i < 26; i++) { const g = x.createRadialGradient(hh(i, 1) * W, hh(i, 2) * H, 0, hh(i, 1) * W, hh(i, 2) * H, (0.12 + hh(i, 3) * 0.25) * Math.max(W, H)); g.addColorStop(0, hh(i, 4) < .5 ? 'rgba(255,255,255,.07)' : 'rgba(20,40,80,.07)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H); }
   for (let i = 0; i < W * H / (900 * dpr); i++) { x.fillStyle = hh(i, 7) < .5 ? 'rgba(255,255,255,.18)' : 'rgba(20,40,80,.16)'; const fx = hh(i, 8) * W, fy = hh(i, 9) * H, a = hh(i, 10) * 6.3, l = (2 + hh(i, 11) * 6) * dpr; x.save(); x.translate(fx, fy); x.rotate(a); x.fillRect(0, 0, l, Math.max(1, dpr * .6)); x.restore(); }
+  x.restore();
   // the outline, fitted to the sheet with room for the labels, and cut by hand: each edge in short pieces, a touch off the line
   const F = fit || { l: 0, t: 0, r: 1, b: 1 }, fw = W * (F.r - F.l), fh = H * (F.b - F.t), m = fit ? 0.05 : 0.1, k = Math.min(fw * (1 - 2 * m) / Z.w, fh * (1 - 2 * m) / Z.h), ox = W * F.l + (fw - Z.w * k) / 2, oy = H * F.t + (fh - Z.h * k) / 2;
   const at = (px: number, py: number): [number, number] => [ox + px * k, oy + py * k];

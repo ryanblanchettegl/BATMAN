@@ -30,6 +30,11 @@ ok('last', 'the last show is the newest report of yours: its name, grade and hou
 ok('motn', 'the match of the night is the best match on that show', !D4.last.motn || r.segs.filter(g => g.k === 'match').every(g => g.label === D4.last.motn.label || g.ov <= r.segs.find(x => x.label === D4.last.motn.label).ov));
 ok('grades', 'every city on record has its last grade for the map', Object.keys(S.rdv).length > 0 && Object.keys(S.rdv).every(c => D4.grades[c] === E.grade(S.rdv[c].cs)));
 ok('same', 'the same game gives the same desk twice', JSON.stringify(E.deskBoard(S)) === JSON.stringify(E.deskBoard(S)));
+S.inbox.push({ id: 99001, type: 'x', text: 'A test matter.', choices: ['Yes', 'No'], done: false });
+const TD = E.deskTodo(S);
+ok('todo', 'the to-do list: matters first, the count is what must be done, no inbox task beside the matters', TD.matters.length >= 1 && TD.left === TD.matters.length + TD.must.length && !TD.must.concat(TD.can).some(t => t.id === 'inbox'));
+ok('kinds', 'every task has a kind for its colour: answer, money or assign', TD.must.concat(TD.can, TD.waved).every(t => ['answer', 'money', 'assign'].indexOf(t.kind) >= 0) && TD.must.concat(TD.can).filter(t => t.id === 'sponsors').every(t => t.kind === 'money'));
+S.inbox = S.inbox.filter(e => e.id !== 99001);
 const before = JSON.stringify(S); E.deskBoard(S);
 ok('read', 'it only reads the game', JSON.stringify(S) === before);
 console.log(fails.length ? fails.length + ' failed' : 'all passed'); process.exit(fails.length ? 1 : 0);

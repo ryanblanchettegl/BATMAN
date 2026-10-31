@@ -60,7 +60,7 @@ function Company(p: { D: any }) {
     <div class="dk-grp"><p class="eyebrow">Ones to watch</p>
       {D.watch.slice(0, D.owner ? 2 : 3).map((x: any, i: number) => <button type="button" key={x.id} class="dk-st dk-opt" data-p={8 + i} data-t="desk-watch" data-id={x.id} onClick={() => file(x.id)}><Portrait w={S.w[x.id]} /><span><b>{S.w[x.id].name}</b><br /><span class="muted">{x.dev} {'·'} {x.ovr} now</span></span><span class="dk-up">{'▲'} rising</span></button>)}</div>
     {D.owner ? <div class="dk-own" data-t="desk-owner"><b>The owner</b>{'“'}{D.owner}{'”'}</div> : null}
-    <div class="dk-ev" data-t="desk-big"><span class="eyebrow">Next big event</span> <b>{D.big.name}</b> <span>{inWeeks(D.big.in)}{D.big.city ? ', ' + D.big.city : ''}.</span>
+    <div class="dk-ev" data-t="desk-big"><span class="eyebrow">Next big event</span> <b>{D.big.name}</b> <span>{inWeeks(D.big.in)}{D.big.city ? ', in ' + D.big.city : ''}.{D.big.away ? ' The tour moves there for it.' : ''}</span>
       <span class="dk-opt muted" data-p={20}> Every show until then builds to it.</span></div>
   </Win>;
 }
@@ -68,7 +68,7 @@ function Company(p: { D: any }) {
 /* ---------- middle: the next show ---------- */
 const POSTER = { v: 1 as const, id: 'dkp', name: 'The poster', when: 'any', set: 'stadium', attire: 'primary_ring' as const,
   slots: [{ id: 'A', n: '', role: 'a' as const }, { id: 'B', n: '', role: 'a' as const }, { id: 'C', n: '', role: 'a' as const }],
-  keys: [{ t: 0, figs: { A: { x: -1.6, y: WAIST, r: 0, f: 1, z: 0.4, p: {} }, B: { x: 0, y: WAIST, r: 0, f: 1, z: 0.6, p: {} }, C: { x: 1.6, y: WAIST, r: 0, f: -1, z: 0.4, p: {} } }, props: [], cam: { x: 0, y: -0.05, z: 1.3 } }] } as any;
+  keys: [{ t: 0, figs: { A: { x: -1.6, y: WAIST, r: 0, f: 1, z: 0.4, p: {} }, B: { x: 0, y: WAIST, r: 0, f: 1, z: 0.8, p: {} }, C: { x: 1.6, y: WAIST, r: 0, f: -1, z: 0.4, p: {} } }, props: [], cam: { x: 0, y: -0.05, z: 1.3 } }] } as any;
 function Poster(p: { ids: number[]; name: string; sub: string; big: boolean }) {
   const S = G.S, L = p.ids.map(id => S.w[id]).filter(Boolean) as W[];
   const cast: any = {}; ['A', 'B', 'C'].forEach((k, i) => { if (L[i]) cast[k] = recipeOf(L[i]); });
@@ -85,7 +85,7 @@ function Night(p: { R: any }) {
   return <div class="dk-night" data-t="road-crowd">
     <p class="dk-tix" data-t="road-building"><b class="num">{num(N.sold)}</b> of {num(N.cap)} sold{N.sold >= N.cap ? <b class="good"> Sold out</b> : null}<span class="dk-bar" aria-hidden="true"><i style={{ width: Math.min(100, N.sold / N.cap * 100) + '%' }} /></span></p>
     <p class="dk-venue" data-t="road-city"><b>{venue}</b>{N.big ? <span class="muted">{' · $'}{num(N.seat)} a seat</span> : null}</p>
-    <p data-t="road-mkt">The crowd likes <b>{N.taste}</b>.{bw ? ' ' + bw[0].toUpperCase() + bw.slice(1) + '.' : ''}</p>
+    <p data-t="road-mkt">The crowd likes <b>{N.taste}</b>.{bw ? ' The building: ' + bw + '.' : ''}</p>
     {x ? <p data-t="next-expect">They expect <b>{x.a}</b>: <b>{x.bar}</b> or better.</p> : null}
     {h2h.length ? <div class="dk-h2h" data-t="desk-h2h"><b>Head to head</b>{h2h[0].co}{'’'}s {h2h[0].n} is on the same night.</div> : null}
   </div>;
@@ -125,16 +125,16 @@ function NextShow(p: { D: any }) {
 }
 
 /* ---------- right: to do ---------- */
-/** A button's colour says what kind of thing it does (Bill's answer 4): answer blue, money yellow, everything else
-    (assign, spend, go somewhere) green. Money is told by the task, never by a word in its label. */
-const kindOf = (t: any): 'sm' | 'go' | undefined => t.label === 'Answer' || t.label === 'Read' ? 'sm' : (t.id === 'sponsors' || /^con-/.test(t.id) || t.id === 'tix' ? 'go' : undefined);
+/** A button's colour says what kind of thing it does (Bill's answer 4; E.deskTodo names the kind): answer blue, money
+    yellow, everything else (assign, spend, go somewhere) green. */
+const KIND: Record<string, 'sm' | 'go' | undefined> = { answer: 'sm', money: 'go', assign: undefined };
 function LastShow(p: { L: any }) {
   const L = p.L;
   if (!L) return <div class="dk-last none" data-t="desk-last"><span class="eyebrow">Last show</span><span>No show yet. Your first one is this week.</span></div>;
   return <button type="button" class="dk-last" data-t="night-recap" aria-label={'Last show: ' + L.name + ', graded ' + L.grade + '. Open the recap.'} onClick={() => { if (E.afterShow(G.S)) openNight(); else go('history'); }}>
     <span class="eyebrow">Last show: {L.name}</span>
     <span class="dk-grade">{L.grade}</span>
-    <span class="dk-lt"><b>{L.word}.</b> {num(L.att)} in. {L.h2h ? (L.h2h.won ? 'Beat ' : 'Lost to ') + L.h2h.co + ' on the night.' : <Txt>{L.line}</Txt>}</span>
+    <span class="dk-lt"><b>{L.word}.</b> {num(L.att)} in. {L.h2h ? <>Head to head with {L.h2h.n}: <b>{L.h2h.won ? 'won' : 'lost'}</b>, {num(L.h2h.us)} viewers to {num(L.h2h.them)}.</> : <Txt>{L.line}</Txt>}</span>
     {L.motn ? <span class="dk-motn dk-opt" data-p={5}>Match of the night: {L.motn.label}, <span class="stars">{L.motn.stars}</span></span> : null}
   </button>;
 }
@@ -150,29 +150,30 @@ function Row(p: { t: string; id: string; first: boolean; must: boolean; cls?: st
     {p.pic}<span class="clamp">{p.text}</span><span class="dk-opts">{p.children}</span></div>;
 }
 const dot = (must: boolean) => <span class={'dk-dot' + (must ? ' must' : '')} aria-hidden="true" />;
-/** The to-do list: the matters on your desk first, then this week's tasks, each with the one button that deals with it. */
+/** The to-do list (E.deskTodo): the matters on your desk, then what must be done, then under its own heading what
+    can wait this week, each with the one button that deals with it. */
 function ToDo(p: { L: any }) {
-  const S = G.S, open: any[] = S.inbox.filter((e: any) => !e.done).sort((a: any, b: any) => (b.head ? 1 : 0) - (a.head ? 1 : 0)), T = E.tasks(S);
-  const L: any[] = T.list.filter((t: any) => (t.state === 'todo' || t.state === 'optional') && !(t.id === 'inbox' && open.length)).sort((a: any, b: any) => (a.state === 'todo' ? 0 : 1) - (b.state === 'todo' ? 0 : 1));
-  const left = open.length + T.todo - (open.length && T.list.some((t: any) => t.id === 'inbox' && t.state === 'todo') ? 1 : 0), more = open.length > 3 ? open.length - 3 : 0;
-  const waved: any[] = T.list.filter((t: any) => t.state === 'waved'), M = E.monthReview(S), month = M && M.unread;
-  const rows = Math.min(3, open.length) + L.length + waved.length + (month ? 1 : 0);
+  const S = G.S, TD = E.deskTodo(S), open: any[] = TD.matters, more = open.length > 3 ? open.length - 3 : 0, M = E.monthReview(S), month = M && M.unread;
+  const task = (t: any, i: number, first: boolean) => <Row key={t.id} t="task" id={t.id} first={first} must={t.state === 'todo'} cls={'task ' + t.state} p={14 + i} pic={dot(t.state === 'todo')}
+    text={<>{t.req ? <b class="dk-head">Required. </b> : null}{t.short || <Txt>{t.text}</Txt>}</>}>
+    <Btn kind={KIND[t.kind]} t="task-go" d={first ? { id: t.id, v: t.id, home: '' } : { id: t.id, v: t.id }} tip={t.text} onClick={() => openTask(t)}>{t.label}</Btn>
+    {t.state === 'todo' && t.waive ? <Btn kind="less" cls="dk-later" t="task-wave" d={{ v: t.id }} label={'Not this week: ' + t.text} onClick={() => act(() => { const r = E.taskWave(S, t.id); say(r.msg, { err: !r.ok }); })}>Later</Btn> : null}</Row>;
+  const rows = Math.min(3, open.length) + TD.must.length + TD.can.length + TD.waved.length + (month ? 1 : 0);
   useFocusAfter();
-  return <Win title="To do" right={<span class="dk-count" data-t="desk-count">{left ? String(left) : 'all done'}</span>} area="todo" cls="dk-todo" t="fire">
-    {rows ? <div class="dk-tasks tasks" data-t="task-win"><p class="eyebrow">Before the bell</p>
+  return <Win title="To do" right={<span class="dk-count" data-t="desk-count">{TD.left ? String(TD.left) : 'all done'}</span>} area="todo" cls="dk-todo" t="fire">
+    {rows ? <div class="dk-tasks tasks" data-t="task-win">{TD.left ? <p class="eyebrow">Before the bell</p> : <p class="dk-alldone"><span aria-hidden="true">{'✔'}</span> Nothing must be done.</p>}
       {open.slice(0, 3).map((e: any, i: number) => <Row key={e.id} t="matter" id={e.id} first={!i} must pic={e.w != null && S.w[e.w] ? <Portrait w={S.w[e.w]} /> : dot(true)}
         text={<>{e.head ? <b class="dk-head">Headline. </b> : null}{e.night ? <b class="dk-head">Last night. </b> : null}<Txt>{e.text}</Txt></>}>
         <Btn kind="sm" t="ev-open" d={i ? { id: e.id } : { id: e.id, home: '' }} onClick={() => openModal({ kind: 'matter', id: e.id })}>Answer</Btn></Row>)}
       {more ? <p class="muted dk-more">And {more} more on your desk after {more === 1 ? 'that' : 'those'}.</p> : null}
-      {L.map((t: any, i: number) => <Row key={t.id} t="task" id={t.id} first={!open.length && !i} must={t.state === 'todo'} cls={'task ' + t.state} p={14 + i} pic={dot(t.state === 'todo')}
-        text={<>{t.req ? <b class="dk-head">Required. </b> : null}{t.short || <Txt>{t.text}</Txt>}</>}>
-        <Btn kind={kindOf(t)} t="task-go" d={!open.length && !i ? { id: t.id, v: t.id, home: '' } : { id: t.id, v: t.id }} tip={t.text} onClick={() => openTask(t)}>{t.label}</Btn>
-        {t.state === 'todo' && t.waive ? <Btn kind="less" cls="dk-later" t="task-wave" d={{ v: t.id }} label={'Not this week: ' + t.text} onClick={() => act(() => { const r = E.taskWave(S, t.id); say(r.msg, { err: !r.ok }); })}>Later</Btn> : null}</Row>)}
-      {month ? <Row t="desk-month" id="month" first={false} must={false} p={13} pic={dot(false)} text={<span data-t="pm-line">{M.r.label} in review: what went well, what went badly, and why.</span>}>
-        <Btn kind="sm" t="pm-open" onClick={() => { act(() => { E.readMonth(S); }); openModal({ kind: 'pmmonth' }); }}>Read</Btn></Row> : null}
-      {waved.map((t: any) => <Row key={t.id} t="task" id={t.id} first={false} must={false} cls="task waved" p={12} pic={dot(false)} text={<span class="muted">Not this week: {t.short || t.text}</span>}>
-        <Btn kind="less" cls="dk-later" t="task-unwave" d={{ v: t.id }} onClick={() => act(() => { E.taskUnwave(S, t.id); })}>Put back</Btn></Row>)}
+      {TD.must.map((t: any, i: number) => task(t, i, !open.length && !i))}
       <p class="muted dk-more dk-gone" data-t="todo-left" />
+      {TD.can.length || TD.waved.length || month ? <div class="dk-grp"><p class="eyebrow dk-can">When you can</p>
+        {TD.can.map((t: any, i: number) => task(t, i, !open.length && !TD.must.length && !i))}
+        {month ? <Row t="desk-month" id="month" first={false} must={false} p={13} pic={dot(false)} text={<span data-t="pm-line">{M.r.label} in review: what went well, what went badly, and why.</span>}>
+          <Btn kind="sm" t="pm-open" onClick={() => { act(() => { E.readMonth(S); }); openModal({ kind: 'pmmonth' }); }}>Read</Btn></Row> : null}
+        {TD.waved.map((t: any) => <Row key={t.id} t="task" id={t.id} first={false} must={false} cls="task waved" p={12} pic={dot(false)} text={<span class="muted">Not this week: {t.short || t.text}</span>}>
+          <Btn kind="less" cls="dk-later" t="task-unwave" d={{ v: t.id }} onClick={() => act(() => { E.taskUnwave(S, t.id); })}>Put back</Btn></Row>)}</div> : null}
     </div> : <p class="dk-alldone" data-t="task-win"><span aria-hidden="true">{'✔'}</span> All done for this week.</p>}
     <div class="dk-after"><LastShow L={p.L} /><Feed /></div>
   </Win>;

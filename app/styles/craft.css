@@ -633,3 +633,7 @@ svg.rangebar{width:9em;height:.8em;vertical-align:middle;margin:0 .4em}
 .dk-row .clamp{grid-column:2}.dk-row .dk-opts{grid-column:2;justify-self:end}
 .dk-after{margin-top:auto;display:flex;flex-direction:column;gap:.4em;flex:none}
 p.dk-post{cursor:default}
+/* round 3: the board is black card with the sea pinned on it as a torn sheet; card lines wrap instead of cutting */
+.dk-board{background:var(--lk-black,#1d1d20) 0 0/400px,#1d1d20}
+.dk-ln span{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.dk-can{color:#1f2a55}
