@@ -20,7 +20,7 @@ MASTER planned a `meterAdd()` funnel at every write: about 22 files for cash and
 - Each weekly hook (`WEEKX`) and show hook (`SHOWX`) is a frame named after the first engine function it calls (`week:pressWeek`).
 - Phase markers inside `E.endWeek` name its parts: rival shows, the books, roster upkeep, feuds, promises, rival hiring, next week.
 - **Nothing is lost:** a change made outside every frame is booked as `untracked` when the next top-level frame opens.
-- **Morale is split:** the roster mean moves either because moods changed (people on the roster at both ends of a frame) or because people joined or left. The second part is booked as `roster mix`.
+- **Morale is split:** the roster mean moves either because moods changed (people on the roster at both ends of a frame) or because people joined or left. The second part is booked as `roster mix:<top-level cause>` and is a decision when that cause is (a release by the player).
 - A frame books to the week it opened, so a season's last week stays in that season.
 - Open frames live on `S` as a property that is never saved; a frame left open is closed and counted in `bad`.
 The log only reads the game, so `test-golden.js` stays identical; its state lives in `S.cz`, left out of the golden fingerprint like the Director's `S.dir`. It never calls `rnd(S)`.
@@ -35,7 +35,7 @@ Cost: one roster scan per top-level frame (about 8 µs; a redraw of about 100 ca
 - `E.causeInfo(S)` returns the season's table for the bot report (row L2).
 
 ## For the bot report
-Trace share counts each cause once. `roster mix` is not a decision on its own: the bot report (row L2) books it to the decision that caused it when one did (a signing or a release under `d:*` moves the roster in the same top-level frame), and otherwise counts it as a consequence. It is never added on top of the mood change, so nothing is counted twice.
+Trace share counts each cause once. Roster mix is booked under the top-level action it happened in (`roster mix:d:release`, `roster mix:other`), so it counts as a decision exactly when that action was one. It is never added on top of the mood change, so nothing is counted twice.
 
 ## Handoff
 Row L2 reads `E.causeInfo` to compute trace share; the spine (row 1) adds ledger lines as decisions.

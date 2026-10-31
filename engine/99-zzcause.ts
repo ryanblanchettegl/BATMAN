@@ -87,7 +87,9 @@ export function czClose(S: any) {
   const sp = split(f.at, now), kidMix = f.kidMix || 0, mix = sp[1] - kidMix;
   own[3] -= mix;
   book(S, f.wk, f.cause, f.dec, own);
-  if (mix) book(S, f.wk, 'roster mix', false, [0, 0, 0, mix]);
+  // roster mix belongs to the top-level action it happened under: a release by the player is the player's decision
+  const root = st.length ? st[0] : f;
+  if (mix) book(S, f.wk, 'roster mix:' + root.cause, root.dec, [0, 0, 0, mix]);
   const up = st[st.length - 1];
   if (up) { for (let k = 0; k < 4; k++) up.kid[k] += d[k]; up.kidMix = (up.kidMix || 0) + sp[1]; }
   else { zone(S, S.week).r = now.v; if (!S._czl) Object.defineProperty(S, '_czl', { value: null, enumerable: false, writable: true }); S._czl = { s: now, w: S.w }; }

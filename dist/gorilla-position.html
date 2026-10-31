@@ -42320,7 +42320,8 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     const sp = split(f.at, now), kidMix = f.kidMix || 0, mix = sp[1] - kidMix;
     own[3] -= mix;
     book(S, f.wk, f.cause, f.dec, own);
-    if (mix) book(S, f.wk, "roster mix", false, [0, 0, 0, mix]);
+    const root = st.length ? st[0] : f;
+    if (mix) book(S, f.wk, "roster mix:" + root.cause, root.dec, [0, 0, 0, mix]);
     const up = st[st.length - 1];
     if (up) {
       for (let k = 0; k < 4; k++) up.kid[k] += d[k];

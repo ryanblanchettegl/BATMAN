@@ -4,7 +4,7 @@
    3. every frame closes (bad = 0) and no hook falls back to a number for a name;
    4. a change made outside every frame shows up as "untracked" (the log can fail);
    5. a known action lands under its own label: releasing a wrestler books trust and mood to d:release;
-   6. a signing or a release moves morale through "roster mix", not mood.
+   6. a signing or a release moves morale through "roster mix:<the action>", not mood, and counts as that decision.
    errs 0, NaN 0.  Run: node test-cause.js   (WEEKS=60, SEEDS=3,11,29) */
 require('./engine.js');
 const fs = require('fs'), E = globalThis.GP;
@@ -62,7 +62,7 @@ ok(csN > 0, 'no crowd scores recorded');
   E.release(S, w.id);
   const after = E.causeInfo(S).sum, dt = m => ((after[m] || {})['d:release'] || [0])[0] - ((before[m] || {})['d:release'] || [0])[0];
   ok(dt('trust') !== 0 || dt('cash') !== 0, 'releasing a wrestler booked nothing to d:release');
-  ok(((after.morale || {})['roster mix'] || [0, 0])[1] > ((before.morale || {})['roster mix'] || [0, 0])[1], 'a release did not move morale through roster mix');
+  ok(((after.morale || {})['roster mix:d:release'] || [0, 0])[1] > ((before.morale || {})['roster mix:d:release'] || [0, 0])[1], 'a release did not move morale through roster mix');
   ok(E.causeInfo(S).dec['d:release'] === 1 && !E.causeInfo(S).dec['show:night'], 'decisions are not marked right');
 }
 // 8: a top-level call that changes nothing costs little (a screen redraw makes many)
