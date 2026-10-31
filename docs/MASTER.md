@@ -98,6 +98,7 @@ Common to all: engine first (`engine/NN-name.ts`, `E.*`, headless test 60 weeks 
 | Pages | `design:design-critique`, `design:accessibility-review`, `design:ux-copy` |
 | Ryan's play notes | `design:research-synthesis` |
 | Visual concept pages, picker, live page | `Artifact` (load `artifact-design` first; picker via `artifact-capabilities`) |
+| Design review of a blueprint | `egm` plugin (Google's Elephant-Goldfish Model, Apache 2.0; `.claude/settings.json`): `/egm:egm-brainstorm`, `/egm:egm-draft`, `/egm:egm-review` (fresh reviewers: comprehension, antagonistic, readiness) |
 | Wide code search | one `Explore` agent with a precise question; never several |
 | Run/screenshot the game | `run` skill, Playwright (pre-installed; `NODE_PATH` per `docs/notes/commands.md`) |
 | GitHub | GitHub MCP tools (`mcp__github__*`) per the session's instructions; Figma/Canva/Notion etc. need auth |
