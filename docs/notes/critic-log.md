@@ -30,3 +30,8 @@
 | 30 Oct | bot lab (L2) | 2 | 8.6 | PASSED; follow-ups: low-n flag, report shape test |
 | 31 Oct | bot lab (L3) | 1 | 7.6 | baseline spent no AP; cash gate empty; asGood too broad; answers not swept |
 | 31 Oct | bot lab (L3) | 2 | 8.6 | PASSED; follow-ups: weak loops flagged; outcome test for dead meters still open |
+| 31 Oct | Roster look A/B/C | 1 | A 6.7 · B 5.8 · C 7.8 | too clean; 5c broken in B/C; dead space |
+| 31 Oct | Roster look A/B/C | 2 | A 6.9 · B 7.6 · C 8.2 | gaps; answers split across panes |
+| 31 Oct | Roster look A/B/C | 3 | A 7.5 · B 8.0 · C 8.45 | cap reached; Ryan: round 4, C with B's by-spot as a toggle |
+| 31 Oct | Roster look 1/2/3 | 4 | 1 7.8 · 2 7.1 · 3 8.2 | shared repeats, green buttons, card height |
+| 31 Oct | Roster look 1/2/3 | 5 | 1 8.1 · 2 7.5 · 3 8.4 | Ryan: show all three now |
