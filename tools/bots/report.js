@@ -1,7 +1,7 @@
 /* The bot report (docs/MASTER.md §7 row L2). Each bot plays one company model for two seasons on three seeds; the report
    says how much of each meter's movement came from player decisions (trace share, from the cause log), how the first
    three weeks graded, and how many words were on the desk in week one. Writes tools/bots/out/report.json.
-   Run: node tools/bots/report.js            (MODEL=lta SEEDS=3,11,29 WEEKS=96; QUICK=1 for one seed, 12 weeks)
+   Run: node tools/bots/report.js            (all five bots in tools/bots/bots.js; MODEL=lta SEEDS=3,11,29 WEEKS=96; QUICK=1 for one seed, 12 weeks)
    Two trace shares, per meter, per season (Σ|change| ÷ Σ|change| of all causes):
      direct: causes that are a player's own answer or action (d:*, and roster mix under them);
      booked: direct plus what the player's own shows did (show:*), since the player booked the card.
@@ -32,11 +32,11 @@ function shares(t) {
 }
 function run(bot, seed, model) {
   const S = E.newGame(model, seed, { name: 'R' }), seasons = [], early = [];
-  let skipped = 0;
+  let skipped = 0; const ctx = { seed: seed * 7919 + 1 };
   const tk = E.tasks(S), desk = tk.list.reduce((a, x) => a + words(x.short || x.text), 0) + S.inbox.filter(e => !e.done).reduce((a, e) => a + words(e.title) + words(e.text), 0);
   let y = 0;
   for (let wk = 1; wk <= WEEKS && !S.over; wk++) {
-    const r = playWeek(E, S, bot), cs = r.cs; skipped += r.skipped;
+    const r = playWeek(E, S, bot, ctx), cs = r.cs; skipped += r.skipped;
     if (wk <= 3) early.push(...cs);
     if (S.cz && S.cz.y !== y) { const t = shares(S.cz.last); t.full = true; seasons.push(t); y = S.cz.y; }
   }
@@ -67,3 +67,9 @@ Object.keys(summary).forEach(b => { const s = summary[b];
   console.log('  ' + b.padEnd(10) + ' weeks 1-3 grade ' + (s.earlyGrade || '-') + ' (' + (s.early == null ? '-' : s.early.toFixed(1)) + ')   week-1 desk task+matter words ' + s.deskWords + '   shows skipped (invalid card) ' + s.skipped + (s.over.length ? '   ended: ' + s.over.join(', ') : '')); });
 const bad = runs.reduce((a, r) => a + r.bad, 0);
 if (bad) { console.log('FAIL: ' + bad + ' cause-log frames did not close'); process.exit(1); }
+// row L3: a meter that never moves in two seasons, for any bot, is dead weight (full runs only)
+if (!Q && WEEKS >= 96) {
+  const dead = METERS.filter(m => runs.every(r => r.seasons.every(t => !t[m].total)));
+  if (dead.length) { console.log('FAIL: these meters never moved in two seasons: ' + dead.join(', ')); process.exit(1); }
+  console.log('every meter moved for every bot (' + METERS.join(', ') + ')');
+}

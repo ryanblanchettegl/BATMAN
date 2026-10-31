@@ -3,6 +3,7 @@ node_modules/
 .DS_Store
 .claude/*
 !.claude/skills/
+!.claude/settings.json
 release/
 __pycache__/
 

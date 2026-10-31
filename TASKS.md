@@ -37,6 +37,7 @@ Two more lists sit beside this one, both finished:
 | Topic | Decision |
 | --- | --- |
 | The spine, 30 Oct | All 13 vault questions answered (`docs/plans/spine.md` §8); go-ahead "Go, after L1": the cause log first, then the spine. Non-default picks: early pay also costs a little crowd reaction; a year with no promises costs owner trust. |
+| The Elephant-Goldfish plugin, 31 Oct | "commit the plugin to repo game, claude everywhere": Google's `egm` plugin is enabled for every session in `.claude/settings.json`. |
 | Golden rules, 30 Oct | Three golden rules in `docs/MASTER.md` §1, read first every session: great not good, every addition critic-scored and only 8.5 or higher passes (replaces 9j's over 8); art direction is always three concepts that each passed a critic run; every session spends fewer tokens and logs the saving. CLAUDE.md is now a short core that imports the master (0av). |
 | The match screen, 22 Oct | Fewer kick-outs. When there is no match picture for the moment, the picture cuts to the commentators. The animation never loops while the commentary catches up; it flows. Build: an instant replay of the finish, a big referee count on near falls, paper-flip cuts between pictures, a finisher close-up with the move's name, cinema mode (the picture fills the screen), the winner celebrating after the bell, big moments for each match rule (ladder, cage, tables), run-ins drawn as their own pictures. The night's highlights go on After the show. The feed is livelier and each poster has a personality of their own; the company's sign-off post comes once, after the main event, not after every match. |
 | Blueprint, questions, approval, 23 Oct | A core rule for any new game mode, system or major feature: first a complete blueprint (states, data, screens, money and balance), then a list of probing questions for Ryan, and no code until he has read both, answered and said go ahead (CLAUDE.md rule 9d). |
@@ -144,7 +145,7 @@ Two more lists sit beside this one, both finished:
 
 - [x] L1: the cause log (30 October, frames instead of `meterAdd`; `docs/plans/cause-log.md`): other ≤ 0.1%, untracked 0%, golden games identical; critic 8.6.
 - [x] L2: two bots on one model nightly, `tools/bots/report.js`, baseline recorded in MASTER §7 (30 October).
-- [ ] L3: five bots plus the exploit bot, failing gates on 3-seed medians.
+- [x] L3: five bots plus the exploit sweep (30 one-action loops against a spender baseline), failing gates on 3-seed medians (31 October; clean).
 - [ ] 1: the spine, rule 9d (`docs/plans/spine.md`): gate 1 written, gate 2 answered 30 October (13 questions); gate 3: Ryan's go-ahead, 30 October: "Go, after L1".
 - [ ] 2: first hour (0ac).
 - [ ] 3: art bible and look freeze.
